@@ -1,5 +1,7 @@
 import { useState } from "react";
 import api from "../services/api";
+import { Link } from "react-router-dom";
+import { Home } from "lucide-react";
 
 export default function Register() {
   const [role, setRole] = useState("student");
@@ -246,6 +248,19 @@ export default function Register() {
       </form>
 
       {message && <p className="mt-4 text-center text-sm text-blue-700 font-medium">{message}</p>}
+        
+      <div className="mt-4 text-center">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-blue-600 hover:underline transition"
+        >
+          <Home className="w-4 h-4" />
+          Back to Home
+        </Link>
+      </div>
+
+    
+
     </div>
   </div>
 );

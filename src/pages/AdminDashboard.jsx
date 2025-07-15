@@ -2,9 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { FaUserClock, FaUserCheck, FaUserTimes, FaDownload , FaSignOutAlt} from "react-icons/fa";
-
-
-
+import { Shield } from "lucide-react";
 export default function AdminDashboard() {
   const navigate = useNavigate();
 
@@ -144,14 +142,18 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-100 to-green-200 p-6 space-y-8">
-      <h1 className="text-3xl font-bold mb-4 text-center">Admin Dashboard</h1>
-
-      <button
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex items-center space-x-2">
+          <Shield className="w-6 h-6 text-green-700" />
+          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+        </div>
+        <button
           onClick={handleLogout}
           className="flex items-center bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
         >
           <FaSignOutAlt className="mr-2" /> Logout
         </button>
+      </div>
 
       {/* One block per table */}
       {[{

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
-import { User, GraduationCap, Loader2 } from "lucide-react";
+import { User, GraduationCap, Loader2,  Home } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function Login() {
   const [role, setRole] = useState("student");
@@ -116,6 +117,15 @@ export default function Login() {
         {message && (
           <p className="mt-4 text-center text-sm text-red-500">{message}</p>
         )}
+       <div className="mt-4 text-center">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-blue-600 hover:underline transition"
+          >
+            <Home className="w-4 h-4" />
+            Back to Home
+          </Link>
+        </div>
       </div>
     </div>
   );
