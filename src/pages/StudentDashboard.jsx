@@ -140,6 +140,7 @@ export default function StudentDashboard() {
     [`Name:,${profile.full_name}`],
     [`Roll No:,${profile.roll_no || ''}`],
     [`Department:,${profile.department || ''}`],
+    [`Branch:,${profile.course || ''}`],
     [`Semester:,${profile.semester || ''}`],
     [`Section:,${profile.section || ''}`],
     [], // empty row before table
@@ -195,6 +196,7 @@ export default function StudentDashboard() {
         <div className="text-gray-600 flex flex-wrap gap-4 mt-2 text-sm md:text-base">
           <span>🆔 <b>Roll No:</b> {roll_no}</span>
           {profile?.department && <span>🏫 <b>Department:</b> {profile.department}</span>}
+          {profile?.course && <span>🧬 <b>Branch:</b> {profile.course}</span>}
           {profile?.semester && <span>📚 <b>Semester:</b> {profile.semester}</span>}
           {profile?.section && <span>🔖 <b>Section:</b> {profile.section}</span>}
         </div>
