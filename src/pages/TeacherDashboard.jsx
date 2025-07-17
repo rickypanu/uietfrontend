@@ -21,9 +21,30 @@ import Papa from "papaparse";
 
 
 
-const SUBJECTS = ["EMT", "VLSI", "DSA", "CE", "DSP", "MICROPROCESSOR", "NETWORKS"];
+// const SUBJECTS = ["EMT", "VLSI", "DSA", "CE", "DSP", "MICROPROCESSOR", "NETWORKS"];
+
+const SUBJECTS = {
+  CSE: {
+    1: ["Maths", "Physics"],
+    2: ["DSA", "OOP"],
+    3: ["DBMS", "OS"],
+    5: ["Computer Graphics", "Theory of Computation", "Artificial Intelligence", "Natural language Processing","Economics"],
+  },
+  ECE: {
+    1: ["Basic Electronics", "Maths"],
+    2: ["EMT", "Digital"],
+    3: ["DSP", "VLSI"],
+    5: ["VLSI", "AWP","DSD","DSA", "DSP", "CN"],
+  },
+  MECH: {
+    1: ["Mechanics", "Maths"],
+    2: ["Thermodynamics", "Fluid Mechanics"],
+  },
+};
 
 export default function TeacherDashboard() {
+  const [branch, setBranch] = useState("");
+  const [semester, setSemester] = useState("");
   const [subject, setSubject] = useState("");
   const [duration, setDuration] = useState(5);
   const [otpList, setOtpList] = useState([]);
@@ -33,6 +54,13 @@ export default function TeacherDashboard() {
   const [filterDate, setFilterDate] = useState("");
   const [filterMonth, setFilterMonth] = useState("");
   const [profile, setProfile] = useState(null);
+  
+
+  const branches = Object.keys(SUBJECTS);
+  const semesters = branch ? Object.keys(SUBJECTS[branch.toUpperCase()] || {}) : [];
+  const subjects = branch && semester
+    ? SUBJECTS[branch.toUpperCase()]?.[semester] || []
+    : [];
 
   const employeeId = localStorage.getItem("userId");
   const navigate = useNavigate();
@@ -50,6 +78,7 @@ export default function TeacherDashboard() {
   }
   // eslint-disable-next-line react-hooks/exhaustive-deps
 }, []);
+
 
 
   useEffect(() => {
@@ -86,60 +115,60 @@ export default function TeacherDashboard() {
     }
   };
 
-      const handleGenerateOtp = async (e) => {
-      e.preventDefault();
-      if (!subject) {
-        setMessage("❌ Please select a subject");
-        return;
-      }
-      setLoading(true);
+    const handleGenerateOtp = async (e) => {
+    e.preventDefault();
+    if (!branch || !semester || !subject) {
+      setMessage("❌ Please select branch, semester, and subject.");
+      return;
+    }
 
-      try {
-        // Ask for location
-        navigator.geolocation.getCurrentPosition(
-          async (position) => {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
+    setLoading(true);
 
-            // Call API with location data
-            const data = await generateOtp(employeeId, subject, duration, lat, lng);
+    try {
+      // Ask for location
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
 
-            const newOtp = {
-              otp: data.otp,
-              subject: data.subject,
-              end_time: data.valid_till,
-            };
+          const data = await generateOtp(employeeId, branch, semester, subject, duration, lat, lng);
 
-            setOtpList((prev) =>
-              [newOtp, ...prev]
-                .filter((item) => new Date(item.end_time) > new Date())
-                .sort((a, b) => new Date(b.end_time) - new Date(a.end_time))
-            );
+          const newOtp = {
+            otp: data.otp,
+            subject: data.subject,
+            end_time: data.valid_till,
+          };
 
-            const validTill = new Date(data.valid_till).getTime();
-            const now = Date.now();
-            const timeout = validTill - now;
+          setOtpList((prev) =>
+            [newOtp, ...prev]
+              .filter((item) => new Date(item.end_time) > new Date())
+              .sort((a, b) => new Date(b.end_time) - new Date(a.end_time))
+          );
 
-            if (timeout > 0) {
-              setTimeout(() => {
-                setOtpList((prev) => prev.filter((item) => item.otp !== newOtp.otp));
-              }, timeout);
-            }
+          const validTill = new Date(data.valid_till).getTime();
+          const now = Date.now();
+          const timeout = validTill - now;
 
-            setMessage(`✅ OTP Generated: ${data.otp} (valid till: ${new Date(data.valid_till).toLocaleString()})`);
-          },
-          (error) => {
-            console.error("Geolocation error:", error);
-            setMessage("❌ Failed to get location. Allow location permission and try again.");
+          if (timeout > 0) {
+            setTimeout(() => {
+              setOtpList((prev) => prev.filter((item) => item.otp !== newOtp.otp));
+            }, timeout);
           }
-        );
-      } catch (err) {
-        console.error("Generate OTP error:", err);
-        setMessage(err.response?.data?.detail || "❌ Failed to generate OTP");
-      }
 
-      setLoading(false);
-    };
+          setMessage(`✅ OTP Generated: ${data.otp} (valid till: ${new Date(data.valid_till).toLocaleString()})`);
+        },
+        (error) => {
+          console.error("Geolocation error:", error);
+          setMessage("❌ Failed to get location. Allow location permission and try again.");
+        }
+      );
+    } catch (err) {
+      console.error("Generate OTP error:", err);
+      setMessage(err.response?.data?.detail || "❌ Failed to generate OTP");
+    }
+
+    setLoading(false);
+  };
 
 
   const handleExport = () => {
@@ -224,17 +253,54 @@ export default function TeacherDashboard() {
         <div className="bg-white shadow-sm rounded-lg p-5">
           <SectionTitle icon={KeyRound} title="Generate OTP for Class" />
           <form onSubmit={handleGenerateOtp} className="flex flex-col md:flex-row md:items-center gap-4">
+          {/* Branch Dropdown */}
+            <select
+              value={branch}
+              onChange={(e) => {
+                setBranch(e.target.value);
+                setSemester("");
+                setSubject("");
+              }}
+              className="p-2 border rounded-md w-full md:w-1/4"
+              required
+            >
+              <option value="">Select Branch</option>
+              {branches.map((b) => (
+                <option key={b} value={b}>{b}</option>
+              ))}
+            </select>
+
+            {/* Semester Dropdown */}
+            <select
+              value={semester}
+              onChange={(e) => {
+                setSemester(e.target.value);
+                setSubject("");
+              }}
+              disabled={!branch}
+              className="p-2 border rounded-md w-full md:w-1/4"
+              required
+            >
+              <option value="">Select Semester</option>
+              {semesters.map((sem) => (
+                <option key={sem} value={sem}>{sem}</option>
+              ))}
+            </select>
+
+            {/* Subject Dropdown */}
             <select
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
-              className="p-2 border rounded-md w-full md:w-1/3"
+              disabled={!semester}
+              className="p-2 border rounded-md w-full md:w-1/4"
               required
             >
               <option value="">Select Subject</option>
-              {SUBJECTS.map((sub) => (
+              {subjects.map((sub) => (
                 <option key={sub} value={sub}>{sub}</option>
               ))}
             </select>
+
             <input
               type="number"
               min={1}
