@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { FaUserClock, FaUserCheck, FaUserTimes, FaDownload , FaSignOutAlt} from "react-icons/fa";
 import { Shield } from "lucide-react";
+
+
 export default function AdminDashboard() {
   const navigate = useNavigate();
 
@@ -73,6 +75,7 @@ export default function AdminDashboard() {
   const handleApprove = async (userId, role) => {
     try {
       if (role === "student") {
+        console.log("Token at approve:", localStorage.getItem("token"));
         await api.post(`/admin/approve/student/${userId}`);
       } else if (role === "teacher") {
         await api.post(`/admin/approve/teacher/${userId}`);
@@ -81,8 +84,15 @@ export default function AdminDashboard() {
       setPendingUsers(prev => prev.filter(u => u.user_id !== userId));
       setApprovedUsers(prev => [...prev, approvedUser]);
     } catch (err) {
-      console.error("Error approving user:", err);
+      if (err.response?.status === 403) {
+        alert("Session expired. Please log in again.");
+        localStorage.removeItem("token");
+        navigate("/admin/login");
+      } else {
+        alert("Failed to approve user: " + (err.response?.data?.detail || err.message));
+      }
     }
+
   };
 
   const handleReject = async (userId, role) => {
