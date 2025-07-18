@@ -72,9 +72,14 @@ export default function TeacherDashboard() {
   ? attendanceList.filter((a) => a.otp === latestOtp.otp).length
   : 0;
 
+  const [selectedOtp, setSelectedOtp] = useState(null);
+  const [todaysOtp, setTodaysOtps] = useState([]);
+
+
   useEffect(() => {
   const interval = setInterval(() => {
       setCurrentTime(new Date());
+      loadAttendance();
     }, 1000);
     return () => clearInterval(interval);
   }, []);
@@ -95,6 +100,20 @@ export default function TeacherDashboard() {
 }, []);
 
 
+const loadTodaysOtps = async () => {
+  try {
+    const res = await api.get(`/teacher/todays-otps/${employeeId}`);
+    setTodaysOtps(res.data);
+  } catch (err) {
+    console.error("Error loading today's OTPs:", err);
+  }
+};
+
+useEffect(() => {
+  loadTodaysOtps();
+  const interval = setInterval(loadTodaysOtps, 1000); // update every second
+  return () => clearInterval(interval);
+}, []);
 
   useEffect(() => {
     if (message) {
@@ -112,27 +131,15 @@ export default function TeacherDashboard() {
     }
   };
 
-  // const loadOtps = async () => {
-  //   try {
-  //     const data = await getGeneratedOtps(employeeId);
-  //     setOtpList(data);
-  //   } catch (err) {
-  //     console.error("Failed to load OTPs", err);
-  //   }
-  // };
-  const loadOtps = async () => {
+
+
+const loadOtps = async () => {
   try {
-    const data = await getGeneratedOtps(employeeId);
-    const todayStr = new Date().toISOString().split("T")[0];
-
-    const todaysOtps = data.filter((otp) => {
-      const otpDate = new Date(otp.end_time).toISOString().split("T")[0];
-      return otpDate === todayStr;
-    });
-
-    setOtpList(todaysOtps.sort((a, b) => new Date(b.end_time) - new Date(a.end_time)));
+    const res = await api.get(`/teacher/active-otps/${employeeId}`);
+    const sorted = res.data.sort((a, b) => new Date(b.end_time) - new Date(a.end_time));
+    setOtpList(sorted);
   } catch (err) {
-    console.error("Failed to load OTPs", err);
+    console.error("Failed to load active OTPs", err);
   }
 };
 
@@ -388,39 +395,66 @@ export default function TeacherDashboard() {
         </div>
 
 
-        {/* Real-Time Attendance Summary */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Current Time */}
-          <div className="bg-white rounded-lg shadow-md p-4 flex flex-col items-center justify-center text-center">
-            <h2 className="text-xl font-semibold text-gray-700">Current Time</h2>
-            <p className="text-2xl font-bold text-blue-600 mt-2">
-              {currentTime.toLocaleTimeString()}
-            </p>
-            <p className="text-gray-500 text-sm">{currentTime.toDateString()}</p>
-          </div>
+     
+        
+        {/* Box Container */}
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
-          {/* Latest OTP */}
-          <div className="bg-white rounded-lg shadow-md p-4 flex flex-col items-center justify-center text-center">
-            <h2 className="text-xl font-semibold text-gray-700">Latest OTP Today</h2>
-            <p className="text-3xl font-mono text-green-600 mt-2">
-              {latestOtp ? latestOtp.otp : "N/A"}
-            </p>
-            <p className="text-gray-500 text-sm">
-              {latestOtp ? `Subject: ${latestOtp.subject}` : "No OTPs generated today"}
-            </p>
-          </div>
+      {/* Box 1: Current Time */}
+      <div className="bg-white rounded-lg shadow-md p-4 text-center">
+        <h2 className="text-xl font-semibold text-gray-700">Current Time</h2>
+        <p className="text-2xl font-bold text-blue-600 mt-2">
+          {currentTime.toLocaleTimeString()}
+        </p>
+        <p className="text-gray-500 text-sm">{currentTime.toDateString()}</p>
+      </div>
 
-          {/* Attendance Count */}
-          <div className="bg-white rounded-lg shadow-md p-4 flex flex-col items-center justify-center text-center">
-            <h2 className="text-xl font-semibold text-gray-700">Students Marked</h2>
-            <p className="text-4xl font-bold text-purple-600 mt-2">
-              {liveAttendanceCount}
-            </p>
-            <p className="text-gray-500 text-sm">
-              {latestOtp ? `For OTP: ${latestOtp.otp}` : "No active OTP"}
-            </p>
-          </div>
-        </div>
+  {/* Box 2: Today's OTPs List */}
+      <div className="bg-white rounded-lg shadow-md p-4 text-center">
+  <h2 className="text-xl font-semibold text-gray-700">Today’s OTPs</h2>
+  <ul className="mt-2 space-y-1 max-h-28 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
+    {todaysOtp.length === 0 ? (
+      <p className="text-gray-500 text-sm">No OTPs generated yet</p>
+    ) : (
+      todaysOtp.map((otpItem, index) => (
+        <li
+          key={index}
+          onClick={() => setSelectedOtp(otpItem.otp)}
+          className={`cursor-pointer px-2 py-1 rounded-md text-sm ${
+            selectedOtp === otpItem.otp
+              ? "bg-purple-100 text-purple-800 font-semibold"
+              : "bg-gray-100 text-gray-700"
+          }`}
+        >
+          {otpItem.otp} - {otpItem.subject}
+        </li>
+      ))
+    )}
+  </ul>
+</div>
+
+
+    {/* box 3 */}
+      
+  <div className="bg-white rounded-lg shadow-md p-4 text-center">
+  <h2 className="text-xl font-semibold text-gray-700">Students Marked</h2>
+  {selectedOtp ? (
+    <>
+      <p className="text-4xl font-bold text-purple-600 mt-2">
+        {
+          attendanceList.filter((record) => record.otp === selectedOtp).length
+        }
+      </p>
+      <p className="text-gray-500 text-sm mt-1">For OTP: {selectedOtp}</p>
+    </>
+  ) : (
+    <p className="text-gray-500 text-sm mt-2">Click an OTP to see count</p>
+  )}
+</div>
+
+
+</div>
+
 
         {/* Filters + Export */}
         <div className="bg-white shadow-sm rounded-lg p-5 space-y-4">
