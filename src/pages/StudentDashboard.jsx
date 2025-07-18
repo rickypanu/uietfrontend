@@ -4,7 +4,25 @@ import api from "../services/api";
 import { useNavigate } from "react-router-dom";
 import { getFingerprint } from "../services/getFingerprint"
 import {LogOut,} from "lucide-react";
-const SUBJECTS = ["EMT", "VLSI", "DSA", "CE", "DSP", "MICROPROCESSOR", "NETWORKS"];
+
+const SUBJECTS = {
+  CSE: {
+    1: ["Maths", "Physics"],
+    2: ["DSA", "OOP"],
+    3: ["DBMS", "OS"],
+    5: ["Computer Graphics", "Theory of Computation", "Artificial Intelligence", "Natural language Processing","Economics"],
+  },
+  ECE: {
+    1: ["Basic Electronics", "Maths"],
+    2: ["EMT", "Digital"],
+    3: ["DSP", "VLSI"],
+    5: ["VLSI", "AWP","DSD","DSA", "DSP", "CN"],
+  },
+  MECH: {
+    1: ["Mechanics", "Maths"],
+    2: ["Thermodynamics", "Fluid Mechanics"],
+  },
+};
 
 export default function StudentDashboard() {
   const [otp, setOtp] = useState("");
@@ -39,6 +57,7 @@ export default function StudentDashboard() {
   const fetchProfile = async () => {
     try {
       const res = await api.get(`/student/profile/${roll_no}`);
+      console.log("PROFILE DATA FROM API:", res.data);
       setProfile(res.data);
     } catch (err) {
       console.error("Failed to fetch profile", err);
@@ -55,7 +74,19 @@ export default function StudentDashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [otp]);
 
-  const checkOtp = async () => {
+    const getAvailableSubjects = () => {
+    if (!profile || !profile.course || !profile.semester) return [];
+    console.log("PROFILE INFO ➜", profile);
+
+    const dept = profile.course.toUpperCase(); // e.g., "CSE"
+    const sem = String(profile.semester);         // e.g., "3"
+
+    console.log("Fetching subjects for ➜", dept, sem);
+    return SUBJECTS?.[dept]?.[sem] || [];
+  };
+
+
+    const checkOtp = async () => {
     try {
       const res = await api.get(`/student/check-otp/${otp}`);
       setOtpInfo(res.data);
@@ -213,10 +244,11 @@ export default function StudentDashboard() {
             required
           >
             <option value="" disabled>Select Subject</option>
-            {SUBJECTS.map((sub) => (
+            {getAvailableSubjects().map((sub) => (
               <option key={sub} value={sub}>{sub}</option>
             ))}
           </select>
+
 
           <input
             type="text"
@@ -261,15 +293,16 @@ export default function StudentDashboard() {
       {/* Filters */}
       <div className="flex flex-col md:flex-row gap-3">
         <select
-          value={filterSubject}
-          onChange={(e) => setFilterSubject(e.target.value)}
-          className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-400"
-        >
-          <option value="">All Subjects</option>
-          {SUBJECTS.map((sub) => (
-            <option key={sub} value={sub}>{sub}</option>
-          ))}
+            value={filterSubject}
+            onChange={(e) => setFilterSubject(e.target.value)}
+            className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-400"
+          >
+            <option value="">All Subjects</option>
+            {getAvailableSubjects().map((sub) => (
+              <option key={sub} value={sub}>{sub}</option>
+            ))}
         </select>
+
         <input
           type="date"
           value={filterDate}
