@@ -6,23 +6,37 @@ import { getFingerprint } from "../services/getFingerprint"
 import {LogOut,} from "lucide-react";
 
 const SUBJECTS = {
-  CSE: {
-    1: ["Maths", "Physics"],
-    2: ["DSA", "OOP"],
-    3: ["DBMS", "OS"],
-    5: ["Computer Graphics", "Theory of Computation", "Artificial Intelligence", "Natural language Processing","Economics"],
-  },
-  ECE: {
-    1: ["Basic Electronics", "Maths"],
-    2: ["EMT", "Digital"],
-    3: ["DSP", "VLSI"],
-    5: ["VLSI", "AWP","DSD","DSA", "DSP", "CN"],
-  },
-  MECH: {
-    1: ["Mechanics", "Maths"],
-    2: ["Thermodynamics", "Fluid Mechanics"],
-  },
-};
+    "CSE": {
+        "1": ["Calculus", "Physics", "Professional Communication","Workshop" , "Programming Fundamentals", "UHV"],
+        "2": ["Basic Electrical and Electronics Engineering", "Applied Chemistry", "Engineering Graphics", "OOPs", "Differential Equations and Transforms"],
+        "3": ["DBMS", "Data Structure", "Discrete Systems", "Web Technologies", "Software Technologies"],
+        "4": [""],
+        "5": ["Computer Graphics", "Theory of Computation", "Artificial Intelligence", "Natural language Processing","Economics"],
+        "6": [""],
+        "7": [""],
+        "8": [""],
+    },
+    "ECE": {
+        "1": ["Basic Electrical and Electronics Engineering", "Engineering Graphics", "Applied Chemistry", "Calculus", "Programming Fundamentals", ],
+        "2": ["Workshop", "Digital Design", "Professional Communication", "UHV", "Applies Physics"],
+        "3": ["Linear Algebra and Complex Analysis", "Signals and Systems", "Microprocessor and Microcontroller", "Electronic Devices and Circuits", "Electronics Measurementsand Instrumentation", "Economics"],
+        "4": ["Communication Engineering", "Advance Microcontroller and Application", "Analog Electronics Circuits", "Probability and Random Process", "Electromagnetic Theory", "Network Analysis"],
+        "5": ["VLSI", "AWP","DSD","DSA", "DSP", "CN"],
+        "6": ["Microwave & Radar Engineering", "Fibre Optic Communication Systems", "Digital Communication", "Control Systems", "Power Electronics", "Satellite Communication" ],
+        "7": ["Wireless and Mobile Communication", "Embedded System Design"],
+        "8": [""],
+    },
+    "MECH": {
+        "1": ["Mechanics", "Maths"],
+        "2": ["Thermodynamics", "Fluid Mechanics"],
+        "3": [""],
+        "4": [""],
+        "5": [""],
+        "6": [""],
+        "7": [""],
+        "8": [""],
+    },
+}
 
 export default function StudentDashboard() {
   const [otp, setOtp] = useState("");
@@ -171,7 +185,7 @@ export default function StudentDashboard() {
     [`Name:,${profile.full_name}`],
     [`Roll No:,${profile.roll_no || ''}`],
     [`Department:,${profile.department || ''}`],
-    [`Branch:,${profile.course || ''}`],
+    [`Branch:,${profile.branch || ''}`],
     [`Semester:,${profile.semester || ''}`],
     [`Section:,${profile.section || ''}`],
     [], // empty row before table
@@ -227,7 +241,7 @@ export default function StudentDashboard() {
         <div className="text-gray-600 flex flex-wrap gap-4 mt-2 text-sm md:text-base">
           <span>🆔 <b>Roll No:</b> {roll_no}</span>
           {profile?.department && <span>🏫 <b>Department:</b> {profile.department}</span>}
-          {profile?.course && <span>🧬 <b>Branch:</b> {profile.course}</span>}
+          {profile?.branch && <span>🧬 <b>Branch:</b> {profile.branch}</span>}
           {profile?.semester && <span>📚 <b>Semester:</b> {profile.semester}</span>}
           {profile?.section && <span>🔖 <b>Section:</b> {profile.section}</span>}
         </div>

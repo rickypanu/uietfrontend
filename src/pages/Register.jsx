@@ -14,7 +14,7 @@ export default function Register() {
     address: "",
     roll_no: "",
     department: "",
-    course: "",
+    branch: "",
     semester: "",
     section: "",
     employee_id: "",
@@ -29,7 +29,7 @@ export default function Register() {
     let { name, value } = e.target;
 
     // Auto-transform fields
-    if (["department", "course", "section", "employee_id"].includes(name)) {
+    if (["department", "branch", "section", "employee_id"].includes(name)) {
       value = value.toUpperCase();
     }
     if (name === "roll_no") {
@@ -58,7 +58,7 @@ export default function Register() {
           address: form.address,
           roll_no: form.roll_no,
           department: form.department,
-          course: form.course,
+          branch: form.branch,
           semester: parseInt(form.semester),
           section: form.section,
         });
@@ -77,7 +77,7 @@ export default function Register() {
       setMessage("✅ Registration successful! Wait for admin approval.");
       setForm({
         name:"", email:"", phone:"", dob:"", gender:"", address:"",
-        roll_no:"", department:"", course:"", semester:"", section:"",
+        roll_no:"", department:"", branch:"", semester:"", section:"",
         employee_id:"", subject:""
       });
     } catch (err) {
@@ -193,13 +193,14 @@ export default function Register() {
             <label className="block text-gray-700 text-sm font-medium mb-1">Branch</label>
             <select
               required
-              name="course"
-              value={form.course}
+              name="branch"
+              value={form.branch}
               onChange={handleChange}
               className="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-500 transition"
             >
               <option value="">Select Branch</option>
               <option value="CSE">Computer Science (CSE)</option>
+              <option value="IT">Information Technology (IT)</option>
               <option value="ECE">Electronics (ECE)</option>
               <option value="EEE">Electrical (EEE)</option>
               <option value="ME">Mechanical (ME)</option>
@@ -207,7 +208,7 @@ export default function Register() {
               {/* Add more branches as needed */}
             </select>
             {fieldErrors.course && (
-              <p className="text-red-500 text-xs mt-1">{fieldErrors.course}</p>
+              <p className="text-red-500 text-xs mt-1">{fieldErrors.branch}</p>
             )}
 
             <label className="block text-gray-700 text-sm font-medium mb-1">Semester</label>
@@ -242,6 +243,7 @@ export default function Register() {
             <select required name="subject" value={form.subject} onChange={handleChange}
               className="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-500 transition">
               <option value="">Select Subject</option>
+              <option>Nil</option>
               <option>ACE</option>
               <option>EMT</option>
               <option>EMI</option>

@@ -82,18 +82,18 @@ export const getTodayAttendanceCount = async () => {
 };
 
 // Add a response interceptor to handle errors globally
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response && error.response.status === 401) {
-      // Token expired or unauthorized → optional: redirect to login
-      localStorage.removeItem("token");
-      localStorage.removeItem("role");
-      window.location.href = "/admin/login";
-    }
-    return Promise.reject(error);
-  }
-);
+// api.interceptors.response.use(
+//   (response) => response,
+//   (error) => {
+//     if (error.response && error.response.status === 401) {
+//       // Token expired or unauthorized → optional: redirect to login
+//       localStorage.removeItem("token");
+//       localStorage.removeItem("role");
+//       window.location.href = "/admin/login";
+//     }
+//     return Promise.reject(error);
+//   }
+// );
 
 
 

@@ -23,23 +23,37 @@ import Papa from "papaparse";
 
 
 const SUBJECTS = {
-  CSE: {
-    1: ["Maths", "Physics"],
-    2: ["DSA", "OOP"],
-    3: ["DBMS", "OS"],
-    5: ["Computer Graphics", "Theory of Computation", "Artificial Intelligence", "Natural language Processing","Economics"],
-  },
-  ECE: {
-    1: ["Basic Electronics", "Maths"],
-    2: ["EMT", "Digital"],
-    3: ["DSP", "VLSI"],
-    5: ["VLSI", "AWP","DSD","DSA", "DSP", "CN"],
-  },
-  MECH: {
-    1: ["Mechanics", "Maths"],
-    2: ["Thermodynamics", "Fluid Mechanics"],
-  },
-};
+    "CSE": {
+        "1": ["Calculus", "Physics", "Professional Communication","Workshop" , "Programming Fundamentals", "UHV"],
+        "2": ["Basic Electrical and Electronics Engineering", "Applied Chemistry", "Engineering Graphics", "OOPs", "Differential Equations and Transforms"],
+        "3": ["DBMS", "Data Structure", "Discrete Systems", "Web Technologies", "Software Technologies"],
+        "4": [""],
+        "5": ["Computer Graphics", "Theory of Computation", "Artificial Intelligence", "Natural language Processing","Economics"],
+        "6": [""],
+        "7": [""],
+        "8": [""],
+    },
+    "ECE": {
+        "1": ["Basic Electrical and Electronics Engineering", "Engineering Graphics", "Applied Chemistry", "Calculus", "Programming Fundamentals", ],
+        "2": ["Workshop", "Digital Design", "Professional Communication", "UHV", "Applies Physics"],
+        "3": ["Linear Algebra and Complex Analysis", "Signals and Systems", "Microprocessor and Microcontroller", "Electronic Devices and Circuits", "Electronics Measurementsand Instrumentation", "Economics"],
+        "4": ["Communication Engineering", "Advance Microcontroller and Application", "Analog Electronics Circuits", "Probability and Random Process", "Electromagnetic Theory", "Network Analysis"],
+        "5": ["VLSI", "AWP","DSD","DSA", "DSP", "CN"],
+        "6": ["Microwave & Radar Engineering", "Fibre Optic Communication Systems", "Digital Communication", "Control Systems", "Power Electronics", "Satellite Communication" ],
+        "7": ["Wireless and Mobile Communication", "Embedded System Design"],
+        "8": [""],
+    },
+    "MECH": {
+        "1": ["Mechanics", "Maths"],
+        "2": ["Thermodynamics", "Fluid Mechanics"],
+        "3": [""],
+        "4": [""],
+        "5": [""],
+        "6": [""],
+        "7": [""],
+        "8": [""],
+    },
+}
 
 export default function TeacherDashboard() {
   const [branch, setBranch] = useState("");
@@ -451,8 +465,6 @@ const loadOtps = async () => {
     <p className="text-gray-500 text-sm mt-2">Click an OTP to see count</p>
   )}
 </div>
-
-
 </div>
 
 
@@ -510,24 +522,25 @@ const loadOtps = async () => {
               <tbody>
                 {attendanceList.length > 0 ? (
                   attendanceList
-                    .filter((a) => {
-                      if (filterDate) {
-                        const date = new Date(a.marked_at).toISOString().split("T")[0];
-                        return date === filterDate;
-                      }
-                      if (filterMonth) {
-                        const month = new Date(a.marked_at).toISOString().slice(0, 7);
-                        return month === filterMonth;
-                      }
-                      return true;
-                    })
-                    .map((a, idx) => (
-                      <tr key={idx} className="hover:bg-gray-50">
-                        <td className="border px-3 py-2">{a.roll_no}</td>
-                        <td className="border px-3 py-2">{a.subject}</td>
-                        <td className="border px-3 py-2">{new Date(a.marked_at).toLocaleString()}</td>
-                      </tr>
-                    ))
+                  .filter((a) => {
+                    if (filterDate) {
+                      const date = new Date(a.marked_at).toISOString().split("T")[0];
+                      return date === filterDate;
+                    }
+                    if (filterMonth) {
+                      const month = new Date(a.marked_at).toISOString().slice(0, 7);
+                      return month === filterMonth;
+                    }
+                    return true;
+                  })
+                  .sort((a, b) => new Date(b.marked_at) - new Date(a.marked_at)) // Newest first
+                  .map((a, idx) => (
+                    <tr key={idx} className="hover:bg-gray-50">
+                      <td className="border px-3 py-2">{a.roll_no}</td>
+                      <td className="border px-3 py-2">{a.subject}</td>
+                      <td className="border px-3 py-2">{new Date(a.marked_at).toLocaleString()}</td>
+                    </tr>
+                  ))
                 ) : (
                   <tr>
                     <td colSpan="3" className="text-center py-3 text-gray-500">No attendance records yet</td>
