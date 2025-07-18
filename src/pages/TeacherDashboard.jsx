@@ -386,7 +386,7 @@ const loadOtps = async () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="3" className="text-center py-3 text-gray-500">No OTPs generated yet</td>
+                    <td colSpan="3" className="text-center py-3 text-gray-500">No active OTPs yet</td>
                   </tr>
                 )}
               </tbody>
