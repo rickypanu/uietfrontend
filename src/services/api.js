@@ -89,7 +89,7 @@ api.interceptors.response.use(
       // Token expired or unauthorized → optional: redirect to login
       localStorage.removeItem("token");
       localStorage.removeItem("role");
-      window.location.href = "/admin-login";
+      window.location.href = "/admin/login";
     }
     return Promise.reject(error);
   }
