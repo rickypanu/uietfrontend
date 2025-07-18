@@ -19,6 +19,7 @@ export default function Register() {
     section: "",
     employee_id: "",
     subject: ""
+
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -190,10 +191,24 @@ export default function Register() {
             {fieldErrors.department && <p className="text-red-500 text-xs mt-1">{fieldErrors.department}</p>}
 
             <label className="block text-gray-700 text-sm font-medium mb-1">Branch</label>
-            <input required name="course" value={form.course} onChange={handleChange}
-              placeholder="Branch"
-              className="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-500 transition" />
-            {fieldErrors.course && <p className="text-red-500 text-xs mt-1">{fieldErrors.course}</p>}
+            <select
+              required
+              name="course"
+              value={form.course}
+              onChange={handleChange}
+              className="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-500 transition"
+            >
+              <option value="">Select Branch</option>
+              <option value="CSE">Computer Science (CSE)</option>
+              <option value="ECE">Electronics (ECE)</option>
+              <option value="EEE">Electrical (EEE)</option>
+              <option value="ME">Mechanical (ME)</option>
+              <option value="CE">Civil (CE)</option>
+              {/* Add more branches as needed */}
+            </select>
+            {fieldErrors.course && (
+              <p className="text-red-500 text-xs mt-1">{fieldErrors.course}</p>
+            )}
 
             <label className="block text-gray-700 text-sm font-medium mb-1">Semester</label>
             <select required name="semester" value={form.semester} onChange={handleChange}

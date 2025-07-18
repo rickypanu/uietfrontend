@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { User, GraduationCap, Loader2,  Home } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -10,7 +9,7 @@ export default function Login() {
   const [dob, setDob] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const navigate = useNavigate();
+
 
   // Reload once to avoid first-load issue
   useEffect(() => {

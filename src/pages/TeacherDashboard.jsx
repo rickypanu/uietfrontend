@@ -21,7 +21,6 @@ import Papa from "papaparse";
 
 
 
-// const SUBJECTS = ["EMT", "VLSI", "DSA", "CE", "DSP", "MICROPROCESSOR", "NETWORKS"];
 
 const SUBJECTS = {
   CSE: {
@@ -64,6 +63,22 @@ export default function TeacherDashboard() {
 
   const employeeId = localStorage.getItem("userId");
   const navigate = useNavigate();
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  const today = new Date().toISOString().split("T")[0];
+  const todaysOtps = otpList.filter(o => new Date(o.end_time).toISOString().split("T")[0] === today);
+  const latestOtp = todaysOtps.length > 0 ? todaysOtps[0] : null;
+  const liveAttendanceCount = latestOtp
+  ? attendanceList.filter((a) => a.otp === latestOtp.otp).length
+  : 0;
+
+  useEffect(() => {
+  const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
 
   useEffect(() => {
   const userId = localStorage.getItem("userId");
@@ -97,14 +112,30 @@ export default function TeacherDashboard() {
     }
   };
 
+  // const loadOtps = async () => {
+  //   try {
+  //     const data = await getGeneratedOtps(employeeId);
+  //     setOtpList(data);
+  //   } catch (err) {
+  //     console.error("Failed to load OTPs", err);
+  //   }
+  // };
   const loadOtps = async () => {
-    try {
-      const data = await getGeneratedOtps(employeeId);
-      setOtpList(data);
-    } catch (err) {
-      console.error("Failed to load OTPs", err);
-    }
-  };
+  try {
+    const data = await getGeneratedOtps(employeeId);
+    const todayStr = new Date().toISOString().split("T")[0];
+
+    const todaysOtps = data.filter((otp) => {
+      const otpDate = new Date(otp.end_time).toISOString().split("T")[0];
+      return otpDate === todayStr;
+    });
+
+    setOtpList(todaysOtps.sort((a, b) => new Date(b.end_time) - new Date(a.end_time)));
+  } catch (err) {
+    console.error("Failed to load OTPs", err);
+  }
+};
+
 
   const loadAttendance = async () => {
     try {
@@ -353,6 +384,41 @@ export default function TeacherDashboard() {
                 )}
               </tbody>
             </table>
+          </div>
+        </div>
+
+
+        {/* Real-Time Attendance Summary */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Current Time */}
+          <div className="bg-white rounded-lg shadow-md p-4 flex flex-col items-center justify-center text-center">
+            <h2 className="text-xl font-semibold text-gray-700">Current Time</h2>
+            <p className="text-2xl font-bold text-blue-600 mt-2">
+              {currentTime.toLocaleTimeString()}
+            </p>
+            <p className="text-gray-500 text-sm">{currentTime.toDateString()}</p>
+          </div>
+
+          {/* Latest OTP */}
+          <div className="bg-white rounded-lg shadow-md p-4 flex flex-col items-center justify-center text-center">
+            <h2 className="text-xl font-semibold text-gray-700">Latest OTP Today</h2>
+            <p className="text-3xl font-mono text-green-600 mt-2">
+              {latestOtp ? latestOtp.otp : "N/A"}
+            </p>
+            <p className="text-gray-500 text-sm">
+              {latestOtp ? `Subject: ${latestOtp.subject}` : "No OTPs generated today"}
+            </p>
+          </div>
+
+          {/* Attendance Count */}
+          <div className="bg-white rounded-lg shadow-md p-4 flex flex-col items-center justify-center text-center">
+            <h2 className="text-xl font-semibold text-gray-700">Students Marked</h2>
+            <p className="text-4xl font-bold text-purple-600 mt-2">
+              {liveAttendanceCount}
+            </p>
+            <p className="text-gray-500 text-sm">
+              {latestOtp ? `For OTP: ${latestOtp.otp}` : "No active OTP"}
+            </p>
           </div>
         </div>
 
