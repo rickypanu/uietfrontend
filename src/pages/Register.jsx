@@ -14,6 +14,7 @@ export default function Register() {
     address: "",
     roll_no: "",
     department: "",
+    course: "", 
     branch: "",
     semester: "",
     section: "",
@@ -58,6 +59,7 @@ export default function Register() {
           address: form.address,
           roll_no: form.roll_no,
           department: form.department,
+          course: form.course,
           branch: form.branch,
           semester: parseInt(form.semester),
           section: form.section,
@@ -77,7 +79,7 @@ export default function Register() {
       setMessage("✅ Registration successful! Wait for admin approval.");
       setForm({
         name:"", email:"", phone:"", dob:"", gender:"", address:"",
-        roll_no:"", department:"", branch:"", semester:"", section:"",
+        roll_no:"", department:"",course: "", branch:"", semester:"", section:"",
         employee_id:"", subject:""
       });
     } catch (err) {
@@ -189,6 +191,23 @@ export default function Register() {
               placeholder="Department"
               className="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-500 transition" />
             {fieldErrors.department && <p className="text-red-500 text-xs mt-1">{fieldErrors.department}</p>}
+
+            <label className="block text-gray-700 text-sm font-medium mb-1">Course</label>
+              <select
+                required
+                name="course"
+                value={form.course}
+                onChange={handleChange}
+                className="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-500 transition"
+              >
+                <option value="">Select Course</option>
+                <option value="BE">Bachelor of Engineering (B.E)</option>
+                <option value="ME">Masters of Engineering(M.E)</option>
+              </select>
+              {fieldErrors.course && (
+                <p className="text-red-500 text-xs mt-1">{fieldErrors.course}</p>
+              )}
+
 
             <label className="block text-gray-700 text-sm font-medium mb-1">Branch</label>
             <select
