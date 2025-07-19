@@ -185,6 +185,7 @@ export default function StudentDashboard() {
     [`Name:,${profile.full_name}`],
     [`Roll No:,${profile.roll_no || ''}`],
     [`Department:,${profile.department || ''}`],
+    [`COurse:,${profile.course || ''}`],
     [`Branch:,${profile.branch || ''}`],
     [`Semester:,${profile.semester || ''}`],
     [`Section:,${profile.section || ''}`],
@@ -224,7 +225,7 @@ export default function StudentDashboard() {
     <div className="max-w-5xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-green-800">🎓 Student Dashboard</h1>
+        <h1 className="text-3xl font-bold text-green-800">🧑‍🎓 Student Dashboard</h1>
         <button
             onClick={handleLogout}
             className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 flex items-center gap-2"
@@ -241,6 +242,7 @@ export default function StudentDashboard() {
         <div className="text-gray-600 flex flex-wrap gap-4 mt-2 text-sm md:text-base">
           <span>🆔 <b>Roll No:</b> {roll_no}</span>
           {profile?.department && <span>🏫 <b>Department:</b> {profile.department}</span>}
+          {profile?.course && <span>🎓 <b>Course:</b> {profile.course}</span>}
           {profile?.branch && <span>🧬 <b>Branch:</b> {profile.branch}</span>}
           {profile?.semester && <span>📚 <b>Semester:</b> {profile.semester}</span>}
           {profile?.section && <span>🔖 <b>Section:</b> {profile.section}</span>}
