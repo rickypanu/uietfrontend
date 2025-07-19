@@ -23,37 +23,60 @@ import Papa from "papaparse";
 
 
 const SUBJECTS = {
-    "CSE": {
-        "1": ["Calculus", "Physics", "Professional Communication","Workshop" , "Programming Fundamentals", "UHV"],
-        "2": ["Basic Electrical and Electronics Engineering", "Applied Chemistry", "Engineering Graphics", "OOPs", "Differential Equations and Transforms"],
-        "3": ["DBMS", "Data Structure", "Discrete Systems", "Web Technologies", "Software Technologies"],
-        "4": [""],
-        "5": ["Computer Graphics", "Theory of Computation", "Artificial Intelligence", "Natural language Processing","Economics"],
-        "6": [""],
-        "7": [""],
-        "8": [""],
+  BE: {
+    CSE: {
+      "1": ["Calculus", "Physics", "Professional Communication", "Workshop", "Programming Fundamentals", "UHV"],
+      "2": ["Basic Electrical and Electronics Engineering", "Applied Chemistry", "Engineering Graphics", "OOPs", "Differential Equations and Transforms"],
+      "3": ["DBMS", "Data Structure", "Discrete Systems", "Web Technologies", "Software Technologies"],
+      "4": [""],
+      "5": ["Computer Graphics", "Theory of Computation", "Artificial Intelligence", "Natural language Processing", "Economics"],
+      "6": [""],
+      "7": [""],
+      "8": [""],
     },
-    "ECE": {
-        "1": ["Basic Electrical and Electronics Engineering", "Engineering Graphics", "Applied Chemistry", "Calculus", "Programming Fundamentals", ],
-        "2": ["Workshop", "Digital Design", "Professional Communication", "UHV", "Applies Physics"],
-        "3": ["Linear Algebra and Complex Analysis", "Signals and Systems", "Microprocessor and Microcontroller", "Electronic Devices and Circuits", "Electronics Measurementsand Instrumentation", "Economics"],
-        "4": ["Communication Engineering", "Advance Microcontroller and Application", "Analog Electronics Circuits", "Probability and Random Process", "Electromagnetic Theory", "Network Analysis"],
-        "5": ["VLSI", "AWP","DSD","DSA", "DSP", "CN"],
-        "6": ["Microwave & Radar Engineering", "Fibre Optic Communication Systems", "Digital Communication", "Control Systems", "Power Electronics", "Satellite Communication" ],
-        "7": ["Wireless and Mobile Communication", "Embedded System Design"],
-        "8": [""],
+    ECE: {
+      "1": ["Basic Electrical and Electronics Engineering", "Engineering Graphics", "Applied Chemistry", "Calculus", "Programming Fundamentals"],
+      "2": ["Workshop", "Digital Design", "Professional Communication", "UHV", "Applies Physics"],
+      "3": ["Linear Algebra and Complex Analysis", "Signals and Systems", "Microprocessor and Microcontroller", "Electronic Devices and Circuits", "Electronics Measurementsand Instrumentation", "Economics"],
+      "4": ["Communication Engineering", "Advance Microcontroller and Application", "Analog Electronics Circuits", "Probability and Random Process", "Electromagnetic Theory", "Network Analysis"],
+      "5": ["VLSI", "AWP", "DSD", "DSA", "DSP", "CN"],
+      "6": ["Microwave & Radar Engineering", "Fibre Optic Communication Systems", "Digital Communication", "Control Systems", "Power Electronics", "Satellite Communication"],
+      "7": ["Wireless and Mobile Communication", "Embedded System Design"],
+      "8": [""],
     },
-    "MECH": {
-        "1": ["Mechanics", "Maths"],
-        "2": ["Thermodynamics", "Fluid Mechanics"],
-        "3": [""],
-        "4": [""],
-        "5": [""],
-        "6": [""],
-        "7": [""],
-        "8": [""],
+    MECH: {
+      "1": ["Mechanics", "Maths"],
+      "2": ["Thermodynamics", "Fluid Mechanics"],
+      "3": [""],
+      "4": [""],
+      "5": [""],
+      "6": [""],
+      "7": [""],
+      "8": [""],
     },
-}
+  },
+  ME: {
+    CSE: {
+      "1": ["Advanced Algorithms", "Machine Learning", "Research Methodology"],
+      "2": ["Advanced DBMS", "Data Mining", "Cloud Computing"],
+      "3": ["Thesis Phase I", "Seminar"],
+      "4": ["Thesis Phase II"],
+    },
+    ECE: {
+      "1": ["Advanced Signal Processing", "VLSI Design", "Research Methodology"],
+      "2": ["Wireless Communication", "Embedded Systems", "Advanced Communication Systems"],
+      "3": ["Thesis Phase I", "Seminar"],
+      "4": ["Thesis Phase II"],
+    },
+    MECH: {
+      "1": ["Advanced Thermodynamics", "Finite Element Methods", "Research Methodology"],
+      "2": ["Computer-Aided Design", "Mechatronics", "Advanced Manufacturing"],
+      "3": ["Thesis Phase I", "Seminar"],
+      "4": ["Thesis Phase II"],
+    },
+  },
+};
+
 
 export default function TeacherDashboard() {
   const [branch, setBranch] = useState("");
@@ -68,12 +91,13 @@ export default function TeacherDashboard() {
   const [filterMonth, setFilterMonth] = useState("");
   const [profile, setProfile] = useState(null);
   
+ 
 
-  const branches = Object.keys(SUBJECTS);
-  const semesters = branch ? Object.keys(SUBJECTS[branch.toUpperCase()] || {}) : [];
-  const subjects = branch && semester
-    ? SUBJECTS[branch.toUpperCase()]?.[semester] || []
-    : [];
+  // const branches = Object.keys(SUBJECTS);
+  // const semesters = branch ? Object.keys(SUBJECTS[branch.toUpperCase()] || {}) : [];
+  // const subjects = branch && semester
+  //   ? SUBJECTS[branch.toUpperCase()]?.[semester] || []
+  //   : [];
 
   const employeeId = localStorage.getItem("userId");
   const navigate = useNavigate();
@@ -88,6 +112,12 @@ export default function TeacherDashboard() {
 
   const [selectedOtp, setSelectedOtp] = useState(null);
   const [todaysOtp, setTodaysOtps] = useState([]);
+
+  const [course, setCourse] = useState("");
+
+  const branches = course ? Object.keys(SUBJECTS[course]) : [];
+  const semesters = course && branch ? Object.keys(SUBJECTS[course]?.[branch] || {}) : [];
+  const subjects = course && branch && semester ? SUBJECTS[course]?.[branch]?.[semester] || [] : [];
 
 
   useEffect(() => {
@@ -176,6 +206,7 @@ const loadOtps = async () => {
 
     setLoading(true);
 
+    
     try {
       // Ask for location
       navigator.geolocation.getCurrentPosition(
@@ -183,7 +214,7 @@ const loadOtps = async () => {
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
 
-          const data = await generateOtp(employeeId, branch, semester, subject, duration, lat, lng);
+          const data = await generateOtp(employeeId,course, branch, semester, subject, duration, lat, lng);
 
           const newOtp = {
             otp: data.otp,
@@ -305,6 +336,25 @@ const loadOtps = async () => {
         <div className="bg-white shadow-sm rounded-lg p-5">
           <SectionTitle icon={KeyRound} title="Generate OTP for Class" />
           <form onSubmit={handleGenerateOtp} className="flex flex-col md:flex-row md:items-center gap-4">
+            {/* <form onSubmit={handleGenerateOtp} className="grid grid-cols-1 md:grid-cols-5 gap-4"> */}
+            {/* Course Dropdown */}
+            <select
+              value={course}
+              onChange={(e) => {
+                setCourse(e.target.value);
+                setBranch("");
+                setSemester("");
+                setSubject("");
+              }}
+              className="p-2 border rounded-md w-full"
+              required
+            >
+              <option value="">Select Course</option>
+              {Object.keys(SUBJECTS).map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+
           {/* Branch Dropdown */}
             <select
               value={branch}

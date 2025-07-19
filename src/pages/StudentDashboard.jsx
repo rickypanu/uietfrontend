@@ -6,6 +6,7 @@ import { getFingerprint } from "../services/getFingerprint"
 import {LogOut,} from "lucide-react";
 
 const SUBJECTS = {
+  "BE":{
     "CSE": {
         "1": ["Calculus", "Physics", "Professional Communication","Workshop" , "Programming Fundamentals", "UHV"],
         "2": ["Basic Electrical and Electronics Engineering", "Applied Chemistry", "Engineering Graphics", "OOPs", "Differential Equations and Transforms"],
@@ -36,6 +37,28 @@ const SUBJECTS = {
         "7": [""],
         "8": [""],
     },
+},
+
+"ME": {
+    "CSE": {
+      "1": ["Advanced Algorithms", "Machine Learning", "Research Methodology"],
+      "2": ["Advanced DBMS", "Data Mining", "Cloud Computing"],
+      "3": ["Thesis Phase I", "Seminar"],
+      "4": ["Thesis Phase II"]
+    },
+    "ECE": {
+      "1": ["Advanced Signal Processing", "VLSI Design", "Research Methodology"],
+      "2": ["Wireless Communication", "Embedded Systems", "Advanced Communication Systems"],
+      "3": ["Thesis Phase I", "Seminar"],
+      "4": ["Thesis Phase II"]
+    },
+    "MECH": {
+      "1": ["Advanced Thermodynamics", "Finite Element Methods", "Research Methodology"],
+      "2": ["Computer-Aided Design", "Mechatronics", "Advanced Manufacturing"],
+      "3": ["Thesis Phase I", "Seminar"],
+      "4": ["Thesis Phase II"]
+    }
+  }
 }
 
 export default function StudentDashboard() {
@@ -89,14 +112,15 @@ export default function StudentDashboard() {
   }, [otp]);
 
     const getAvailableSubjects = () => {
-    if (!profile || !profile.course || !profile.semester) return [];
+    if (!profile || !profile.branch || !profile.semester) return [];
     console.log("PROFILE INFO ➜", profile);
 
-    const dept = profile.course.toUpperCase(); // e.g., "CSE"
+    const course = profile.course.toUpperCase();
+    const branch = profile.branch.toUpperCase(); // e.g., "CSE"
     const sem = String(profile.semester);         // e.g., "3"
 
-    console.log("Fetching subjects for ➜", dept, sem);
-    return SUBJECTS?.[dept]?.[sem] || [];
+    console.log("Fetching subjects for ➜", branch, sem);
+    return SUBJECTS?.[course]?.[branch]?.[sem] || [];
   };
 
 
@@ -185,7 +209,7 @@ export default function StudentDashboard() {
     [`Name:,${profile.full_name}`],
     [`Roll No:,${profile.roll_no || ''}`],
     [`Department:,${profile.department || ''}`],
-    [`COurse:,${profile.course || ''}`],
+    [`Course:,${profile.course || ''}`],
     [`Branch:,${profile.branch || ''}`],
     [`Semester:,${profile.semester || ''}`],
     [`Section:,${profile.section || ''}`],
