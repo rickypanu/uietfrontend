@@ -103,7 +103,7 @@ export default function Register() {
     
   <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 px-2 py-6 flex justify-center items-start sm:items-center overflow-auto">
     <div className="w-full max-w-md bg-white p-6 sm:p-8 rounded-xl shadow-lg">
-      <h2 className="text-3xl font-bold mb-6 text-center text-blue-900">Register as</h2>
+      <h2 className="text-3xl font-bold mb-6 text-center text-blue-900">Register</h2>
       <div className="flex justify-center mb-6 space-x-4">
         <button
           type="button"
@@ -218,12 +218,12 @@ export default function Register() {
               className="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-500 transition"
             >
               <option value="">Select Branch</option>
-              <option value="CSE">Computer Science (CSE)</option>
+              <option value="CSE">Computer Science Engineering (CSE)</option>
               <option value="IT">Information Technology (IT)</option>
-              <option value="ECE">Electronics (ECE)</option>
-              <option value="EEE">Electrical (EEE)</option>
-              <option value="ME">Mechanical (ME)</option>
-              <option value="CE">Civil (CE)</option>
+              <option value="ECE">Electronics & Communication Engineering (ECE)</option>
+              <option value="EEE">Electrical & Electronics Engineering (EEE)</option>
+              <option value="ME">Mechanical Engineering (ME)</option>
+              <option value="BT">BioTechnology Engineering(BioTech)</option>
               {/* Add more branches as needed */}
             </select>
             {fieldErrors.course && (
