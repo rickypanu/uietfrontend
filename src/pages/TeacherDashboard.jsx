@@ -451,9 +451,7 @@ const loadOtps = async () => {
           </div>
         </div>
 
-
-     
-        
+ 
         {/* Box Container */}
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
@@ -541,30 +539,38 @@ const loadOtps = async () => {
             >
               Clear Filters
             </button>
-            <button
-              onClick={handleExport}
-              className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center gap-2"
-            >
-              <FileDown className="w-4 h-4" /> Export CSV
-            </button>
+            
           </div>
         </div>
 
         {/* Attendance Table */}
         <div className="bg-white shadow-sm rounded-lg p-5">
           <SectionTitle icon={CalendarCheck2} title="Attendance Marked by Students" />
-          <div className="overflow-auto">
-            <table className="w-full text-sm border">
-              <thead>
-                <tr className="bg-gray-100 text-gray-700">
-                  <th className="border px-3 py-2 text-left">Roll No</th>
-                  <th className="border px-3 py-2 text-left">Subject</th>
-                  <th className="border px-3 py-2 text-left">Marked At</th>
-                </tr>
-              </thead>
-              <tbody>
-                {attendanceList.length > 0 ? (
-                  attendanceList
+
+        {/* Responsive Button Wrapper */}
+        <div className="flex flex-col-reverse md:flex-row md:justify-end md:items-center gap-4 mb-4">
+          <button
+            onClick={handleExport}
+            className="w-full md:w-auto bg-green-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-green-700 hover:scale-105 active:scale-95 transition-all duration-200 ease-in-out flex items-center justify-center gap-2 text-sm font-medium"
+          >
+            <FileDown className="w-5 h-5" />
+            Export CSV
+          </button>
+
+       </div>
+
+        <div className="overflow-auto">
+          <table className="w-full text-sm border">
+            <thead>
+              <tr className="bg-gray-100 text-gray-700">
+                <th className="border px-3 py-2 text-left">Roll No</th>
+                <th className="border px-3 py-2 text-left">Subject</th>
+                <th className="border px-3 py-2 text-left">Marked At</th>
+              </tr>
+            </thead>
+            <tbody>
+              {attendanceList.length > 0 ? (
+                attendanceList
                   .filter((a) => {
                     if (filterDate) {
                       const date = new Date(a.marked_at).toISOString().split("T")[0];
@@ -581,19 +587,22 @@ const loadOtps = async () => {
                     <tr key={idx} className="hover:bg-gray-50">
                       <td className="border px-3 py-2">{a.roll_no}</td>
                       <td className="border px-3 py-2">{a.subject}</td>
-                      <td className="border px-3 py-2">{new Date(a.marked_at).toLocaleString()}</td>
+                      <td className="border px-3 py-2">
+                        {new Date(a.marked_at).toLocaleString()}
+                      </td>
                     </tr>
                   ))
-                ) : (
-                  <tr>
-                    <td colSpan="3" className="text-center py-3 text-gray-500">No attendance records yet</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+              ) : (
+                <tr>
+                  <td colSpan="3" className="text-center py-3 text-gray-500">
+                    No attendance records yet
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
-
+      </div>
       </div>
     </div>
   );
