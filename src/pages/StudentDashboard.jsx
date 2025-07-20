@@ -4,6 +4,8 @@ import api from "../services/api";
 import { useNavigate } from "react-router-dom";
 import { getFingerprint } from "../services/getFingerprint"
 import {LogOut,} from "lucide-react";
+import Sidebar from "../components/Sidebar";
+
 
 const SUBJECTS = {
   "BE":{
@@ -245,6 +247,8 @@ export default function StudentDashboard() {
   };
 
   return (
+  <div className="flex min-h-screen">
+    <Sidebar onLogout={handleLogout} />
   <div className="min-h-screen bg-gradient-to-b from-green-50 to-green-100 p-4 md:p-8">
     <div className="max-w-5xl mx-auto space-y-6">
       {/* Header */}
@@ -421,6 +425,7 @@ export default function StudentDashboard() {
       </div>
 
     </div>
+  </div>
   </div>
 );
 }

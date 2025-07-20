@@ -7,6 +7,8 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import TeacherDashboard from "./pages/TeacherDashboard";
 import StudentDashboard from "./pages/StudentDashboard";
+import ProfilePage from "./pages/ProfilePage";
+import AboutPage from "./pages/AboutPage";
 
 export default function App() {
   const storedRole = localStorage.getItem("role");
@@ -23,6 +25,8 @@ export default function App() {
           
           {/* Example for student (uncomment if you add StudentDashboard) */}
           <Route path="/student"element={storedRole === "student" ? <StudentDashboard /> : <Navigate to="/login" replace />}/>
+          <Route path="/student/profile" element={<ProfilePage />} />
+          <Route path="/student/about" element={<AboutPage />} />
 
           {/* Teacher dashboard: allow only if logged in as teacher */}
           <Route path="/teacher"element={storedRole === "teacher" ? <TeacherDashboard /> : <Navigate to="/login" replace />}/>
