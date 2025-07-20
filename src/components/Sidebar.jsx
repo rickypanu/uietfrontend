@@ -13,6 +13,7 @@ const Sidebar = ({ onLogout }) => {
     }`;
 
   return (
+    // <div className={`h-screen p-4 shadow-lg bg-white transition-all duration-300 ${collapsed ? "w-20" : "w-64"} flex flex-col justify-between`}>
     <div className={`h-screen p-4 shadow-lg bg-white transition-all duration-300 ${collapsed ? "w-20" : "w-64"} flex flex-col justify-between`}>
       {/* Top Section */}
       <div>
