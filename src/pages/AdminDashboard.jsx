@@ -23,6 +23,14 @@ export default function AdminDashboard() {
   const [approvedPage, setApprovedPage] = useState(1);
   const [rejectedPage, setRejectedPage] = useState(1);
 
+  const [pendingType, setPendingType] = useState("all");
+  const [approvedType, setApprovedType] = useState("all");
+  const [rejectedType, setRejectedType] = useState("all");
+
+  const [pendingTypeFilter, setPendingTypeFilter] = useState("all");
+  const [approvedTypeFilter, setApprovedTypeFilter] = useState("all");
+  const [rejectedTypeFilter, setRejectedTypeFilter] = useState("all");
+
   const [loading, setLoading] = useState(true);
 
   
@@ -111,12 +119,13 @@ export default function AdminDashboard() {
     }
   };
 
-  const filterUsers = (users, filter) =>
+  const filterUsers = (users, filter, type) =>
     users.filter(
       u =>
-        u.full_name.toLowerCase().includes(filter.toLowerCase()) ||
+        (type === "all" || u.role === type) &&
+        (u.full_name.toLowerCase().includes(filter.toLowerCase()) ||
         u.user_id.toLowerCase().includes(filter.toLowerCase()) ||
-        u.email.toLowerCase().includes(filter.toLowerCase())
+        u.email.toLowerCase().includes(filter.toLowerCase()))
     );
 
   const paginate = (users, page) =>
@@ -147,12 +156,13 @@ export default function AdminDashboard() {
   if (loading) return <div className="p-4 text-center">Loading...</div>;
 
   // Filtered lists
-  const filteredPending = filterUsers(pendingUsers, pendingFilter);
-  const filteredApproved = filterUsers(approvedUsers, approvedFilter);
-  const filteredRejected = filterUsers(rejectedUsers, rejectedFilter);
+  const filteredPending = filterUsers(pendingUsers, pendingFilter, pendingTypeFilter, pendingType);
+  const filteredApproved = filterUsers(approvedUsers, approvedFilter, approvedTypeFilter, approvedType);
+  const filteredRejected = filterUsers(rejectedUsers, rejectedFilter, rejectedTypeFilter, rejectedType);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-100 to-green-200 p-6 space-y-8">
+    <div className="min-h-screen bg-gradient-to-b from-green-100 to-green-200 p-4 sm:p-6 space-y-8">
+
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center space-x-2">
           <Shield className="w-6 h-6 text-green-700" />
@@ -175,6 +185,8 @@ export default function AdminDashboard() {
         setPage: setPendingPage,
         filter: pendingFilter,
         setFilter: setPendingFilter,
+        typeFilter: pendingTypeFilter,
+        setTypeFilter: setPendingTypeFilter,
         showActions: true,
         original: pendingUsers,
         filename: "pending_users.csv"
@@ -187,6 +199,8 @@ export default function AdminDashboard() {
         setPage: setApprovedPage,
         filter: approvedFilter,
         setFilter: setApprovedFilter,
+        typeFilter: approvedTypeFilter,
+         setTypeFilter: setApprovedTypeFilter,
         showActions: false,
         original: approvedUsers,
         filename: "approved_users.csv"
@@ -199,22 +213,36 @@ export default function AdminDashboard() {
         setPage: setRejectedPage,
         filter: rejectedFilter,
         setFilter: setRejectedFilter,
+        typeFilter: rejectedTypeFilter,
+        setTypeFilter: setRejectedTypeFilter,
         showActions: false,
         original: rejectedUsers,
         filename: "rejected_users.csv"
       }].map((section, idx) => (
-        <div key={idx} className="bg-white rounded-2xl shadow-lg p-4">
-          <div className="flex items-center justify-between mb-2">
+        <div key={idx} className="bg-white rounded-2xl shadow-lg p-4">         
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 flex-wrap mb-4">
             <div className="flex items-center text-xl font-semibold">
               {section.icon} {section.title}
             </div>
-            <button
-              onClick={() => exportCSV(section.users, section.filename)}
-              className="flex items-center bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 text-sm"
-            >
-              <FaDownload className="mr-1" /> Export CSV
-            </button>
+            <div className="flex flex-wrap gap-2">
+              {["all", "student", "teacher"].map(type => (
+                <button
+                  key={type}
+                  onClick={() => section.setTypeFilter(type)}
+                  className={`px-3 py-1 rounded transition text-sm ${
+                    section.typeFilter === type
+                      ? "bg-green-600 text-white"
+                      : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                  }`}
+                >
+                  {type.charAt(0).toUpperCase() + type.slice(1)}
+                </button>
+              ))}
+            </div>
           </div>
+
+
+
           <input
             type="text"
             placeholder="Search..."
@@ -231,7 +259,8 @@ export default function AdminDashboard() {
           ) : (
             <>
               <div className="overflow-x-auto">
-                <table className="min-w-full border text-sm">
+                <table className="min-w-full border text-xs md:text-sm">
+
                   <thead className="bg-gray-100">
                     <tr>
                       <th className="px-2 py-1 border">Name</th>
@@ -249,7 +278,7 @@ export default function AdminDashboard() {
                         <td className="px-2 py-1 border">{u.user_id}</td>
                         <td className="px-2 py-1 border">{u.email}</td>
                         {section.showActions && (
-                          <td className="px-2 py-1 border space-x-1">
+                          <td className="px-2 py-1 border space-y-1 flex flex-col sm:flex-row sm:space-x-1 sm:space-y-0">
                             <button
                               onClick={() => handleApprove(u.user_id, u.role)}
                               className="bg-green-500 text-white px-2 py-0.5 rounded hover:bg-green-600 text-xs"
@@ -263,6 +292,7 @@ export default function AdminDashboard() {
                               Reject
                             </button>
                           </td>
+
                         )}
                       </tr>
                     ))}
@@ -296,6 +326,17 @@ export default function AdminDashboard() {
               </div>
             </>
           )}
+          <div className="flex justify-center my-6">
+            <button
+              onClick={() => exportCSV(section.users, section.filename)}
+              className="flex items-center justify-center gap-2 w-full sm:w-auto bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-xl shadow-md hover:shadow-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-300 text-sm font-medium"
+            >
+              <FaDownload className="text-base" />
+              Export CSV
+            </button>
+          </div>
+
+
         </div>
       ))}
     </div>
