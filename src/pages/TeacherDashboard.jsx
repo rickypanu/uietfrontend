@@ -189,24 +189,24 @@ const loadOtps = async () => {
     }
   };
 
-    const handleGenerateOtp = async (e) => {
-    e.preventDefault();
-    if (!branch || !semester || !subject) {
-      setMessage("❌ Please select branch, semester, and subject.");
-      return;
-    }
 
-    setLoading(true);
+  const handleGenerateOtp = async (e) => {
+  e.preventDefault();
+  if (!branch || !semester || !subject) {
+    setMessage("❌ Please select branch, semester, and subject.");
+    return;
+  }
 
-    
-    try {
-      // Ask for location
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
+  setLoading(true); // this will trigger a render and show "Generating..."
+
+  try {
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
 
-          const data = await generateOtp(employeeId,course, branch, semester, subject, duration, lat, lng);
+          const data = await generateOtp(employeeId, course, branch, semester, subject, duration, lat, lng);
 
           const newOtp = {
             otp: data.otp,
@@ -231,20 +231,25 @@ const loadOtps = async () => {
           }
 
           setMessage(`✅ OTP Generated: ${data.otp} (valid till: ${new Date(data.valid_till).toLocaleString()})`);
-        },
-        (error) => {
-          console.error("Geolocation error:", error);
-          setMessage("❌ Failed to get location. Allow location permission and try again.");
+        } catch (error) {
+          console.error("Generate OTP error:", error);
+          setMessage(error.response?.data?.detail || "❌ Failed to generate OTP");
+        } finally {
+          setLoading(false); // ✅ ensure loading is turned off inside the success path
         }
-      );
-    } catch (err) {
-      console.error("Generate OTP error:", err);
-      setMessage(err.response?.data?.detail || "❌ Failed to generate OTP");
-      console.log("Setting loading to false (error case)");
-      
-    } 
-    setLoading(false);
-  };
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+        setMessage("❌ Failed to get location. Allow location permission and try again.");
+        setLoading(false); // ✅ also turn off loading on geolocation failure
+      }
+    );
+  } catch (err) {
+    console.error("Unexpected error:", err);
+    setMessage("❌ Something went wrong.");
+    setLoading(false); // ✅ fallback
+  }
+};
 
 
 
