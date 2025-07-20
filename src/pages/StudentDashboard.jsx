@@ -275,7 +275,7 @@ export default function StudentDashboard() {
 
       {/* Mark Attendance */}
       <div className="bg-white rounded-2xl shadow p-6 space-y-4">
-        <h2 className="text-xl font-semibold text-gray-800">✅ Mark Attendance using OTP</h2>
+        <h2 className="text-xl font-semibold text-gray-800">🔐Enter OTP to Mark Attendance</h2>
         <form onSubmit={handleMarkAttendance} className="flex flex-col md:flex-row gap-3">
           <select
             value={subject}
@@ -288,8 +288,7 @@ export default function StudentDashboard() {
               <option key={sub} value={sub}>{sub}</option>
             ))}
           </select>
-
-
+          
           <input
             type="text"
             value={otp}
@@ -331,41 +330,56 @@ export default function StudentDashboard() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col md:flex-row gap-3">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-center gap-3 bg-white p-4 rounded-xl shadow-md w-full max-w-4xl mx-auto">
+        <div className="flex flex-col gap-2 mb-4 text-center">
+          <h2 className="text-lg font-semibold text-gray-700 flex items-center justify-center gap-2">
+            🔍 Filter Attendance
+          </h2>
+        </div>
+
+        {/* Subject Dropdown */}
+
         <select
-            value={filterSubject}
-            onChange={(e) => setFilterSubject(e.target.value)}
-            className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-400"
-          >
-            <option value="">All Subjects</option>
-            {getAvailableSubjects().map((sub) => (
-              <option key={sub} value={sub}>{sub}</option>
-            ))}
+          value={filterSubject}
+          onChange={(e) => setFilterSubject(e.target.value)}
+          className="w-full md:w-56 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 transition-all"
+        >
+          <option value="">All Subjects</option>
+          {getAvailableSubjects().map((sub) => (
+            <option key={sub} value={sub}>{sub}</option>
+          ))}
         </select>
 
+        {/* Date Picker */}
         <input
           type="date"
           value={filterDate}
           onChange={(e) => setFilterDate(e.target.value)}
-          className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-400"
+          className="w-full md:w-44 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 transition-all"
         />
+
+        {/* Apply Filters Button */}
         <button
           onClick={() => loadAttendance(filterSubject, filterDate)}
-          className="bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded shadow"
+          className="w-full md:w-40 bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-xl shadow-md hover:shadow-lg transform hover:-translate-y-0.5 hover:scale-105 transition-all duration-300 text-sm font-semibold"
         >
-          Apply Filters
+          ✅ Apply
         </button>
+
+        {/* Reset Button */}
         <button
           onClick={() => {
             setFilterSubject("");
             setFilterDate("");
             loadAttendance();
           }}
-          className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-3 py-2 rounded shadow"
+          className="w-full md:w-32 bg-gray-200 hover:bg-gray-300 text-gray-800 px-5 py-2 rounded-xl shadow hover:shadow-md transform hover:scale-105 transition-all duration-300 text-sm font-semibold"
         >
-          Reset
+          ♻️ Reset
         </button>
       </div>
+
+      
 
       {/* Attendance History */}
       <div className="bg-white rounded-2xl shadow p-6">
@@ -397,14 +411,15 @@ export default function StudentDashboard() {
       </div>
 
       {/* Export */}
-      <div className="flex justify-end">
+      <div className="flex justify-center mt-6">
         <button
           onClick={handleExport}
-          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded shadow"
+          className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-5 py-2 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 hover:scale-105 transition-all duration-300 text-sm font-semibold"
         >
           📤 Export Attendance CSV
         </button>
       </div>
+
     </div>
   </div>
 );
