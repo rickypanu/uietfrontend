@@ -53,8 +53,11 @@ export default function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-blue-200 to-blue-400 px-4">
-      <div className="w-full max-w-md bg-white/90 backdrop-blur p-8 rounded-2xl shadow-xl">
+
+    <div
+      className="flex items-center justify-center bg-gradient-to-b from-blue-200 to-blue-400 px-3 py-6"
+      style={{ minHeight: "100dvh" }}>
+      <div className="w-full max-w-sm sm:max-w-md bg-white/90 backdrop-blur p-6 sm:p-8 rounded-2xl shadow-xl">
         {/* Header */}
         <div className="flex flex-col items-center mb-6">
           <GraduationCap size={40} className="text-blue-600 mb-2" />
@@ -79,7 +82,7 @@ export default function Login() {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
           <div>
             <label className="block text-gray-700 text-sm mb-1">Login ID</label>
             <input
