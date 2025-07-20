@@ -90,14 +90,6 @@ export default function TeacherDashboard() {
   const [filterDate, setFilterDate] = useState("");
   const [filterMonth, setFilterMonth] = useState("");
   const [profile, setProfile] = useState(null);
-  
- 
-
-  // const branches = Object.keys(SUBJECTS);
-  // const semesters = branch ? Object.keys(SUBJECTS[branch.toUpperCase()] || {}) : [];
-  // const subjects = branch && semester
-  //   ? SUBJECTS[branch.toUpperCase()]?.[semester] || []
-  //   : [];
 
   const employeeId = localStorage.getItem("userId");
   const navigate = useNavigate();
@@ -248,10 +240,12 @@ const loadOtps = async () => {
     } catch (err) {
       console.error("Generate OTP error:", err);
       setMessage(err.response?.data?.detail || "❌ Failed to generate OTP");
-    }
-
+      console.log("Setting loading to false (error case)");
+      
+    } 
     setLoading(false);
   };
+
 
 
   const handleExport = () => {
@@ -336,8 +330,7 @@ const loadOtps = async () => {
         <div className="bg-white shadow-sm rounded-lg p-5">
           <SectionTitle icon={KeyRound} title="Generate OTP for Class" />
           <form onSubmit={handleGenerateOtp} className="flex flex-col md:flex-row md:items-center gap-4">
-            {/* <form onSubmit={handleGenerateOtp} className="grid grid-cols-1 md:grid-cols-5 gap-4"> */}
-            {/* Course Dropdown */}
+          {/* Course Dropdown */}
             <select
               value={course}
               onChange={(e) => {
@@ -426,7 +419,7 @@ const loadOtps = async () => {
             </p>
           )}
         </div>
-
+      
         {/* Active OTPs */}
         <div className="bg-white shadow-sm rounded-lg p-5">
           <SectionTitle icon={BookOpenText} title="Active OTPs" />

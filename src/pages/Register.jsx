@@ -101,8 +101,8 @@ export default function Register() {
 
   return (
     
-  <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 px-4">
-    <div className="w-full max-w-lg bg-white p-8 rounded-xl shadow-lg">
+  <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 px-2 py-6 flex justify-center items-start sm:items-center overflow-auto">
+    <div className="w-full max-w-md bg-white p-6 sm:p-8 rounded-xl shadow-lg">
       <h2 className="text-3xl font-bold mb-6 text-center text-blue-900">Register as</h2>
       <div className="flex justify-center mb-6 space-x-4">
         <button
