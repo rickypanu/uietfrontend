@@ -56,7 +56,8 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-blue-200 to-blue-400 px-4">
+       <div className="flex items-center justify-center bg-gradient-to-b from-blue-200 to-blue-400 px-4"
+        style={{ minHeight: "100dvh" }}>
       <div className="w-full max-w-md bg-white/90 backdrop-blur p-8 rounded-2xl shadow-xl">
         <div className="flex flex-col items-center mb-6">
           <Shield className="w-12 h-12 text-blue-600 mb-2" />
