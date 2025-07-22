@@ -310,7 +310,7 @@ const loadOtps = async () => {
       <TeacherSidebar profile={profile} />
 
       {/* Main Content */}
-      <div className="flex-1 p-4 sm:ml-5"> {/* Adjust padding/margin based on sidebar width */}
+      <div className="flex-1 p-4 sm:ml-2"> {/* Adjust padding/margin based on sidebar width */}
         <div className="max-w-6xl mx-auto space-y-6">
           {/* Header */}
           <div className="text-center">

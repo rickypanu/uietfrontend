@@ -12,7 +12,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { useEffect } from "react";
+// import { useEffect } from "react";
 
 
 const TeacherSidebar = ({ profile }) => {
@@ -63,7 +63,9 @@ const TeacherSidebar = ({ profile }) => {
           sm:translate-x-0 sm:static sm:flex 
           ${collapsed ? "w-20" : "w-64"}`}
       >
-        <div className="h-full flex flex-col justify-between p-4">
+        {/* <div className="h-full flex flex-col justify-between p-4 mt-10"> */}
+        <div className="h-full flex flex-col p-4  gap-6">
+
           <div>
             {/* Top Buttons */}
             <div className="flex justify-between items-center mb-6">
@@ -83,7 +85,7 @@ const TeacherSidebar = ({ profile }) => {
 
             {/* Title */}
             {!collapsed && (
-              <h2 className="text-2xl font-bold text-blue-700 flex items-center gap-2 mb-6">
+              <h2 className="text-2xl font-bold text-blue-700 flex items-center gap-2 mb-6mt-15 ">
                 <GraduationCap className="w-6 h-6" />
                 Teacher
               </h2>
@@ -91,7 +93,7 @@ const TeacherSidebar = ({ profile }) => {
 
             {/* Profile */}
             {!collapsed && profile && (
-              <div className="mb-6">
+              <div className="mb-6 mt-10">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-lg font-bold shadow-inner">
                     {profile.full_name?.[0]?.toUpperCase() || "T"}
