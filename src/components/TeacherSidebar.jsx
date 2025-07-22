@@ -1,4 +1,3 @@
-// src/components/TeacherSidebar.jsx
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
@@ -8,12 +7,9 @@ import {
   LogOut,
   GraduationCap,
   Menu,
-  X,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-// import { useEffect } from "react";
-
 
 const TeacherSidebar = ({ profile }) => {
   const [collapsed, setCollapsed] = useState(false);
@@ -34,16 +30,6 @@ const TeacherSidebar = ({ profile }) => {
       isActive ? "bg-blue-200 font-semibold" : "text-gray-700"
     }`;
 
-//     useEffect(() => {
-//   const handleResize = () => {
-//     if (window.innerWidth >= 640) {
-//       setCollapsed(true);
-//     }
-//   };
-//   window.addEventListener("resize", handleResize);
-//   return () => window.removeEventListener("resize", handleResize);
-// }, []);
-
   return (
     <>
       {/* Mobile Hamburger */}
@@ -58,95 +44,81 @@ const TeacherSidebar = ({ profile }) => {
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 left-0 z-40 h-full bg-white shadow-lg transition-transform duration-300 
+        className={`fixed top-0 left-0 z-40 h-full bg-white shadow-lg transition-all duration-300
           ${mobileOpen ? "translate-x-0" : "-translate-x-full"} 
           sm:translate-x-0 sm:static sm:flex 
           ${collapsed ? "w-20" : "w-64"}`}
       >
-        {/* <div className="h-full flex flex-col justify-between p-4 mt-10"> */}
-        <div className="h-full flex flex-col p-4  gap-6">
-
-          <div>
-            {/* Top Buttons */}
-            <div className="flex justify-between items-center mb-6">
-              <button
-                onClick={toggleSidebar}
-                className="text-blue-600 hidden sm:block"
-              >
-                {collapsed ? <ChevronRight /> : <ChevronLeft />}
-              </button>
-              <button
-                onClick={closeMobileSidebar}
-                className="text-blue-600 sm:hidden"
-              >
-                <X />
-              </button>
-            </div>
-
-            {/* Title */}
-            {!collapsed && (
-              <h2 className="text-2xl font-bold text-blue-700 flex items-center gap-2 mb-6mt-15 ">
-                <GraduationCap className="w-6 h-6" />
-                Teacher
-              </h2>
-            )}
-
-            {/* Profile */}
-            {!collapsed && profile && (
-              <div className="mb-6 mt-10">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-lg font-bold shadow-inner">
-                    {profile.full_name?.[0]?.toUpperCase() || "T"}
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-800">
-                      {profile.full_name}
-                    </p>
-                    <p className="text-sm text-gray-500">{profile.email}</p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Nav Links */}
-            <div className="space-y-3">
-              <NavLink
-                to="/teacher/profile"
-                className={({ isActive }) => linkClasses(isActive)}
-                onClick={closeMobileSidebar}
-              >
-                <UserCircle className="w-5 h-5" />
-                {!collapsed && <span>Profile</span>}
-              </NavLink>
-
-              <NavLink
-                to="/teacher/about"
-                className={({ isActive }) => linkClasses(isActive)}
-                onClick={closeMobileSidebar}
-              >
-                <Info className="w-5 h-5" />
-                {!collapsed && <span>How to Use</span>}
-              </NavLink>
-
-              <NavLink
-                to="/teacher"
-                className={({ isActive }) => linkClasses(isActive)}
-                onClick={closeMobileSidebar}
-              >
-                <CalendarCheck className="w-5 h-5" />
-                {!collapsed && <span>Dashboard</span>}
-              </NavLink>
-            </div>
+        <div className="h-full flex flex-col p-4 gap-6 mt-10">
+          {/* Collapse Toggle (only on laptop) */}
+          <div className="hidden sm:flex justify-end">
+            <button onClick={toggleSidebar} className="text-blue-600">
+              {collapsed ? <ChevronRight /> : <ChevronLeft />}
+            </button>
           </div>
 
-          {/* Logout */}
-          <button
-            onClick={handleLogout}
-            className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 flex items-center justify-center gap-2 mt-6"
-          >
-            <LogOut className="w-5 h-5" />
-            {!collapsed && <span>Logout</span>}
-          </button>
+          {/* Title */}
+          {!collapsed && (
+            <h2 className="text-2xl font-bold text-blue-700 flex items-center gap-2">
+              <GraduationCap className="w-6 h-6" />
+              Teacher
+            </h2>
+          )}
+
+          {/* Profile */}
+          {!collapsed && profile && (
+            <div>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-lg font-bold shadow-inner">
+                  {profile.full_name?.[0]?.toUpperCase() || "T"}
+                </div>
+                <div>
+                  <p className="font-semibold text-gray-800">
+                    {profile.full_name}
+                  </p>
+                  <p className="text-sm text-gray-500">{profile.email}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Links + Logout */}
+          <div className="space-y-3">
+            <NavLink
+              to="/teacher/profile"
+              className={({ isActive }) => linkClasses(isActive)}
+              onClick={closeMobileSidebar}
+            >
+              <UserCircle className="w-5 h-5" />
+              {!collapsed && <span>Profile</span>}
+            </NavLink>
+
+            <NavLink
+              to="/teacher/about"
+              className={({ isActive }) => linkClasses(isActive)}
+              onClick={closeMobileSidebar}
+            >
+              <Info className="w-5 h-5" />
+              {!collapsed && <span>How to Use</span>}
+            </NavLink>
+
+            <NavLink
+              to="/teacher"
+              className={({ isActive }) => linkClasses(isActive)}
+              onClick={closeMobileSidebar}
+            >
+              <CalendarCheck className="w-5 h-5" />
+              {!collapsed && <span>Dashboard</span>}
+            </NavLink>
+
+            <button
+              onClick={handleLogout}
+              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 flex items-center justify-center gap-2"
+            >
+              <LogOut className="w-5 h-5" />
+              {!collapsed && <span>Logout</span>}
+            </button>
+          </div>
         </div>
       </div>
 

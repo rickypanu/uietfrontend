@@ -138,6 +138,7 @@ export default function TeacherDashboard() {
 }, []);
 
 
+
 const loadTodaysOtps = async () => {
   try {
     const res = await api.get(`/teacher/todays-otps/${employeeId}`);
@@ -168,7 +169,6 @@ useEffect(() => {
       console.error("Failed to fetch profile", err);
     }
   };
-
 
 
 const loadOtps = async () => {
