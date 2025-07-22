@@ -18,6 +18,8 @@ import {
   Filter,
 } from "lucide-react";
 import Papa from "papaparse";
+import TeacherSidebar from "../components/TeacherSidebar";
+import { Outlet } from "react-router-dom";
 
 
 
@@ -303,20 +305,26 @@ const loadOtps = async () => {
 
   
   return (
-    <div className="min-h-screen bg-gray-100 px-4 py-6">
-      <div className="max-w-6xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-semibold text-gray-800 flex items-center gap-2">
-            <ShieldCheck className="w-6 h-6 text-blue-600" />
-            Teacher Dashboard
-          </h1>
-          <button
+    <div className="flex min-h-screen bg-gray-100">
+      {/* Sidebar */}
+      <TeacherSidebar profile={profile} />
+
+      {/* Main Content */}
+      <div className="flex-1 p-4 sm:ml-64"> {/* Adjust padding/margin based on sidebar width */}
+        <div className="max-w-6xl mx-auto space-y-6">
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-semibold text-gray-800 flex items-center gap-2">
+              <ShieldCheck className="w-6 h-6 text-blue-600" />
+              Teacher Dashboard
+            </h1>
+          </div>
+          {/* <button
             onClick={handleLogout}
             className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 flex items-center gap-2"
           >
             <LogOut className="w-4 h-4" /> Logout
-          </button>
+          </button> */}
         </div>
 
         {/* Profile */}
