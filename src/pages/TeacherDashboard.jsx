@@ -310,15 +310,16 @@ const loadOtps = async () => {
       <TeacherSidebar profile={profile} />
 
       {/* Main Content */}
-      <div className="flex-1 p-4 sm:ml-64"> {/* Adjust padding/margin based on sidebar width */}
+      <div className="flex-1 p-4 sm:ml-5"> {/* Adjust padding/margin based on sidebar width */}
         <div className="max-w-6xl mx-auto space-y-6">
           {/* Header */}
-          <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-semibold text-gray-800 flex items-center gap-2">
+          <div className="text-center">
+            <h1 className="text-2xl font-semibold text-gray-800 inline-flex items-center gap-2 justify-center">
               <ShieldCheck className="w-6 h-6 text-blue-600" />
               Teacher Dashboard
             </h1>
           </div>
+
           {/* <button
             onClick={handleLogout}
             className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 flex items-center gap-2"
@@ -328,7 +329,7 @@ const loadOtps = async () => {
         </div>
 
         {/* Profile */}
-          <div className="bg-white shadow-md rounded-2xl p-6 border border-gray-200 flex items-center gap-6">
+          <div className="bg-white shadow-md rounded-2xl p-6 border border-gray-200 flex items-center gap-6 mt-6">
             {/* Optional Profile Initials or Icon */}
             <div className="w-20 h-20 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-3xl font-bold shadow-inner">
               {(profile?.full_name?.[0] || "T").toUpperCase()}
@@ -337,7 +338,6 @@ const loadOtps = async () => {
 
             {/* Info Section */}
             <div>
-              {/* <h2 className="text-2xl font-bold text-gray-800">{profile?.full_name || "Loading..."}</h2> */}
               <h2 className="text-2xl font-bold text-gray-800">
                 {(profile?.full_name || "Loading...").toUpperCase()}
               </h2>
@@ -350,7 +350,9 @@ const loadOtps = async () => {
 
     
         {/* OTP Generator */}
-        <div className="bg-white shadow-sm rounded-lg p-5">
+        {/* <div className="bg-white shadow-sm rounded-lg p-5"> */}
+        <div className="bg-white shadow-sm rounded-lg p-5 mt-6">
+
           <SectionTitle icon={KeyRound} title="Generate OTP for Class" />
           <form onSubmit={handleGenerateOtp} className="flex flex-col md:flex-row md:items-center gap-4">
           {/* Course Dropdown */}
@@ -444,7 +446,7 @@ const loadOtps = async () => {
         </div>
       
         {/* Active OTPs */}
-        <div className="bg-white shadow-sm rounded-lg p-5">
+        <div className="bg-white shadow-sm rounded-lg p-5 mt-6">
           <SectionTitle icon={BookOpenText} title="Active OTPs" />
           <div className="overflow-auto">
             <table className="w-full text-sm border">
@@ -476,7 +478,7 @@ const loadOtps = async () => {
 
  
         {/* Box Container */}
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
 
       {/* Box 1: Current Time */}
       <div className="bg-white rounded-lg shadow-md p-4 text-center">
@@ -533,7 +535,7 @@ const loadOtps = async () => {
 
 
         {/* Filters + Export */}
-        <div className="bg-white shadow-sm rounded-lg p-5 space-y-4">
+        <div className="bg-white shadow-sm rounded-lg p-5 space-y-4 mt-6">
           <SectionTitle icon={Filter} title="Filter & Export Attendance Records" />
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
@@ -567,7 +569,7 @@ const loadOtps = async () => {
         </div>
 
         {/* Attendance Table */}
-        <div className="bg-white shadow-sm rounded-lg p-5">
+        <div className="bg-white shadow-sm rounded-lg p-5 mt-6">
           <SectionTitle icon={CalendarCheck2} title="Attendance Marked by Students" />
 
         {/* Responsive Button Wrapper */}
