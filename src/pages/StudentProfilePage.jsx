@@ -1,26 +1,62 @@
 import React, { useEffect, useState } from "react";
 import api from "../services/api";
 import dayjs from "dayjs";
+import { UploadCloud } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { X } from "lucide-react"; // optional icon
-
-
-const StudentProfilePage = () => {
+import { X } from "lucide-react";
+const ProfilePage = () => {
   const [profile, setProfile] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [saving, setSaving] = useState(false);
   const roll_no = localStorage.getItem("userId");
   const navigate = useNavigate();
 
+
+  const fetchProfile = async () => {
+    try {
+      const res = await api.get(`/student/profile/${roll_no}`);
+      setProfile(res.data);
+    } catch (err) {
+      console.error("Failed to fetch profile", err);
+    }
+  };
+
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await api.get(`/student/profile/${roll_no}`);
-        setProfile(res.data);
-      } catch (err) {
-        console.error("Failed to fetch profile", err);
-      }
-    };
     fetchProfile();
   }, [roll_no]);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.size > 100 * 1024) {
+      alert("Image size must be less than 100KB.");
+      return;
+    }
+
+    setSelectedImage(URL.createObjectURL(file));
+    saveImage(file);
+  };
+
+  const saveImage = async (file) => {
+    try {
+      setSaving(true);
+      const formData = new FormData();
+      formData.append("file", file);
+      await api.post(`/student/profile/upload-photo/${roll_no}`, formData);
+      fetchProfile(); // refresh to show updated photo
+    } catch (err) {
+      console.error("Upload failed", err);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const renderImage = () => {
+    if (selectedImage) return selectedImage;
+    if (profile?.photo) return `data:image/jpeg;base64,${profile.photo}`;
+    return null;
+  };
 
   if (!profile) {
     return (
@@ -33,31 +69,46 @@ const StudentProfilePage = () => {
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-100 px-4">
       <div className="w-full max-w-4xl p-6 bg-white rounded-3xl shadow-lg border border-gray-200 relative">
-        {/* ❌ Close Button */}
-        <button
-          onClick={() => navigate("/student")}
-          className="absolute top-4 right-4 text-gray-500 hover:text-red-500 transition"
-          title="Back to Dashboard"
-        >
-          <X className="w-6 h-6" />
-        </button>
+          <button
+            onClick={() => navigate("/student")}
+            className="absolute top-4 right-4 text-gray-500 hover:text-red-500 transition"
+            title="Back to Dashboard"
+          >
+            <X className="w-6 h-6" />
+          </button>
 
-        <h1 className="text-3xl font-bold text-green-700 text-center mb-8">
-          My Information
-        </h1>
+          <h1 className="text-3xl font-bold text-green-700 text-center mb-8">
+            👤 Student Profile
+          </h1>
 
         <div className="flex flex-col sm:flex-row items-center gap-8 mb-6">
-          {/* Profile picture placeholder */}
+          {/* Profile Photo */}
           <div className="flex flex-col items-center gap-3">
-            <div className="w-36 h-36 rounded-full bg-gray-100 border border-gray-300 flex items-center justify-center text-6xl text-gray-500 shadow-inner">
-              🧑
+            <div className="w-36 h-36 rounded-full overflow-hidden border border-gray-300 bg-gray-100 shadow-inner">
+              {renderImage() ? (
+                <img
+                  src={renderImage()}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-5xl text-gray-400">
+                  🧑
+                </div>
+              )}
             </div>
-            <button
-              disabled
-              className="px-4 py-1 bg-gray-200 text-gray-500 rounded-full text-sm cursor-not-allowed"
-            >
-              Upload Photo (Coming Soon)
-            </button>
+
+            <label className="flex items-center gap-2 px-4 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium cursor-pointer hover:bg-green-200 transition">
+              <UploadCloud className="w-4 h-4" />
+              {saving ? "Saving..." : "Upload Photo"}
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageChange}
+                disabled={saving}
+              />
+            </label>
           </div>
 
           {/* Profile Details */}
@@ -107,4 +158,4 @@ const StudentProfilePage = () => {
   );
 };
 
-export default StudentProfilePage;
+export default ProfilePage;

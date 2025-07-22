@@ -219,6 +219,7 @@ export default function StudentDashboard() {
     [`Branch:,${profile.branch || ''}`],
     [`Semester:,${profile.semester || ''}`],
     [`Section:,${profile.section || ''}`],
+    [`DOB:,${profile.dob || ''}`],
     [], // empty row before table
   ];
 
