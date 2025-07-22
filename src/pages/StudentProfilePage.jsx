@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
 import api from "../services/api";
 import dayjs from "dayjs";
+import { useNavigate } from "react-router-dom";
+import { X } from "lucide-react"; // optional icon
+
 
 const StudentProfilePage = () => {
   const [profile, setProfile] = useState(null);
   const roll_no = localStorage.getItem("userId");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -28,7 +32,16 @@ const StudentProfilePage = () => {
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-100 px-4">
-      <div className="w-full max-w-4xl p-6 bg-white rounded-3xl shadow-lg border border-gray-200">
+      <div className="w-full max-w-4xl p-6 bg-white rounded-3xl shadow-lg border border-gray-200 relative">
+        {/* ❌ Close Button */}
+        <button
+          onClick={() => navigate("/student")}
+          className="absolute top-4 right-4 text-gray-500 hover:text-red-500 transition"
+          title="Back to Dashboard"
+        >
+          <X className="w-6 h-6" />
+        </button>
+
         <h1 className="text-3xl font-bold text-green-700 text-center mb-8">
           My Information
         </h1>

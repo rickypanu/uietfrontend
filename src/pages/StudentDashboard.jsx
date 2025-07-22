@@ -271,7 +271,8 @@ export default function StudentDashboard() {
       {/* Profile Card */}
       <div className="bg-white rounded-2xl shadow p-6">
         <h2 className="text-xl font-semibold text-gray-800 mb-2">
-          Welcome <span className="text-green-700">{profile ? profile.full_name : 'Loading...'}</span>
+          Welcome <span className="text-blue-700 font-semibold text-2xl"> {profile ? profile.full_name : "Loading..."}</span>
+
         </h2>
         {/* <div className="text-gray-600 flex flex-wrap gap-4 mt-2 text-sm md:text-base"> */}
           {/* <span><b>Roll No:</b> {roll_no}</span> */}
