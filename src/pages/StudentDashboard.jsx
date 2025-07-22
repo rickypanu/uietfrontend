@@ -251,55 +251,9 @@ export default function StudentDashboard() {
   };
 
   return (
-   <div className="w-full min-h-screen flex overflow-x-hidden">
-    {/* Mobile Sidebar Overlay */}
-    {showMobileSidebar && (
-      <div
-        className="fixed inset-0 z-50 bg-black bg-opacity-40 md:hidden"
-        onClick={() => setShowMobileSidebar(false)}
-      >
-        <div
-          className="absolute left-0 top-0 w-64 h-full bg-white shadow-lg p-4"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {/* ❌ Close Button */}
-          <button
-            className="self-end text-green-700 mb-4"
-            onClick={() => setShowMobileSidebar(false)}
-          >
-            ❌
-          </button>
-
-          {/* <Sidebar onLogout={handleLogout} /> */}
-          <Sidebar
-            onLogout={() => {
-              setShowMobileSidebar(false);
-              handleLogout(); // make sure this function is defined
-            }}
-          />
-        </div>
-      </div>
-    )}
-
-    {/* Desktop Sidebar */}
-    <div className="hidden md:flex">
+   <div className="flex min-h-screen bg-gray-100">
+      {/* Sidebar */}
       <Sidebar onLogout={handleLogout} />
-    </div>
-
-    {/* Main Content */}
-    <div className="flex-1 min-h-screen bg-gradient-to-b from-green-50 to-green-100 p-4 md:p-8">
-      
-      {/* Mobile Menu Button */}
-      
-<div className="md:hidden p-4">
-  <button
-    className="bg-green-600 text-white px-4 py-2 rounded shadow flex items-center gap-2"
-    onClick={() => setShowMobileSidebar(true)}
-  >
-    <Menu className="w-5 h-5" />
-    Menu
-  </button>
-</div>
 
   <div className="flex-1 min-h-screen w-full bg-gradient-to-b from-green-50 to-green-100 p-4 md:p-8">
     <div className="max-w-5xl mx-auto space-y-6">
@@ -317,16 +271,16 @@ export default function StudentDashboard() {
       {/* Profile Card */}
       <div className="bg-white rounded-2xl shadow p-6">
         <h2 className="text-xl font-semibold text-gray-800 mb-2">
-          Welcome, <span className="text-green-700">{profile ? profile.full_name : 'Loading...'}</span>
+          Welcome <span className="text-green-700">{profile ? profile.full_name : 'Loading...'}</span>
         </h2>
-        <div className="text-gray-600 flex flex-wrap gap-4 mt-2 text-sm md:text-base">
-          <span>🆔 <b>Roll No:</b> {roll_no}</span>
-          {profile?.department && <span>🏫 <b>Department:</b> {profile.department}</span>}
-          {profile?.course && <span>🎓 <b>Course:</b> {profile.course}</span>}
-          {profile?.branch && <span>🧬 <b>Branch:</b> {profile.branch}</span>}
-          {profile?.semester && <span>📚 <b>Semester:</b> {profile.semester}</span>}
-          {profile?.section && <span>🔖 <b>Section:</b> {profile.section}</span>}
-        </div>
+        {/* <div className="text-gray-600 flex flex-wrap gap-4 mt-2 text-sm md:text-base"> */}
+          {/* <span><b>Roll No:</b> {roll_no}</span> */}
+          {/* {profile?.department && <span>🏫 <b>Department:</b> {profile.department}</span>} */}
+          {/* {profile?.course && <span>🎓 <b>Course:</b> {profile.course}</span>} */}
+          {/* {profile?.branch && <span> <b>Branch:</b> {profile.branch}</span>}
+          {profile?.semester && <span> <b>Semester:</b> {profile.semester}</span>} */}
+          {/* {profile?.section && <span>🔖 <b>Section:</b> {profile.section}</span>} */}
+        {/* </div> */}
       </div>
 
       {/* Mark Attendance */}
@@ -419,7 +373,7 @@ export default function StudentDashboard() {
           onClick={() => loadAttendance(filterSubject, filterDate)}
           className="w-full md:w-40 bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-xl shadow-md hover:shadow-lg transform hover:-translate-y-0.5 hover:scale-105 transition-all duration-300 text-sm font-semibold"
         >
-          ✅ Apply
+           Apply
         </button>
 
         {/* Reset Button */}
@@ -431,7 +385,7 @@ export default function StudentDashboard() {
           }}
           className="w-full md:w-32 bg-gray-200 hover:bg-gray-300 text-gray-800 px-5 py-2 rounded-xl shadow hover:shadow-md transform hover:scale-105 transition-all duration-300 text-sm font-semibold"
         >
-          ♻️ Reset
+           Reset
         </button>
       </div>
 
@@ -477,7 +431,6 @@ export default function StudentDashboard() {
       </div>
 
     </div>
-  </div>
   </div>
   </div>
 );

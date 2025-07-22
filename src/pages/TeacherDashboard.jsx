@@ -320,17 +320,27 @@ const loadOtps = async () => {
         </div>
 
         {/* Profile */}
-        <div className="bg-white shadow-sm rounded-lg p-5">
-          <SectionTitle icon={User} title="Teacher Profile" />
-          <p className="text-gray-600 text-xl uppercase">
-            👤 <strong>{profile ? profile.full_name : "Loading..."}</strong>
-          </p>
-          <p className="text-gray-600 text-sm">
-            🆔 Employee ID: <span className="font-medium">{employeeId}</span>
-          </p>
-        </div>
+          <div className="bg-white shadow-md rounded-2xl p-6 border border-gray-200 flex items-center gap-6">
+            {/* Optional Profile Initials or Icon */}
+            <div className="w-20 h-20 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-3xl font-bold shadow-inner">
+              {(profile?.full_name?.[0] || "T").toUpperCase()}
+            </div>
 
-        
+
+            {/* Info Section */}
+            <div>
+              {/* <h2 className="text-2xl font-bold text-gray-800">{profile?.full_name || "Loading..."}</h2> */}
+              <h2 className="text-2xl font-bold text-gray-800">
+                {(profile?.full_name || "Loading...").toUpperCase()}
+              </h2>
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">Employee ID:</span> {employeeId}
+              </p>
+            </div>
+          </div>
+
+
+    
         {/* OTP Generator */}
         <div className="bg-white shadow-sm rounded-lg p-5">
           <SectionTitle icon={KeyRound} title="Generate OTP for Class" />

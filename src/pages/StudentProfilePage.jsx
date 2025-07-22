@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import api from "../services/api";
 import dayjs from "dayjs";
 
-const ProfilePage = () => {
+const StudentProfilePage = () => {
   const [profile, setProfile] = useState(null);
   const roll_no = localStorage.getItem("userId");
 
@@ -30,7 +30,7 @@ const ProfilePage = () => {
     <div className="min-h-screen flex justify-center items-center bg-gray-100 px-4">
       <div className="w-full max-w-4xl p-6 bg-white rounded-3xl shadow-lg border border-gray-200">
         <h1 className="text-3xl font-bold text-green-700 text-center mb-8">
-          👤 Student Profile
+          My Information
         </h1>
 
         <div className="flex flex-col sm:flex-row items-center gap-8 mb-6">
@@ -50,31 +50,31 @@ const ProfilePage = () => {
           {/* Profile Details */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-4 text-gray-800 text-[17px] w-full">
             <div>
-              <span className="font-semibold">🧑 Name:</span> {profile.full_name}
+              <span className="font-semibold">Name:</span> {profile.full_name}
             </div>
             <div>
-              <span className="font-semibold">🆔 Roll Number:</span> {profile.roll_no}
+              <span className="font-semibold">Roll Number:</span> {profile.roll_no}
             </div>
             <div>
-              <span className="font-semibold">✉️ Email:</span> {profile.email}
+              <span className="font-semibold">Email:</span> {profile.email}
             </div>
             <div>
-              <span className="font-semibold">🎓 Course:</span> {profile.course}
+              <span className="font-semibold">Course:</span> {profile.course}
             </div>
             <div>
-              <span className="font-semibold">🧬 Branch:</span> {profile.branch}
+              <span className="font-semibold">Branch:</span> {profile.branch}
             </div>
             <div>
-              <span className="font-semibold">🏫 Department:</span> {profile.department}
+              <span className="font-semibold">Department:</span> {profile.department}
             </div>
             <div>
-              <span className="font-semibold">📚 Semester:</span> {profile.semester}
+              <span className="font-semibold">Semester:</span> {profile.semester}
             </div>
             <div>
-              <span className="font-semibold">🔖 Section:</span> {profile.section}
+              <span className="font-semibold">Section:</span> {profile.section}
             </div>
             <div className="sm:col-span-2">
-              <span className="font-semibold">🎂 Date of Birth:</span>{" "}
+              <span className="font-semibold">Date of Birth:</span>{" "}
               {dayjs(profile.dob).format("D MMMM YYYY")}
             </div>
           </div>
@@ -94,4 +94,4 @@ const ProfilePage = () => {
   );
 };
 
-export default ProfilePage;
+export default StudentProfilePage;
