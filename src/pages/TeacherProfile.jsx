@@ -2,30 +2,54 @@ import React, { useEffect, useState } from "react";
 import api from "../services/api";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
-import { X } from "lucide-react";
+import { X, UploadCloud } from "lucide-react";
 
 const TeacherProfilePage = () => {
   const [profile, setProfile] = useState(null);
-  const [photoPreview, setPhotoPreview] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [saving, setSaving] = useState(false);
   const employeeId = localStorage.getItem("userId");
   const navigate = useNavigate();
 
+  const fetchProfile = async () => {
+    try {
+      const res = await api.get(`/teacher/profile/${employeeId}`);
+      setProfile(res.data);
+    } catch (err) {
+      console.error("Failed to fetch teacher profile", err);
+    }
+  };
+
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await api.get(`/teacher/profile/${employeeId}`);
-        setProfile(res.data);
-      } catch (err) {
-        console.error("Failed to fetch teacher profile", err);
-      }
-    };
     fetchProfile();
   }, [employeeId]);
 
-  const handlePhotoChange = (e) => {
+  const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      setPhotoPreview(URL.createObjectURL(file));
+    if (!file) return;
+
+    if (file.size > 100 * 1024) {
+    alert("Image size must be less than 100KB.");
+    return;
+  }
+  
+    setSelectedImage(URL.createObjectURL(file));
+    saveImage(file);
+  };
+
+  
+
+  const saveImage = async (file) => {
+    try {
+      setSaving(true);
+      const formData = new FormData();
+      formData.append("file", file);
+      await api.post(`/teacher/profile/upload-photo/${employeeId}`, formData);
+      fetchProfile(); // refetch updated photo
+    } catch (err) {
+      console.error("Upload failed", err);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -37,10 +61,15 @@ const TeacherProfilePage = () => {
     );
   }
 
+  const renderImage = () => {
+    if (selectedImage) return selectedImage;
+    if (profile.photo) return `data:image/jpeg;base64,${profile.photo}`;
+    return null;
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-8">
-      <div className="max-w-5xl mx-auto bg-white rounded-3xl shadow-lg p-6 sm:p-10 border border-gray-200 relative">
-        {/* ❌ Close Button */}
+    <div className="min-h-screen bg-gray-100 px-4 py-8 flex justify-center items-center">
+      <div className="w-full max-w-5xl bg-white shadow-xl rounded-3xl p-6 sm:p-10 border border-gray-200 relative">
         <button
           onClick={() => navigate("/teacher")}
           className="absolute top-4 right-4 text-gray-500 hover:text-red-500 transition"
@@ -53,42 +82,39 @@ const TeacherProfilePage = () => {
           Teacher Profile
         </h1>
 
-        <div className="flex flex-col lg:flex-row items-center lg:items-start gap-10">
+        <div className="flex flex-col md:flex-row items-center md:items-start gap-10">
           {/* Profile Photo */}
           <div className="flex flex-col items-center gap-4">
-            <div className="w-40 h-40 rounded-full bg-gray-100 border border-gray-300 shadow-inner overflow-hidden">
-              {photoPreview ? (
+            <div className="w-40 h-40 sm:w-48 sm:h-48 rounded-full overflow-hidden border border-gray-300 shadow-inner bg-gray-100">
+              {renderImage() ? (
                 <img
-                  src={photoPreview}
+                  src={renderImage()}
                   alt="Profile"
-                  className="w-full h-full object-cover"
+                  className="object-cover w-full h-full"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-6xl text-gray-400">
+                <div className="w-full h-full flex justify-center items-center text-5xl text-gray-400">
                   🧑‍🏫
                 </div>
               )}
             </div>
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              id="photoInput"
-              onChange={handlePhotoChange}
-            />
-            <label
-              htmlFor="photoInput"
-              className="px-4 py-2 bg-blue-600 text-white rounded-full text-sm cursor-pointer hover:bg-blue-700 transition"
-            >
-              Upload Photo
+            <label className="flex items-center gap-2 px-4 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium cursor-pointer hover:bg-blue-200 transition">
+              <UploadCloud className="w-4 h-4" />
+              {saving ? "Saving..." : "Upload Photo"}
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageChange}
+                disabled={saving}
+              />
             </label>
-            <p className="text-xs text-gray-500">(Save feature coming soon)</p>
           </div>
 
           {/* Profile Details */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-5 text-gray-800 text-base w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-5 text-gray-800 text-[17px] w-full">
             <div>
-              <span className="font-semibold">Full Name:</span> {profile.full_name}
+              <span className="font-semibold">Name:</span> {profile.full_name}
             </div>
             <div>
               <span className="font-semibold">Email:</span> {profile.email}
@@ -107,7 +133,8 @@ const TeacherProfilePage = () => {
               <span className="font-semibold">Address:</span> {profile.address}
             </div>
             <div>
-              <span className="font-semibold">Employee ID:</span> {profile.employee_id}
+              <span className="font-semibold">Employee ID:</span>{" "}
+              {profile.employee_id}
             </div>
             <div>
               <span className="font-semibold">Subject:</span> {profile.subject}
@@ -115,13 +142,12 @@ const TeacherProfilePage = () => {
           </div>
         </div>
 
-        {/* Save / Edit Buttons (Coming Soon) */}
-        <div className="text-center mt-10">
+        <div className="mt-10 text-center">
           <button
             disabled
             className="px-6 py-2 bg-gray-300 text-gray-600 font-medium rounded-xl shadow cursor-not-allowed"
           >
-            💾 Save Changes (Coming Soon)
+            ✏️ Edit Profile (Coming Soon)
           </button>
         </div>
       </div>
