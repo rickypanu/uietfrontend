@@ -78,7 +78,7 @@ const ProfilePage = () => {
           </button>
 
           <h1 className="text-3xl font-bold text-green-700 text-center mb-8">
-            👤 Student Profile
+            Personal Information
           </h1>
 
         <div className="flex flex-col sm:flex-row items-center gap-8 mb-6">
