@@ -25,6 +25,7 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [fieldErrors, setFieldErrors] = useState({});
+  const [messageType, setMessageType] = useState(""); // 'success' | 'error'
 
   const handleChange = (e) => {
     let { name, value } = e.target;
@@ -76,13 +77,17 @@ export default function Register() {
           subject: form.subject,
         });
       }
-      setMessage("✅ Registration successful! Wait for admin approval.");
+
+      setMessage("Registration successful! Wait for admin approval.");
+      setMessageType("success"); // ✅ Set success type
       setForm({
-        name:"", email:"", phone:"", dob:"", gender:"", address:"",
-        roll_no:"", department:"",course: "", branch:"", semester:"", section:"",
-        employee_id:"", subject:""
+        name: "", email: "", phone: "", dob: "", gender: "", address: "",
+        roll_no: "", department: "", course: "", branch: "", semester: "", section: "",
+        employee_id: "", subject: ""
       });
+
     } catch (err) {
+      setMessageType("error"); // ❌ Set error type
       if (Array.isArray(err.response?.data?.detail)) {
         const newErrors = {};
         err.response.data.detail.forEach(error => {
@@ -93,9 +98,58 @@ export default function Register() {
         });
         setFieldErrors(newErrors);
       } else {
-        setMessage(err.response?.data?.detail || "❌ Error during registration.");
+        setMessage(err.response?.data?.detail || "Error during registration.");
       }
     }
+
+    // try {
+    //   if (role === "student") {
+    //     await api.post("/register/student", {
+    //       full_name: form.name,
+    //       email: form.email,
+    //       phone: form.phone,
+    //       dob: form.dob,
+    //       gender: form.gender,
+    //       address: form.address,
+    //       roll_no: form.roll_no,
+    //       department: form.department,
+    //       course: form.course,
+    //       branch: form.branch,
+    //       semester: parseInt(form.semester),
+    //       section: form.section,
+    //     });
+    //   } else {
+    //     await api.post("/register/teacher", {
+    //       full_name: form.name,
+    //       email: form.email,
+    //       phone: form.phone,
+    //       dob: form.dob,
+    //       gender: form.gender,
+    //       address: form.address,
+    //       employee_id: form.employee_id,
+    //       subject: form.subject,
+    //     });
+    //   }
+    //   setMessage("✅ Registration successful! Wait for admin approval.");
+    //   setForm({
+    //     name:"", email:"", phone:"", dob:"", gender:"", address:"",
+    //     roll_no:"", department:"",course: "", branch:"", semester:"", section:"",
+    //     employee_id:"", subject:""
+    //   });
+    // } catch (err) {
+    //   if (Array.isArray(err.response?.data?.detail)) {
+    //     const newErrors = {};
+    //     err.response.data.detail.forEach(error => {
+    //       if (error.loc && error.loc.length >= 2) {
+    //         const fieldName = error.loc[1];
+    //         newErrors[fieldName] = error.msg;
+    //       }
+    //     });
+    //     setFieldErrors(newErrors);
+    //   } else {
+    //     setMessage(err.response?.data?.detail || "❌ Error during registration.");
+    //   }
+    // }
     setLoading(false);
   };
 
@@ -283,7 +337,17 @@ export default function Register() {
         </button>
       </form>
 
-      {message && <p className="mt-4 text-center text-sm text-blue-700 font-medium">{message}</p>}
+      {/* {message && <p className="mt-4 text-center text-sm text-blue-700 font-medium">{message}</p>} */}
+      {message && (
+          <p
+            className={`mt-4 text-center text-sm font-medium ${
+              messageType === "success" ? "text-green-600" : "text-red-600"
+            }`}
+          >
+            {message}
+          </p>
+        )}
+
         
       <div className="mt-4 text-center">
         <Link
