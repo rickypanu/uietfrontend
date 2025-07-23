@@ -391,32 +391,48 @@ const loadOtps = async () => {
         {/* Active OTPs */}
         <div className="bg-white shadow-sm rounded-lg p-5 mt-6">
           <SectionTitle icon={BookOpenText} title="Active OTPs" />
-          <div className="overflow-auto">
-            <table className="w-full text-sm border">
-              <thead>
-                <tr className="bg-gray-100 text-gray-700">
-                  <th className="border px-3 py-2 text-left">OTP</th>
-                  <th className="border px-3 py-2 text-left">Subject</th>
-                  <th className="border px-3 py-2 text-left">Valid Till</th>
+          <div className="overflow-x-auto bg-white shadow rounded-xl p-4">
+            <table className="w-full text-sm text-left border border-gray-200 rounded-lg overflow-hidden">
+              <thead className="bg-gray-100 text-gray-700">
+                <tr>
+                  <th className="px-4 py-3 border">OTP</th>
+                  <th className="px-4 py-3 border">Subject</th>
+                  <th className="px-4 py-3 border">Valid Date</th>
+                  <th className="px-4 py-3 border">Valid Time</th>
                 </tr>
               </thead>
               <tbody>
                 {otpList.length > 0 ? (
-                  otpList.map((otp, idx) => (
-                    <tr key={idx} className="hover:bg-gray-50">
-                      <td className="border px-3 py-2">{otp.otp}</td>
-                      <td className="border px-3 py-2">{otp.subject}</td>
-                      <td className="border px-3 py-2">{new Date(otp.end_time).toLocaleString()}</td>
-                    </tr>
-                  ))
+                  otpList.map((otp, idx) => {
+                    const endTime = new Date(otp.end_time);
+                    const date = endTime.toLocaleDateString();
+                    const time = endTime.toLocaleTimeString();
+
+                    return (
+                      <tr
+                        key={idx}
+                        className={`${
+                          idx % 2 === 0 ? "bg-white" : "bg-gray-50"
+                        } hover:bg-green-50 transition-all`}
+                      >
+                        <td className="px-4 py-2 border font-semibold text-gray-800">{otp.otp}</td>
+                        <td className="px-4 py-2 border text-gray-700">{otp.subject}</td>
+                        <td className="px-4 py-2 border text-gray-700">{date}</td>
+                        <td className="px-4 py-2 border text-gray-700">{time}</td>
+                      </tr>
+                    );
+                  })
                 ) : (
                   <tr>
-                    <td colSpan="3" className="text-center py-3 text-gray-500">No active OTPs yet</td>
+                    <td colSpan="4" className="text-center p-4 text-gray-500">
+                      No active OTPs yet
+                    </td>
                   </tr>
                 )}
               </tbody>
             </table>
           </div>
+
         </div>
 
  
