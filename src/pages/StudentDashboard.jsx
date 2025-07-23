@@ -3,13 +3,18 @@ import { markAttendance, getStudentAttendance, exportStudentAttendanceCSV } from
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
 import { getFingerprint } from "../services/getFingerprint"
-import {LogOut,} from "lucide-react";
 import Sidebar from "../components/Sidebar";
-import { Menu } from "lucide-react"; // add this with others
 import { SUBJECTS } from "../constants/subjects";
-
-
-
+import {
+  LogOut,
+  UserRound,
+  Menu,
+  CheckCircle,
+  CalendarCheck,
+  AlertCircle,
+  FileDown,
+  Filter,
+} from "lucide-react";
 
 
 export default function StudentDashboard() {
@@ -221,10 +226,14 @@ export default function StudentDashboard() {
 
       {/* Profile Card */}
       <div className="bg-white rounded-2xl shadow p-6">
-        <h2 className="text-xl font-semibold text-gray-800 mb-2">
-          Welcome <span className="text-blue-700 font-semibold text-2xl"> {profile ? profile.full_name : "Loading..."}</span>
-
+        <h2 className="text-xl font-semibold text-gray-800 mb-2 flex items-center gap-2">
+          <UserRound className="text-green-500 w-6 h-6" />
+          Welcome
+          <span className="text-blue-700 font-semibold text-2xl">
+            {profile ? profile.full_name : "Loading..."}
+          </span>
         </h2>
+
         {/* <div className="text-gray-600 flex flex-wrap gap-4 mt-2 text-sm md:text-base"> */}
           {/* <span><b>Roll No:</b> {roll_no}</span> */}
           {/* {profile?.department && <span>🏫 <b>Department:</b> {profile.department}</span>} */}
@@ -237,7 +246,12 @@ export default function StudentDashboard() {
 
       {/* Mark Attendance */}
       <div className="bg-white rounded-2xl shadow p-6 space-y-4">
-        <h2 className="text-xl font-semibold text-gray-800">Enter OTP to Mark Attendance</h2>
+        {/* <h2 className="text-xl font-semibold text-gray-800">Enter OTP to Mark Attendance</h2> */}
+        <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
+          <CheckCircle className="text-green-500 w-5 h-5" />
+          Enter OTP to Mark Attendance
+        </h2>
+
         <form onSubmit={handleMarkAttendance} className="flex flex-col md:flex-row gap-3">
           <select
             value={subject}
@@ -292,11 +306,13 @@ export default function StudentDashboard() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-center gap-3 bg-white p-4 rounded-xl shadow-md w-full max-w-4xl mx-auto">
-        <div className="flex flex-col gap-2 mb-4 text-center">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-center gap-3 bg-white p-4 rounded-xl shadow-md w-full max-w-5xl mx-auto">
+        <div className="flex flex-col gap-2 m-3 ml-1 text-center">
           <h2 className="text-lg font-semibold text-gray-700 flex items-center justify-center gap-2">
-            🔍 Filter Attendance
+            <Filter className="w-5 h-5 text-green-500" />
+            Filter Attendance
           </h2>
+
         </div>
 
         {/* Subject Dropdown */}
@@ -345,7 +361,10 @@ export default function StudentDashboard() {
 
       {/* Attendance History */}
       <div className="bg-white rounded-2xl shadow p-6">
-        <h2 className="text-xl font-semibold text-gray-800 mb-3">📅 Attendance History</h2>
+        <h2 className="text-xl font-semibold text-gray-800 mb-3 flex items-center gap-2">
+          <CalendarCheck className="text-green-500 w-5 h-5" />
+          Attendance History
+        </h2>
         <div className="overflow-auto">
           <table className="w-full text-sm border border-gray-200 rounded">
             <thead>
@@ -375,11 +394,12 @@ export default function StudentDashboard() {
       {/* Export */}
       <div className="flex justify-center mt-6">
         <button
-          onClick={handleExport}
-          className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-5 py-2 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 hover:scale-105 transition-all duration-300 text-sm font-semibold"
-        >
-          Export Attendance CSV
-        </button>
+            onClick={handleExport}
+            className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-5 py-2 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 hover:scale-105 transition-all duration-300 text-sm font-semibold"
+          >
+            <FileDown className="w-4 h-4" />
+            Export Attendance CSV
+          </button>
       </div>
 
     </div>
