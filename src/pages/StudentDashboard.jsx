@@ -14,6 +14,7 @@ import {
   AlertCircle,
   FileDown,
   Filter,
+  GraduationCap,
 } from "lucide-react";
 
 
@@ -212,9 +213,13 @@ export default function StudentDashboard() {
   <div className="flex-1 min-h-screen w-full bg-gradient-to-b from-green-50 to-green-100 p-4 md:p-8">
     <div className="max-w-5xl mx-auto space-y-6">
       {/* Header */}
+       {/* <div className="flex justify-between items-center"> */}
        <div className="flex justify-between items-center">
-        {/* <h1 className="text-3xl font-bold text-green-800">🧑‍🎓 Student Dashboard</h1>  */}
-        <h1 className="text-3xl font-bold text-green-800 text-center mt-12">🧑‍🎓 Student Dashboard</h1>
+          <h1 className="flex items-center gap-2 text-3xl font-bold text-green-800 mt-12 ml-0 md:ml-[40%]">
+  <GraduationCap className="w-8 h-8 text-green-600" />
+  Student Dashboard</h1>
+
+        {/* <h1 className="text-3xl font-bold text-green-800 text-center  mt-12">🧑‍🎓 Student Dashboard</h1> */}
 
         {/* <button
             onClick={handleLogout}
@@ -228,7 +233,7 @@ export default function StudentDashboard() {
       <div className="bg-white rounded-2xl shadow p-6">
         <h2 className="text-xl font-semibold text-gray-800 mb-2 flex items-center gap-2">
           <UserRound className="text-green-500 w-6 h-6" />
-          Welcome
+          {/* Welcome */}
           <span className="text-blue-700 font-semibold text-2xl">
             {profile ? profile.full_name : "Loading..."}
           </span>

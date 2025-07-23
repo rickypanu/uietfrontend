@@ -219,7 +219,7 @@ const loadOtps = async () => {
     const csv = Papa.unparse(
       filtered.map((a) => ({
         RollNo: a.roll_no,
-        Subject: a.subject,
+        Subject: a.subject.toUpperCase(),
         MarkedAt: new Date(a.marked_at).toLocaleString(),
       }))
     );
@@ -257,8 +257,8 @@ const loadOtps = async () => {
         <div className="max-w-6xl mx-auto space-y-6">
           {/* Header */}
           <div className="text-center">
-            <h1 className="text-2xl font-semibold text-gray-800 inline-flex items-center gap-2 justify-center">
-              <ShieldCheck className="w-6 h-6 text-blue-600" />
+            <h1 className="text-4xl font-semibold text-gray-800 inline-flex items-center gap-2 justify-center">
+              <ShieldCheck className="w-6 h-6 text-blue-600 " />
               Teacher Dashboard
             </h1>
           </div>
@@ -460,21 +460,21 @@ const loadOtps = async () => {
     {/* box 3 */}
       
   <div className="bg-white rounded-lg shadow-md p-4 text-center">
-  <h2 className="text-xl font-semibold text-gray-700">Students Marked</h2>
-  {selectedOtp ? (
-    <>
-      <p className="text-4xl font-bold text-purple-600 mt-2">
-        {
-          attendanceList.filter((record) => record.otp === selectedOtp).length
-        }
-      </p>
-      <p className="text-gray-500 text-sm mt-1">For OTP: {selectedOtp}</p>
-    </>
-  ) : (
-    <p className="text-gray-500 text-sm mt-2">Click an OTP to see count</p>
-  )}
-</div>
-</div>
+      <h2 className="text-xl font-semibold text-gray-700">Students Marked</h2>
+      {selectedOtp ? (
+        <>
+          <p className="text-4xl font-bold text-purple-600 mt-2">
+            {
+              attendanceList.filter((record) => record.otp === selectedOtp).length
+            }
+          </p>
+          <p className="text-gray-500 text-sm mt-1">For OTP: {selectedOtp}</p>
+        </>
+      ) : (
+        <p className="text-gray-500 text-sm mt-2">Click an OTP to see count</p>
+      )}
+    </div>
+    </div>
 
 
         {/* Filters + Export */}
@@ -527,7 +527,122 @@ const loadOtps = async () => {
 
        </div>
 
-        <div className="overflow-auto">
+       {/* <div className="grid gap-4 mt-4">
+  {attendanceList.length > 0 ? (
+    attendanceList
+      .filter((a) => {
+        if (filterDate) {
+          const date = new Date(a.marked_at).toISOString().split("T")[0];
+          return date === filterDate;
+        }
+        if (filterMonth) {
+          const month = new Date(a.marked_at).toISOString().slice(0, 7);
+          return month === filterMonth;
+        }
+        return true;
+      })
+      .sort((a, b) => new Date(b.marked_at) - new Date(a.marked_at))
+      .map((a, idx) => (
+        <div
+          key={idx}
+          className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition p-5"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            {/* Left side */}
+            {/* <div>
+              <h3 className="text-xl font-semibold text-gray-800 mb-1">
+                Roll No: {a.roll_no}
+              </h3>
+              <p className="text-sm text-gray-500">
+                Marked At:{" "}
+                <span className="text-gray-700">
+                  {new Date(a.marked_at).toLocaleString()}
+                </span>
+              </p>
+            </div> */}
+
+            {/* Right side */}
+            {/* <div className="text-sm sm:text-base font-medium text-gray-700 flex items-center gap-2">
+              <span className="border border-gray-300 rounded-full px-3 py-1">
+                {a.subject.toUpperCase()}
+              </span>
+            </div>
+          </div>
+        </div>
+      ))
+  ) : (
+    <div className="text-center py-6 text-gray-500">
+      No attendance records yet
+    </div>
+  )}
+</div> */} 
+
+<div className="overflow-auto mt-4 rounded-lg border border-gray-200">
+  <table className="w-full text-sm text-gray-800">
+    <thead>
+      <tr className="bg-gray-100 text-gray-700">
+        <th className="px-4 py-3 text-left">Roll No</th>
+        <th className="px-4 py-3 text-left">Subject</th>
+        <th className="px-4 py-3 text-left">Date</th>
+        <th className="px-4 py-3 text-left">Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      {attendanceList.length > 0 ? (
+        attendanceList
+          .filter((a) => {
+            if (filterDate) {
+              const date = new Date(a.marked_at).toISOString().split("T")[0];
+              return date === filterDate;
+            }
+            if (filterMonth) {
+              const month = new Date(a.marked_at).toISOString().slice(0, 7);
+              return month === filterMonth;
+            }
+            return true;
+          })
+          .sort((a, b) => new Date(b.marked_at) - new Date(a.marked_at)) // Newest first
+          .map((a, idx) => {
+            const markedDate = new Date(a.marked_at);
+            const isEven = idx % 2 === 0;
+            return (
+              <tr
+                key={idx}
+                className={`${
+                  isEven ? "bg-white" : "bg-gray-50"
+                } hover:bg-gray-100 transition`}
+              >
+                <td className="px-4 py-2 border-t">{a.roll_no}</td>
+                <td className="px-4 py-2 border-t">{a.subject.toUpperCase()}</td>
+                <td className="px-4 py-2 border-t">
+                  {markedDate.toLocaleDateString()}
+                </td>
+                <td className="px-4 py-2 border-t">
+                  {markedDate.toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </td>
+              </tr>
+            );
+          })
+      ) : (
+        <tr>
+          <td
+            colSpan="4"
+            className="text-center py-4 text-gray-500 bg-white border-t"
+          >
+            No attendance records yet
+          </td>
+        </tr>
+      )}
+    </tbody>
+  </table>
+</div>
+
+
+
+        {/* <div className="overflow-auto">
           <table className="w-full text-sm border">
             <thead>
               <tr className="bg-gray-100 text-gray-700">
@@ -569,7 +684,7 @@ const loadOtps = async () => {
               )}
             </tbody>
           </table>
-        </div>
+        </div> */}
       </div>
       </div>
     </div>
