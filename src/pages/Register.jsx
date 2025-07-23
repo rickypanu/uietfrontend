@@ -222,8 +222,8 @@ export default function Register() {
               <option value="IT">Information Technology (IT)</option>
               <option value="ECE">Electronics & Communication Engineering (ECE)</option>
               <option value="EEE">Electrical & Electronics Engineering (EEE)</option>
-              <option value="ME">Mechanical Engineering (ME)</option>
-              <option value="BT">BioTechnology Engineering(BioTech)</option>
+              <option value="MECH">Mechanical Engineering (ME)</option>
+              <option value="BioTech">BioTechnology Engineering(BioTech)</option>
               {/* Add more branches as needed */}
             </select>
             {fieldErrors.course && (
