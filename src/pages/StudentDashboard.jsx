@@ -215,7 +215,7 @@ export default function StudentDashboard() {
       {/* Header */}
        {/* <div className="flex justify-between items-center"> */}
        <div className="flex justify-between items-center">
-          <h1 className="flex items-center gap-2 text-3xl font-bold text-green-800 mt-12 ml-0 md:ml-[40%]">
+          <h1 className="flex items-center gap-2 text-3xl font-bold text-green-800 mt-12 ml-0 md:ml-[32%]">
   <GraduationCap className="w-8 h-8 text-green-600" />
   Student Dashboard</h1>
 
