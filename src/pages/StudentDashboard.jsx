@@ -216,10 +216,9 @@ export default function StudentDashboard() {
        {/* <div className="flex justify-between items-center"> */}
        <div className="flex justify-between items-center">
           <h1 className="flex items-center gap-2 text-3xl font-bold text-green-800 mt-12 ml-0 md:ml-[32%]">
-  <GraduationCap className="w-8 h-8 text-green-600" />
-  Student Dashboard</h1>
-
-        {/* <h1 className="text-3xl font-bold text-green-800 text-center  mt-12">🧑‍🎓 Student Dashboard</h1> */}
+            <GraduationCap className="w-8 h-8 text-green-600" />
+            Student Dashboard
+          </h1>
 
         {/* <button
             onClick={handleLogout}
@@ -287,7 +286,8 @@ export default function StudentDashboard() {
           <button
             type="submit"
             disabled={loading}
-            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded shadow"
+            className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-5 py-2 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 hover:scale-105 transition-all duration-300 text-sm font-semibold"
+        
           >
             {loading ? "Marking..." : "Mark Attendance"}
           </button>
@@ -370,30 +370,48 @@ export default function StudentDashboard() {
           <CalendarCheck className="text-green-500 w-5 h-5" />
           Attendance History
         </h2>
-        <div className="overflow-auto">
-          <table className="w-full text-sm border border-gray-200 rounded">
-            <thead>
-              <tr className="bg-gray-100 text-gray-700">
-                <th className="border px-3 py-2">Subject</th>
-                <th className="border px-3 py-2">Marked At</th>
-              </tr>
-            </thead>
-            <tbody>
-              {attendanceList.length > 0 ? (
-                attendanceList.map((a, idx) => (
-                  <tr key={idx} className="hover:bg-green-50">
-                    <td className="border px-3 py-2">{a.subject}</td>
-                    <td className="border px-3 py-2">{new Date(a.marked_at).toLocaleString()}</td>
-                  </tr>
-                ))
-              ) : (
+        <div className="bg-white shadow rounded-xl p-4">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left border border-gray-200 rounded-lg overflow-hidden">
+              <thead className="bg-gray-100 text-gray-700">
                 <tr>
-                  <td colSpan="2" className="text-center p-3 text-gray-500">No attendance marked yet</td>
+                  <th className="px-4 py-3 border">Subject</th>
+                  <th className="px-4 py-3 border">Date</th>
+                  <th className="px-4 py-3 border">Time</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {attendanceList.length > 0 ? (
+                  attendanceList.map((a, idx) => {
+                    const markedAt = new Date(a.marked_at);
+                    const date = markedAt.toLocaleDateString();
+                    const time = markedAt.toLocaleTimeString();
+
+                    return (
+                      <tr
+                        key={idx}
+                        className={`${
+                          idx % 2 === 0 ? "bg-white" : "bg-gray-50"
+                        } hover:bg-green-50 transition-all`}
+                      >
+                        <td className="px-4 py-2 border font-medium text-gray-800">{a.subject.toUpperCase()}</td>
+                        <td className="px-4 py-2 border text-gray-700">{date}</td>
+                        <td className="px-4 py-2 border text-gray-700">{time}</td>
+                      </tr>
+                    );
+                  })
+                ) : (
+                  <tr>
+                    <td colSpan="3" className="text-center p-4 text-gray-500">
+                      No attendance marked yet
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
+      
       </div>
 
       {/* Export */}
