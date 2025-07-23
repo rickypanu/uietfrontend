@@ -259,14 +259,16 @@ export default function StudentDashboard() {
   <div className="flex-1 min-h-screen w-full bg-gradient-to-b from-green-50 to-green-100 p-4 md:p-8">
     <div className="max-w-5xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-green-800">🧑‍🎓 Student Dashboard</h1>
-        <button
+       <div className="flex justify-between items-center">
+        {/* <h1 className="text-3xl font-bold text-green-800">🧑‍🎓 Student Dashboard</h1>  */}
+        <h1 className="text-3xl font-bold text-green-800 text-center mt-12">🧑‍🎓 Student Dashboard</h1>
+
+        {/* <button
             onClick={handleLogout}
             className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 flex items-center gap-2"
           >
             <LogOut className="w-4 h-4" /> Logout
-        </button>
+        </button> */}
       </div>
 
       {/* Profile Card */}
@@ -287,7 +289,7 @@ export default function StudentDashboard() {
 
       {/* Mark Attendance */}
       <div className="bg-white rounded-2xl shadow p-6 space-y-4">
-        <h2 className="text-xl font-semibold text-gray-800">🔐Enter OTP to Mark Attendance</h2>
+        <h2 className="text-xl font-semibold text-gray-800">Enter OTP to Mark Attendance</h2>
         <form onSubmit={handleMarkAttendance} className="flex flex-col md:flex-row gap-3">
           <select
             value={subject}
@@ -307,7 +309,7 @@ export default function StudentDashboard() {
             onChange={(e) => setOtp(e.target.value)}
             onPaste={(e) => {
               e.preventDefault();
-              setOtpPasteMessage("⚠️ Pasting is disabled. Type the OTP like a real human. 🕶️💻");
+              setOtpPasteMessage("⚠️ Pasting is disabled. Type the OTP like a real human.");
               setTimeout(() => setOtpPasteMessage(""), 5000);
             }}
             placeholder="Enter OTP"
@@ -428,7 +430,7 @@ export default function StudentDashboard() {
           onClick={handleExport}
           className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-5 py-2 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 hover:scale-105 transition-all duration-300 text-sm font-semibold"
         >
-          📤 Export Attendance CSV
+          Export Attendance CSV
         </button>
       </div>
 
