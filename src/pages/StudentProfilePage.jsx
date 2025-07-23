@@ -1,21 +1,27 @@
 import React, { useEffect, useState } from "react";
 import api from "../services/api";
 import dayjs from "dayjs";
-import { UploadCloud } from "lucide-react";
+import { UploadCloud, X, Save } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { X } from "lucide-react";
+
 const ProfilePage = () => {
   const [profile, setProfile] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [editedSemester, setEditedSemester] = useState("");
+  const [editedDOB, setEditedDOB] = useState("");
+  const [updatingProfile, setUpdatingProfile] = useState(false);
+
   const roll_no = localStorage.getItem("userId");
   const navigate = useNavigate();
-
 
   const fetchProfile = async () => {
     try {
       const res = await api.get(`/student/profile/${roll_no}`);
       setProfile(res.data);
+      setEditedSemester(res.data.semester);
+      setEditedDOB(dayjs(res.data.dob).format("YYYY-MM-DD"));
     } catch (err) {
       console.error("Failed to fetch profile", err);
     }
@@ -44,11 +50,28 @@ const ProfilePage = () => {
       const formData = new FormData();
       formData.append("file", file);
       await api.post(`/student/profile/upload-photo/${roll_no}`, formData);
-      fetchProfile(); // refresh to show updated photo
+      fetchProfile();
     } catch (err) {
       console.error("Upload failed", err);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleSaveProfile = async () => {
+    try {
+      setUpdatingProfile(true);
+      await api.patch(`/student/profile/update/${roll_no}`, {
+        semester: parseInt(editedSemester),
+        dob: editedDOB,
+      });
+      await fetchProfile();
+      setEditMode(false);
+    } catch (err) {
+      console.error("Failed to update profile", err);
+      alert("Failed to update profile. Try again.");
+    } finally {
+      setUpdatingProfile(false);
     }
   };
 
@@ -69,17 +92,17 @@ const ProfilePage = () => {
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-100 px-4">
       <div className="w-full max-w-4xl p-6 bg-white rounded-3xl shadow-lg border border-gray-200 relative">
-          <button
-            onClick={() => navigate("/student")}
-            className="absolute top-4 right-4 text-gray-500 hover:text-red-500 transition"
-            title="Back to Dashboard"
-          >
-            <X className="w-6 h-6" />
-          </button>
+        <button
+          onClick={() => navigate("/student")}
+          className="absolute top-4 right-4 text-gray-500 hover:text-red-500 transition"
+          title="Back to Dashboard"
+        >
+          <X className="w-6 h-6" />
+        </button>
 
-          <h1 className="text-3xl font-bold text-green-700 text-center mb-8">
-            Personal Information
-          </h1>
+        <h1 className="text-3xl font-bold text-green-700 text-center mb-8">
+          Personal Information
+        </h1>
 
         <div className="flex flex-col sm:flex-row items-center gap-8 mb-6">
           {/* Profile Photo */}
@@ -132,26 +155,63 @@ const ProfilePage = () => {
               <span className="font-semibold">Department:</span> {profile.department}
             </div>
             <div>
-              <span className="font-semibold">Semester:</span> {profile.semester}
+              <span className="font-semibold">Semester:</span>{" "}
+              {editMode ? (
+                <select
+                  value={editedSemester}
+                  onChange={(e) => setEditedSemester(e.target.value)}
+                  className="border border-gray-300 rounded px-2 py-1"
+                >
+                  {[1, 2, 3, 4, 5, 6, 7, 8].map((sem) => (
+                    <option key={sem} value={sem}>
+                      {sem}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                profile.semester
+              )}
             </div>
             <div>
               <span className="font-semibold">Section:</span> {profile.section}
             </div>
             <div className="sm:col-span-2">
               <span className="font-semibold">Date of Birth:</span>{" "}
-              {dayjs(profile.dob).format("D MMMM YYYY")}
+              {editMode ? (
+                <input
+                  type="date"
+                  value={editedDOB}
+                  onChange={(e) => setEditedDOB(e.target.value)}
+                  className="border border-gray-300 rounded px-2 py-1"
+                />
+              ) : (
+                dayjs(profile.dob).format("D MMMM YYYY")
+              )}
             </div>
           </div>
         </div>
 
-        {/* Future Edit Button */}
-        <div className="text-center">
-          <button
-            disabled
-            className="px-6 py-2 bg-gray-300 text-gray-600 font-medium rounded-xl shadow cursor-not-allowed"
-          >
-            ✏️ Edit Profile (Coming Soon)
-          </button>
+        {/* Edit and Save Buttons */}
+        <div className="text-center space-x-4">
+          {!editMode ? (
+            <button
+              onClick={() => setEditMode(true)}
+              className="px-6 py-2 bg-blue-600 text-white font-medium rounded-xl shadow hover:bg-blue-700 transition"
+            >
+               Edit Profile
+            </button>
+          ) : (
+            <button
+              onClick={handleSaveProfile}
+              disabled={updatingProfile}
+              className={`px-6 py-2 bg-green-600 text-white font-medium rounded-xl shadow hover:bg-green-700 transition ${
+                updatingProfile ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            >
+              <Save className="inline-block w-4 h-4 mr-1" />
+              {updatingProfile ? "Saving..." : "Save Changes"}
+            </button>
+          )}
         </div>
       </div>
     </div>
