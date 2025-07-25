@@ -9,6 +9,7 @@ import {
   Menu,
   ChevronLeft,
   ChevronRight,
+  Megaphone,
 } from "lucide-react";
 
 const TeacherSidebar = ({ profile }) => {
@@ -100,6 +101,15 @@ const TeacherSidebar = ({ profile }) => {
             >
               <Info className="w-5 h-5" />
               {!collapsed && <span>How to Use</span>}
+            </NavLink>
+
+            <NavLink
+              to="/teacher/send-notification"
+              className={({ isActive }) => linkClasses(isActive)}
+              onClick={closeMobileSidebar}
+            >
+              <Megaphone className="w-5 h-5" />
+              {!collapsed && <span>Send Notification</span>}
             </NavLink>
 
             <NavLink

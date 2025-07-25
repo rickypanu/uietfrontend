@@ -9,6 +9,7 @@ import {
   ChevronLeft,
   ChevronRight,
   X,
+  Inbox,
 } from "lucide-react";
 
 const Sidebar = ({ onLogout }) => {
@@ -98,6 +99,15 @@ const Sidebar = ({ onLogout }) => {
               </NavLink>
 
               <NavLink
+                to="/student/notifications"
+                className={({ isActive }) => linkClasses(isActive)}
+                onClick={closeMobileSidebar}
+              >
+                <Info className="w-5 h-5" />
+                {!collapsed && <span>Notifications</span>}
+              </NavLink>
+
+              <NavLink
                 to="/student"
                 className={({ isActive }) => linkClasses(isActive)}
                 onClick={closeMobileSidebar}
@@ -105,6 +115,8 @@ const Sidebar = ({ onLogout }) => {
                 <CalendarCheck className="w-5 h-5" />
                 {!collapsed && <span>Dashboard</span>}
               </NavLink>
+
+
             </div>
           </div>
 
