@@ -2,8 +2,7 @@
 import { useState, useEffect } from "react";
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
-import { XCircle } from "lucide-react";
-
+import { XCircle, Trash2, FileText, Clock } from "lucide-react";
 
 export default function TeacherSendNotification() {
   const [formData, setFormData] = useState({
@@ -16,10 +15,19 @@ export default function TeacherSendNotification() {
   });
   const [file, setFile] = useState(null);
   const [notifications, setNotifications] = useState([]);
+  const employeeId = localStorage.getItem("userId");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (employeeId) {
+      setFormData((prev) => ({ ...prev, employee_id: employeeId }));
+      fetchNotifications(employeeId);
+    }
+  }, [employeeId]);
 
   const fetchNotifications = async (empId) => {
     try {
-      const res = await api.get(`/teacher/notifications/${empId}`);
+      const res = await api.get(`/teacher/notifications/${empId.toUpperCase()}`);
       setNotifications(res.data);
     } catch (err) {
       console.error("Fetch failed", err);
@@ -45,37 +53,27 @@ export default function TeacherSendNotification() {
     }
   };
 
-  const handleDelete = async (id) => {
-    const confirmDelete = window.confirm("Delete this notification?");
-    if (!confirmDelete) return;
-
-    const form = new FormData();
-    form.append("employee_id", formData.employee_id);
+  const handleDelete = async (notificationId) => {
+    if (!window.confirm("Are you sure you want to delete this notification?")) return;
 
     try {
-      await api.delete(`/teacher/notifications/${id}`, {
-        data: form,
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      alert("Deleted successfully");
-      fetchNotifications(formData.employee_id);
+      const form = new FormData();
+      form.append("notification_id", notificationId);
+      form.append("employee_id", employeeId.toUpperCase());
+
+      await api.post("/teacher/notifications/delete", form);
+      fetchNotifications(employeeId);
     } catch (err) {
-      alert("Failed to delete");
+      console.error("Delete failed", err);
+      alert("Failed to delete the notification.");
     }
   };
 
-  useEffect(() => {
-    if (formData.employee_id.trim().length > 0) {
-      fetchNotifications(formData.employee_id);
-    }
-  }, [formData.employee_id]);
-
-  const navigate = useNavigate();
-
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded shadow space-y-6">
+    <div className="max-w-4xl mx-auto p-6 space-y-10">
+      {/* Header */}
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold">Send Notification</h2>
+        <h2 className="text-2xl font-bold text-blue-700">Send Notification</h2>
         <button
           onClick={() => navigate("/teacher")}
           className="flex items-center gap-2 text-sm bg-gray-200 hover:bg-red-100 text-red-600 px-3 py-1 rounded-md transition"
@@ -84,117 +82,160 @@ export default function TeacherSendNotification() {
           Dashboard
         </button>
       </div>
-<form onSubmit={handleSubmit} className="space-y-5">
-  {/* Message */}
-  <div>
-    <label className="block text-sm font-medium text-gray-700 mb-1">Notification Message</label>
-    <textarea
-      className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      rows={4}
-      placeholder="Enter your message"
-      value={formData.message}
-      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-      required
-    />
-  </div>
 
-  {/* File Upload */}
-  <div>
-    <label className="block text-sm font-medium text-gray-700 mb-1">Attach File (Optional)</label>
-    <input
-      type="file"
-      accept=".pdf,.doc,.docx,.jpg,.png"
-      onChange={(e) => setFile(e.target.files[0])}
-      className="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-gray-100 file:text-sm file:font-semibold file:text-blue-600 hover:file:bg-gray-200"
-    />
-  </div>
-
-  {/* Branch / Section / Semester */}
-  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-    <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1">Branch</label>
-      <select
-        className="w-full border p-2 rounded-lg"
-        value={formData.branch}
-        onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
-        required
+      {/* Notification Form */}
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-6 rounded-xl shadow space-y-5 border border-blue-100"
       >
-        <option value="">Select Branch</option>
-        <option value="CSE">CSE</option>
-        <option value="ECE">ECE</option>
-        <option value="EEE">EEE</option>
-        <option value="MECH">MECH</option>
-        <option value="CIVIL">CIVIL</option>
-      </select>
-    </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div className="sm:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
+            <textarea
+              className="w-full border rounded-lg p-3 focus:ring-blue-500 focus:border-blue-500"
+              rows={4}
+              placeholder="Enter your message"
+              value={formData.message}
+              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+              required
+            />
+          </div>
 
-    <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1">Section</label>
-      <select
-        className="w-full border p-2 rounded-lg"
-        value={formData.section}
-        onChange={(e) => setFormData({ ...formData, section: e.target.value })}
-        required
-      >
-        <option value="">Select Section</option>
-        <option value="A">A</option>
-        <option value="B">B</option>
-      </select>
-    </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Branch</label>
+            <select
+              className="w-full border p-2 rounded-lg"
+              value={formData.branch}
+              onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
+              required
+            >
+              <option value="">Select Branch</option>
+              {["CSE", "ECE", "EEE", "MECH", "CIVIL"].map((br) => (
+                <option key={br} value={br}>{br}</option>
+              ))}
+            </select>
+          </div>
 
-    <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1">Semester</label>
-      <select
-        className="w-full border p-2 rounded-lg"
-        value={formData.semester}
-        onChange={(e) => setFormData({ ...formData, semester: e.target.value })}
-        required
-      >
-        <option value="">Select Semester</option>
-        {[...Array(8)].map((_, i) => (
-          <option key={i + 1} value={i + 1}>
-            {i + 1}
-          </option>
-        ))}
-      </select>
-    </div>
-  </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Section</label>
+            <select
+              className="w-full border p-2 rounded-lg"
+              value={formData.section}
+              onChange={(e) => setFormData({ ...formData, section: e.target.value })}
+              required
+            >
+              <option value="">Select Section</option>
+              <option value="A">A</option>
+              <option value="B">B</option>
+            </select>
+          </div>
 
-  {/* Expiry Time */}
-  <div>
-    <label className="block text-sm font-medium text-gray-700 mb-1">Expiry Time</label>
-    <input
-      type="datetime-local"
-      className="w-full border p-2 rounded-lg"
-      onChange={(e) => setFormData({ ...formData, expiry_time: e.target.value })}
-      required
-    />
-  </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Semester</label>
+            <select
+              className="w-full border p-2 rounded-lg"
+              value={formData.semester}
+              onChange={(e) => setFormData({ ...formData, semester: e.target.value })}
+              required
+            >
+              <option value="">Select Semester</option>
+              {[...Array(8)].map((_, i) => (
+                <option key={i + 1} value={i + 1}>{i + 1}</option>
+              ))}
+            </select>
+          </div>
 
-  {/* Employee ID */}
-  <div>
-    <label className="block text-sm font-medium text-gray-700 mb-1">Your Employee ID</label>
-    <input
-      type="text"
-      placeholder="Employee ID"
-      className="w-full border p-2 rounded-lg"
-      value={formData.employee_id}
-      onChange={(e) => setFormData({ ...formData, employee_id: e.target.value })}
-      required
-    />
-  </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Expiry Time</label>
+            <input
+              type="datetime-local"
+              className="w-full border p-2 rounded-lg"
+              value={formData.expiry_time}
+              onChange={(e) => setFormData({ ...formData, expiry_time: e.target.value })}
+              required
+            />
+          </div>
+        </div>
 
-  {/* Submit Button */}
-  <button
-    type="submit"
-    className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition"
-  >
-    Send Notification
-  </button>
-</form>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Attach File</label>
+            <input
+              type="file"
+              accept=".pdf,.doc,.docx,.jpg,.png"
+              onChange={(e) => setFile(e.target.files[0])}
+              className="block w-full text-sm file:py-2 file:px-4 file:rounded-lg file:bg-gray-100 file:text-blue-600 file:font-medium"
+            />
+          </div>
 
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Your Employee ID</label>
+            <input
+              type="text"
+              value={formData.employee_id}
+              readOnly
+              className="w-full border bg-gray-100 text-gray-600 p-2 rounded-lg cursor-not-allowed"
+            />
+          </div>
+        </div>
 
-      
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700"
+        >
+          Send Notification
+        </button>
+      </form>
+
+      {/* Sent Notifications List */}
+      <div>
+        <h3 className="text-xl font-semibold text-gray-800 mb-4">Previous Notifications</h3>
+        {notifications.length === 0 ? (
+          <p className="text-gray-500">No notifications sent yet.</p>
+        ) : (
+          <div className="space-y-4">
+            {notifications.map((notif) => (
+              <div
+                key={notif._id}
+                className="p-4 border border-gray-200 rounded-lg shadow-sm bg-white hover:shadow-md transition"
+              >
+                <div className="flex justify-between">
+                  <div className="space-y-2">
+                    <p className="font-medium text-gray-800 whitespace-pre-line">{notif.message}</p>
+                    <div className="text-sm text-gray-600 flex flex-wrap gap-4">
+                      <span>Branch: {notif.target_branch}</span>
+                      <span>Section: {notif.target_section}</span>
+                      <span>Semester: {notif.target_semester}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <Clock size={14} />
+                      <span>Expiry: {new Date(notif.expiry_time).toLocaleString()}</span>
+                    </div>
+                    {notif.file_url && (
+                      <a
+                        href={notif.file_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-blue-600 text-sm font-medium hover:underline"
+                      >
+                        <FileText size={16} />
+                        View Attachment
+                      </a>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => handleDelete(notif._id)}
+                    className="text-red-600 hover:text-red-800 text-sm font-semibold flex items-center gap-1"
+                  >
+                    <Trash2 size={16} />
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
