@@ -314,7 +314,8 @@ export default function StudentDashboard() {
         )}
         {otpError && <p className="text-red-600">{otpError}</p>}
         {message && (
-          <p className={`text-sm ${message.startsWith('✅') ? 'text-green-700' : 'text-red-600'}`}>
+          // <p className={`text-sm ${message.startsWith('✅') ? 'text-green-700' : 'text-red-600'}`}>
+            <p className={`text-sm ${message.startsWith('') ? 'text-green-700' : 'text-red-600'}`}></p>
             {message}
           </p>
         )}
