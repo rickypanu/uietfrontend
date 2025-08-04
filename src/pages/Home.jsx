@@ -4,8 +4,9 @@ import { CheckCircle } from "lucide-react";
 
 export default function Home() {
   return (
+    // <div className="flex flex-col min-h-screen bg-gradient-to-br from-green-200 via-green-100 to-green-300">
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-green-200 via-green-100 to-green-300">
-      
+  
       {/* Hero Heading */}
       <header className="text-center px-4 pt-8 sm:pt-12 pb-4 sm:pb-6">
         <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold text-gray-800 drop-shadow-xl leading-tight">
