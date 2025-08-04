@@ -305,13 +305,13 @@ export default function StudentDashboard() {
 
         {otpPasteMessage && <p className="text-yellow-700 text-sm">{otpPasteMessage}</p>}
 
-        {otpInfo && (
+        {/* {otpInfo && (
           <div className="bg-green-50 border border-green-200 rounded p-3 text-sm text-gray-700">
             <p>OTP is for subject: <b>{otpInfo.subject}</b></p>
             <p>Active from: {new Date(otpInfo.start_time).toLocaleString()}</p>
             <p>Until: {new Date(otpInfo.end_time).toLocaleString()}</p>
           </div>
-        )}
+        )} */}
         {otpError && <p className="text-red-600">{otpError}</p>}
         {message && (
           // <p className={`text-sm ${message.startsWith('✅') ? 'text-green-700' : 'text-red-600'}`}>
