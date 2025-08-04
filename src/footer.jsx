@@ -3,7 +3,8 @@ import { Mail, MapPin, Landmark, Copyright } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="bg-blue-900 text-white py-4">
+    // <footer className="bg-blue-900 text-white py-4">
+    <footer className="bg-blue-900 text-white py-4 px-4 mt-auto w-full">
       <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row sm:justify-between items-center text-sm gap-2 sm:gap-4 text-center sm:text-left">
 
         {/* Left: Links */}
