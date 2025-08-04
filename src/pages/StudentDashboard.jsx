@@ -131,15 +131,25 @@ export default function StudentDashboard() {
     }
     setLoading(true);
     try {
-      const visitorId = await getFingerprint(); // get device fingerprint
+      const visitorId = await getFingerprint(); // get device fingerprint'
       const position = await new Promise((resolve, reject) =>
-      navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 })
-    );
-    const lat = position.coords.latitude;
-    const lng = position.coords.longitude;
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
+        })
+      );
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+
+    //   const position = await new Promise((resolve, reject) =>
+    //   navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 })
+    // );
+    // const lat = position.coords.latitude;
+    // const lng = position.coords.longitude;
 
       await markAttendance(roll_no, subject, otp, visitorId, lat, lng);
-      setMessage("✅ Attendance marked successfully!");
+      setMessage("Attendance marked successfully!");
       setOtp("");
       setSubject("");
       loadAttendance(filterSubject, filterDate);
