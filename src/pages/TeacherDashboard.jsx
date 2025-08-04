@@ -262,7 +262,7 @@ const loadOtps = async () => {
             }
 
             setMessage(
-              `✅ OTP Generated: ${data.otp} (valid till: ${new Date(
+              ` OTP Generated: ${data.otp} (valid till: ${new Date(
                 data.valid_till
               ).toLocaleString()})`
             );
