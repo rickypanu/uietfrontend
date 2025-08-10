@@ -21,7 +21,6 @@ import Papa from "papaparse";
 import TeacherSidebar from "../components/TeacherSidebar";
 import { Outlet } from "react-router-dom";
 import { SUBJECTS } from "../constants/subjects";
-import TeacherAttendanceSummary from "../components/TeacherAttendanceSummary";
 
 
 export default function TeacherDashboard() {
@@ -503,88 +502,105 @@ const loadOtps = async () => {
     {todaysOtp.length === 0 ? (
       <p className="text-gray-500 text-sm">No OTPs generated yet</p>
     ) : (
-      todaysOtp.map((otpItem, index) => (
-        <li
-          key={index}
-          onClick={() => setSelectedOtp(otpItem.otp)}
-          className={`cursor-pointer px-2 py-1 rounded-md text-sm ${
-            selectedOtp === otpItem.otp
-              ? "bg-purple-100 text-purple-800 font-semibold"
-              : "bg-gray-100 text-gray-700"
-          }`}
-        >
-          {otpItem.otp} - {otpItem.subject}
-        </li>
-      ))
+      todaysOtp
+        .sort((a, b) => new Date(b.start_time) - new Date(a.start_time)) // latest first
+        .map((otpItem, index) => {
+          const formattedTime = otpItem.start_time
+            ? new Date(otpItem.start_time).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true
+              })
+            : "No Time";
+
+          return (
+            <li
+              key={index}
+              onClick={() => setSelectedOtp(otpItem.otp)}
+              className={`cursor-pointer px-2 py-1 rounded-md text-sm ${
+                selectedOtp === otpItem.otp
+                  ? "bg-purple-100 text-purple-800 font-semibold"
+                  : "bg-gray-100 text-gray-700"
+              }`}
+            >
+              <div className="flex justify-between items-center">
+                <span>{otpItem.otp} - {otpItem.subject}</span>
+                <span className="text-xs text-gray-500">{formattedTime}</span>
+              </div>
+            </li>
+          );
+        })
     )}
   </ul>
 </div>
 
 
+
     {/* box 3 */}
       
-  <div className="bg-white rounded-lg shadow-md p-4 text-center">
-      <h2 className="text-xl font-semibold text-gray-700">Students Marked</h2>
-      {selectedOtp ? (
-        <>
-          <p className="text-4xl font-bold text-purple-600 mt-2">
-            {
-              attendanceList.filter((record) => record.otp === selectedOtp).length
-            }
-          </p>
-          <p className="text-gray-500 text-sm mt-1">For OTP: {selectedOtp}</p>
-        </>
-      ) : (
-        <p className="text-gray-500 text-sm mt-2">Click an OTP to see count</p>
-      )}
-    </div>
-    </div>
+      <div className="bg-white rounded-lg shadow-md p-4 text-center">
+          <h2 className="text-xl font-semibold text-gray-700">Students Marked</h2>
+          {selectedOtp ? (
+            <>
+              <p className="text-4xl font-bold text-purple-600 mt-2">
+                {
+                  attendanceList.filter((record) => record.otp === selectedOtp).length
+                }
+              </p>
+              <p className="text-gray-500 text-sm mt-1">For OTP: {selectedOtp}</p>
+            </>
+          ) : (
+            <p className="text-gray-500 text-sm mt-2">Click an OTP to see count</p>
+          )}
+        </div>
+        </div>
 
         {/* Box 4: Student Names for Selected OTP */}
         {selectedOtp && (
-  <div className="bg-white rounded-lg shadow-md p-4 mt-4">
-    <h2 className="text-xl font-semibold text-gray-700 flex flex-col sm:flex-row sm:items-center sm:gap-2">
-      Students for OTP: {selectedOtp}
-      <span className="text-xl text-gray-900 font-bold">
-        (
-        {
-          todaysOtp.find((otp) => otp.otp === selectedOtp)?.subject ||
-          "No Subject"
-        }
-        )
-      </span>
-    </h2>
-    <ul className="mt-4 space-y-3 max-h-40 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
-      {attendanceList.filter((record) => record.otp === selectedOtp).length > 0 ? (
-        attendanceList
-          .filter((record) => record.otp === selectedOtp)
-          .map((record, index) => (
-            <li
-              key={index}
-              className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg shadow-sm hover:bg-gray-100 transition"
-            >
-              {/* Avatar circle with initials */}
-              <div className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-500 text-white font-semibold">
-                {record.student_name
-                  ? record.student_name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")
-                      .toUpperCase()
-                  : record.roll_no[0]}
-              </div>
+          <div className="bg-white rounded-lg shadow-md p-4 mt-4">
+            <h2 className="text-xl font-semibold text-gray-700 flex flex-col sm:flex-row sm:items-center sm:gap-2">
+              Students for OTP: {selectedOtp}
+              <span className="text-xl text-gray-900 font-bold">
+                (
+                {
+                  todaysOtp.find((otp) => otp.otp === selectedOtp)?.subject ||
+                  "No Subject"
+                }
+                )
+              </span>
+            </h2>
+            <ul className="mt-4 space-y-3 max-h-40 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
+              {attendanceList.filter((record) => record.otp === selectedOtp).length > 0 ? (
+                attendanceList
+                .filter((record) => record.otp === selectedOtp)
+                .sort((a, b) => a.roll_no.localeCompare(b.roll_no, undefined, { numeric: true }))
+                .map((record, index) => ( 
+                    <li
+                      key={index}
+                      className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg shadow-sm hover:bg-gray-100 transition"
+                    >
+                      {/* Avatar circle with initials */}
+                      <div className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-500 text-white font-semibold">
+                        {record.student_name
+                          ? record.student_name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")
+                              .toUpperCase()
+                          : record.roll_no[0]}
+                      </div>
 
-              {/* Name and roll no in clean layout */}
-              <div> <p className="font-medium text-gray-800">{record.student_name}</p> </div>
-              <div> <p className="text-xs text-gray-500">{record.roll_no}</p> </div>
-            </li>
-          ))
-      ) : (
-        <p className="text-gray-500 text-sm">No students marked yet</p>
-      )}
-    </ul>
-  </div>
-)}
+                      {/* Name and roll no in clean layout */}
+                      <div> <p className=" text-2xl font-normal text-gray-800">{record.student_name}</p> </div>
+                      <div> <p className="text-xl text-gray-500">{record.roll_no}</p> </div>
+                    </li>
+                  ))
+              ) : (
+                <p className="text-gray-500 text-sm">No students marked yet</p>
+              )}
+            </ul>
+          </div>
+        )}
 
 
 
