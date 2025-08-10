@@ -542,30 +542,53 @@ const loadOtps = async () => {
 
         {/* Box 4: Student Names for Selected OTP */}
         {selectedOtp && (
-          <div className="bg-white rounded-lg shadow-md p-4 mt-4">
-            <h2 className="text-xl font-semibold text-gray-700">
-              Students for OTP: {selectedOtp}
-            </h2>
-            <ul className="mt-2 space-y-1 max-h-40 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
-              {attendanceList.filter((record) => record.otp === selectedOtp).length > 0 ? (
-                attendanceList
-                  .filter((record) => record.otp === selectedOtp)
-                  .map((record, index) => (
-                    <li
-                      key={index}
-                      className="px-3 py-1 bg-gray-100 rounded-md text-sm text-gray-800"
-                    >
-                      {record.full_name
-                        ? `${record.full_name} (${record.roll_no})`
-                        : record.roll_no}
-                    </li>
-                  ))
-              ) : (
-                <p className="text-gray-500 text-sm">No students marked yet</p>
-              )}
-            </ul>
-          </div>
-        )}
+  <div className="bg-white rounded-lg shadow-md p-4 mt-4">
+    <h2 className="text-xl font-semibold text-gray-700 flex flex-col sm:flex-row sm:items-center sm:gap-2">
+      Students for OTP: {selectedOtp}
+      <span className="text-xl text-gray-900 font-bold">
+        (
+        {
+          todaysOtp.find((otp) => otp.otp === selectedOtp)?.subject ||
+          "No Subject"
+        }
+        )
+      </span>
+    </h2>
+    <ul className="mt-4 space-y-3 max-h-40 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
+      {attendanceList.filter((record) => record.otp === selectedOtp).length > 0 ? (
+        attendanceList
+          .filter((record) => record.otp === selectedOtp)
+          .map((record, index) => (
+            <li
+              key={index}
+              className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg shadow-sm hover:bg-gray-100 transition"
+            >
+              {/* Avatar circle with initials */}
+              <div className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-500 text-white font-semibold">
+                {record.student_name
+                  ? record.student_name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")
+                      .toUpperCase()
+                  : record.roll_no[0]}
+              </div>
+
+              {/* Name and roll no in clean layout */}
+              <div> <p className="font-medium text-gray-800">{record.student_name}</p> </div>
+              <div> <p className="text-xs text-gray-500">{record.roll_no}</p> </div>
+            </li>
+          ))
+      ) : (
+        <p className="text-gray-500 text-sm">No students marked yet</p>
+      )}
+    </ul>
+  </div>
+)}
+
+
+
+
 
         {/* Filters + Export */}
         <div className="bg-white shadow-sm rounded-lg p-5 space-y-4 mt-6">
