@@ -334,7 +334,6 @@ const loadOtps = async () => {
 
     
         {/* OTP Generator */}
-        {/* <div className="bg-white shadow-sm rounded-lg p-5"> */}
         <div className="bg-white shadow-sm rounded-lg p-5 mt-6">
 
           <SectionTitle icon={KeyRound} title="Generate OTP for Class" />
@@ -344,17 +343,20 @@ const loadOtps = async () => {
             </p>
           )} */}
 
-          <form onSubmit={handleGenerateOtp} className="flex flex-col md:flex-row md:items-center gap-4">
+          <form onSubmit={handleGenerateOtp} className="flex flex-col sm:flex-col md:flex-row md:items-center gap-3 w-full">
+           {/* <div className="flex flex-col sm:flex-row gap-3 w-full"> */}
           {/* Course Dropdown */}
             <select
               value={course}
+              
               onChange={(e) => {
                 setCourse(e.target.value);
                 setBranch("");
                 setSemester("");
                 setSubject("");
               }}
-              className="p-2 border rounded-md w-full"
+              // className="p-2 border rounded-md w-full"
+              className="p-2 border rounded-md w-full sm:w-1/2 md:w-auto" 
               required
             >
               <option value="">Select Course</option>
@@ -371,7 +373,8 @@ const loadOtps = async () => {
                 setSemester("");
                 setSubject("");
               }}
-              className="p-2 border rounded-md w-full md:w-1/4"
+              // className="p-2 border rounded-md w-full md:w-1/4"
+              className="p-2 border rounded-md w-full sm:w-1/2 md:w-auto" 
               required
             >
               <option value="">Select Branch</option>
@@ -379,7 +382,7 @@ const loadOtps = async () => {
                 <option key={b} value={b}>{b}</option>
               ))}
             </select>
-
+            {/* </div> */}
             {/* Semester Dropdown */}
             <select
               value={semester}
@@ -656,58 +659,10 @@ const loadOtps = async () => {
 
        </div>
 
-       {/* <div className="grid gap-4 mt-4">
-  {attendanceList.length > 0 ? (
-    attendanceList
-      .filter((a) => {
-        if (filterDate) {
-          const date = new Date(a.marked_at).toISOString().split("T")[0];
-          return date === filterDate;
-        }
-        if (filterMonth) {
-          const month = new Date(a.marked_at).toISOString().slice(0, 7);
-          return month === filterMonth;
-        }
-        return true;
-      })
-      .sort((a, b) => new Date(b.marked_at) - new Date(a.marked_at))
-      .map((a, idx) => (
-        <div
-          key={idx}
-          className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition p-5"
-        >
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-            {/* Left side */}
-            {/* <div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-1">
-                Roll No: {a.roll_no}
-              </h3>
-              <p className="text-sm text-gray-500">
-                Marked At:{" "}
-                <span className="text-gray-700">
-                  {new Date(a.marked_at).toLocaleString()}
-                </span>
-              </p>
-            </div> */}
-
-            {/* Right side */}
-            {/* <div className="text-sm sm:text-base font-medium text-gray-700 flex items-center gap-2">
-              <span className="border border-gray-300 rounded-full px-3 py-1">
-                {a.subject.toUpperCase()}
-              </span>
-            </div>
-          </div>
-        </div>
-      ))
-  ) : (
-    <div className="text-center py-6 text-gray-500">
-      No attendance records yet
-    </div>
-  )}
-</div> */} 
 
 <div className="overflow-auto mt-4 rounded-lg border border-gray-200">
-  <table className="w-full text-sm text-gray-800">
+  {/* <table className="w-full text-sm text-gray-800"> */}
+    <table className="min-w-full text-sm">
     <thead>
       <tr className="bg-gray-100 text-gray-700">
         <th className="px-4 py-3 text-left">Roll No</th>
@@ -768,52 +723,6 @@ const loadOtps = async () => {
     </tbody>
   </table>
 </div>
-
-
-
-        {/* <div className="overflow-auto">
-          <table className="w-full text-sm border">
-            <thead>
-              <tr className="bg-gray-100 text-gray-700">
-                <th className="border px-3 py-2 text-left">Roll No</th>
-                <th className="border px-3 py-2 text-left">Subject</th>
-                <th className="border px-3 py-2 text-left">Marked At</th>
-              </tr>
-            </thead>
-            <tbody>
-              {attendanceList.length > 0 ? (
-                attendanceList
-                  .filter((a) => {
-                    if (filterDate) {
-                      const date = new Date(a.marked_at).toISOString().split("T")[0];
-                      return date === filterDate;
-                    }
-                    if (filterMonth) {
-                      const month = new Date(a.marked_at).toISOString().slice(0, 7);
-                      return month === filterMonth;
-                    }
-                    return true;
-                  })
-                  .sort((a, b) => new Date(b.marked_at) - new Date(a.marked_at)) // Newest first
-                  .map((a, idx) => (
-                    <tr key={idx} className="hover:bg-gray-50">
-                      <td className="border px-3 py-2">{a.roll_no}</td>
-                      <td className="border px-3 py-2">{a.subject}</td>
-                      <td className="border px-3 py-2">
-                        {new Date(a.marked_at).toLocaleString()}
-                      </td>
-                    </tr>
-                  ))
-              ) : (
-                <tr>
-                  <td colSpan="3" className="text-center py-3 text-gray-500">
-                    No attendance records yet
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div> */}
       </div>
       </div>
     </div>
