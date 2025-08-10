@@ -21,6 +21,7 @@ import Papa from "papaparse";
 import TeacherSidebar from "../components/TeacherSidebar";
 import { Outlet } from "react-router-dom";
 import { SUBJECTS } from "../constants/subjects";
+import TeacherAttendanceSummary from "../components/TeacherAttendanceSummary";
 
 
 export default function TeacherDashboard() {
@@ -135,66 +136,6 @@ const loadOtps = async () => {
   };
 
 
-//   const handleGenerateOtp = async (e) => {
-//   e.preventDefault();
-//   if (!branch || !semester || !subject) {
-//     setMessage("❌ Please select branch, semester, and subject.");
-//     return;
-//   }
-
-//   setLoading(true); // this will trigger a render and show "Generating..."
-
-//   try {
-//     navigator.geolocation.getCurrentPosition(
-//       async (position) => {
-//         try {
-//           const lat = position.coords.latitude;
-//           const lng = position.coords.longitude;
-
-//           const data = await generateOtp(employeeId, course, branch, semester, subject, duration, lat, lng);
-
-//           const newOtp = {
-//             otp: data.otp,
-//             subject: data.subject,
-//             end_time: data.valid_till,
-//           };
-
-//           setOtpList((prev) =>
-//             [newOtp, ...prev]
-//               .filter((item) => new Date(item.end_time) > new Date())
-//               .sort((a, b) => new Date(b.end_time) - new Date(a.end_time))
-//           );
-
-//           const validTill = new Date(data.valid_till).getTime();
-//           const now = Date.now();
-//           const timeout = validTill - now;
-
-//           if (timeout > 0) {
-//             setTimeout(() => {
-//               setOtpList((prev) => prev.filter((item) => item.otp !== newOtp.otp));
-//             }, timeout);
-//           }
-
-//           setMessage(`OTP Generated: ${data.otp} (valid till: ${new Date(data.valid_till).toLocaleString()})`);
-//         } catch (error) {
-//           console.error("Generate OTP error:", error);
-//           setMessage(error.response?.data?.detail || "❌ Failed to generate OTP");
-//         } finally {
-//           setLoading(false); // ensure loading is turned off inside the success path
-//         }
-//       },
-//       (error) => {
-//         console.error("Geolocation error:", error);
-//         setMessage("❌ Failed to get location. Allow location permission and try again.");
-//         setLoading(false); // also turn off loading on geolocation failure
-//       }
-//     );
-//   } catch (err) {
-//     console.error("Unexpected error:", err);
-//     setMessage("❌ Something went wrong.");
-//     setLoading(false); // ✅ fallback
-//   }
-// };
 
     const handleGenerateOtp = async (e) => {
   e.preventDefault();
@@ -599,6 +540,32 @@ const loadOtps = async () => {
     </div>
     </div>
 
+        {/* Box 4: Student Names for Selected OTP */}
+        {selectedOtp && (
+          <div className="bg-white rounded-lg shadow-md p-4 mt-4">
+            <h2 className="text-xl font-semibold text-gray-700">
+              Students for OTP: {selectedOtp}
+            </h2>
+            <ul className="mt-2 space-y-1 max-h-40 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
+              {attendanceList.filter((record) => record.otp === selectedOtp).length > 0 ? (
+                attendanceList
+                  .filter((record) => record.otp === selectedOtp)
+                  .map((record, index) => (
+                    <li
+                      key={index}
+                      className="px-3 py-1 bg-gray-100 rounded-md text-sm text-gray-800"
+                    >
+                      {record.full_name
+                        ? `${record.full_name} (${record.roll_no})`
+                        : record.roll_no}
+                    </li>
+                  ))
+              ) : (
+                <p className="text-gray-500 text-sm">No students marked yet</p>
+              )}
+            </ul>
+          </div>
+        )}
 
         {/* Filters + Export */}
         <div className="bg-white shadow-sm rounded-lg p-5 space-y-4 mt-6">
