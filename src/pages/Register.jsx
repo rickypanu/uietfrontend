@@ -265,16 +265,26 @@ export default function Register() {
               )}
 
 
-            <label className="block text-gray-700 text-sm font-medium mb-1">Subject</label>
-            <Select
-              options={SUBJECTS.map(sub => ({ value: sub, label: sub }))}
-              onChange={(selected) => setForm(prev => ({ ...prev, subject: selected.value }))}
-              value={form.subject ? { value: form.subject, label: form.subject } : null}
-              placeholder="Search or select subject"
-              isSearchable
-            />
-            {fieldErrors.subject && <p className="text-red-500 text-xs mt-1">{fieldErrors.subject}</p>}
-
+            <label className="block text-gray-700 text-sm font-medium mb-1">Branch</label>
+            <select
+              required
+              name="branch"
+              value={form.branch}
+              onChange={handleChange}
+              className="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-500 transition"
+            >
+              <option value="">Select Branch</option>
+              <option value="CSE">Computer Science Engineering (CSE)</option>
+              <option value="IT">Information Technology (IT)</option>
+              <option value="ECE">Electronics & Communication Engineering (ECE)</option>
+              <option value="EEE">Electrical & Electronics Engineering (EEE)</option>
+              <option value="MECH">Mechanical Engineering (ME)</option>
+              <option value="BioTech">BioTechnology Engineering(BioTech)</option>
+              {/* Add more branches as needed */}
+            </select>
+            {fieldErrors.course && (
+              <p className="text-red-500 text-xs mt-1">{fieldErrors.branch}</p>
+            )}
 
             <label className="block text-gray-700 text-sm font-medium mb-1">Semester</label>
             <select required name="semester" value={form.semester} onChange={handleChange}
@@ -304,7 +314,7 @@ export default function Register() {
               className="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-500 transition" />
             {fieldErrors.employee_id && <p className="text-red-500 text-xs mt-1">{fieldErrors.employee_id}</p>}
 
-            <label className="block text-gray-700 text-sm font-medium mb-1">Subject</label>
+            {/* <label className="block text-gray-700 text-sm font-medium mb-1">Subject</label>
             <select required name="subject" value={form.subject} onChange={handleChange}
               className="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-500 transition">
               <option value="">Select Subject</option>
@@ -316,7 +326,17 @@ export default function Register() {
               <option>VLSI</option>
               <option>Power Electronics</option>
             </select>
+            {fieldErrors.subject && <p className="text-red-500 text-xs mt-1">{fieldErrors.subject}</p>} */}
+            <label className="block text-gray-700 text-sm font-medium mb-1">Subject</label>
+            <Select
+              options={SUBJECTS.map(sub => ({ value: sub, label: sub }))}
+              onChange={(selected) => setForm(prev => ({ ...prev, subject: selected.value }))}
+              value={form.subject ? { value: form.subject, label: form.subject } : null}
+              placeholder="Search or select subject"
+              isSearchable
+            />
             {fieldErrors.subject && <p className="text-red-500 text-xs mt-1">{fieldErrors.subject}</p>}
+
           </>
         )}
 
@@ -357,4 +377,4 @@ export default function Register() {
   </div>
 );
 
-}
+} 
