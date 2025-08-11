@@ -323,91 +323,84 @@ export default function TeacherDashboard() {
 
       {/* Content */}
       <div className="flex-1 p-4 sm:ml-2">
-        {/* Top header */}
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <ShieldCheck className="w-7 h-7 text-blue-600" />
-            <div>
-              <h1 className="text-2xl font-semibold text-gray-800">Teacher Dashboard</h1>
-              <p className="text-sm text-gray-500">Welcome back{profile?.full_name ? `, ${profile.full_name.split(" ")[0]}` : ""}!</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="hidden md:flex items-center gap-3 bg-white px-3 py-2 rounded-lg shadow-sm">
-              <Clock className="w-4 h-4 text-gray-500" />
-              <div className="text-sm text-gray-700 font-medium">{currentTime.toLocaleTimeString()}</div>
-            </div>
-
-            <button
-              onClick={() => setOtpCardOpen((s) => !s)}
-              className="hidden sm:inline-flex items-center gap-2 bg-indigo-600 text-white px-3 py-2 rounded-lg hover:bg-indigo-700 transition"
-            >
-              <Plus className="w-4 h-4" />
-              Quick OTP
-            </button>
-
-            <div className="flex items-center gap-3">
-              {/* <button className="p-2 rounded-md hover:bg-gray-100 transition">
-                <Bell className="w-5 h-5 text-gray-600" />
-              </button> */}
-              <button
-                onClick={() => navigate("/teacher/send-notification")}
-                className="p-2 rounded-md hover:bg-gray-100 transition"
-                title="Notifications"
-                aria-label="Notifications"
-              >
-                <Bell className="w-5 h-5 text-gray-600" />
-              </button>
-
-              {/* <div className="flex items-center gap-2 bg-white px-2 py-1 rounded-full shadow-sm">
-                <div className="w-8 h-8 rounded-full bg-green-100 text-green-700 flex items-center justify-center font-semibold">
-                  {(profile?.full_name?.[0] || "T").toUpperCase()}
-                </div>
-                <div className="text-sm">
-                  <div className="font-medium text-gray-800">{profile?.full_name || "Loading..."}</div>
-                  <div className="text-xs text-gray-500">{employeeId}</div>
-                </div>
-              </div> */}
-
-              <div
-                onClick={() => navigate("/teacher/profile")}
-                className="flex items-center gap-2 bg-white px-2 py-1 rounded-full shadow-sm cursor-pointer hover:bg-gray-50 transition"
-                title="Go to Profile"
-              >
-                <div className="w-8 h-8 rounded-full bg-green-100 text-green-700 flex items-center justify-center font-semibold">
-                  {(profile?.full_name?.[0] || "T").toUpperCase()}
-                </div>
-                <div className="text-sm">
-                  <div className="font-medium text-gray-800">{profile?.full_name || "Loading..."}</div>
-                  <div className="text-xs text-gray-500">{employeeId}</div>
-                </div>
-              </div>
-
-              <div
-                onClick={() => navigate("/teacher/about")}
-                className="flex items-center gap-2 bg-white px-2 py-1 rounded-full shadow-sm cursor-pointer hover:bg-gray-50 transition"
-                title="Learn How to Use"
-              >
-                <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center">
-                  <Info className="w-5 h-5" />
-                </div>
-                <div className="text-sm">
-                  <div className="font-medium text-gray-800">How to Use</div>
-                  <div className="text-xs text-gray-500">Guide & Tips</div>
-                </div>
-              </div>
-
-              <button
-                onClick={handleLogout}
-                className="hidden md:inline-flex items-center gap-2 bg-rose-500 text-white px-3 py-2 rounded-lg hover:bg-rose-600 transition"
-              >
-                <LogOut className="w-4 h-4" />
-                Logout
-              </button>
-            </div>
+      <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+        {/* Left Section */}
+        <div className="flex items-center gap-3">
+          <ShieldCheck className="w-7 h-7 text-blue-600" />
+          <div>
+            <h1 className="text-lg sm:text-2xl font-semibold text-gray-800">Teacher Dashboard</h1>
+            <p className="text-xs sm:text-sm text-gray-500">
+              Welcome back{profile?.full_name ? `, ${profile.full_name.split(" ")[0]}` : ""}!
+            </p>
           </div>
         </div>
+
+        {/* Right Section */}
+        <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+          {/* Time (hidden on very small screens) */}
+          <div className="hidden sm:flex items-center gap-2 bg-white px-2 py-1 rounded-lg shadow-sm text-xs sm:text-sm">
+            <Clock className="w-4 h-4 text-gray-500" />
+            {currentTime.toLocaleTimeString()}
+          </div>
+
+          {/* Quick OTP (hidden on mobile) */}
+          <button
+            onClick={() => setOtpCardOpen((s) => !s)}
+            className="hidden sm:inline-flex items-center gap-1 bg-indigo-600 text-white px-2 sm:px-3 py-1.5 rounded-lg hover:bg-indigo-700 transition text-xs sm:text-sm"
+          >
+            <Plus className="w-4 h-4" />
+            Quick OTP
+          </button>
+
+          {/* Notification Icon */}
+          <button
+            onClick={() => navigate("/teacher/send-notification")}
+            className="p-2 rounded-md hover:bg-gray-100 transition"
+            title="Notifications"
+          >
+            <Bell className="w-5 h-5 text-gray-600" />
+          </button>
+
+          {/* Profile */}
+          <div
+            onClick={() => navigate("/teacher/profile")}
+            className="flex items-center gap-1 sm:gap-2 bg-white px-2 py-1 rounded-full shadow-sm cursor-pointer hover:bg-gray-50 transition"
+          >
+            <div className="w-8 h-8 rounded-full bg-green-100 text-green-700 flex items-center justify-center font-semibold">
+              {(profile?.full_name?.[0] || "T").toUpperCase()}
+            </div>
+            <div className="hidden sm:block text-sm">
+              <div className="font-medium text-gray-800">{profile?.full_name || "Loading..."}</div>
+              <div className="text-xs text-gray-500">{employeeId}</div>
+            </div>
+          </div>
+
+          {/* How to Use */}
+          <div
+            onClick={() => navigate("/teacher/about")}
+            className="flex items-center gap-1 sm:gap-2 bg-white px-2 py-1 rounded-full shadow-sm cursor-pointer hover:bg-gray-50 transition"
+          >
+            <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center">
+              <Info className="w-5 h-5" />
+            </div>
+            <div className="hidden sm:block text-sm">
+              <div className="font-medium text-gray-800">How to Use</div>
+              <div className="text-xs text-gray-500">Guide & Tips</div>
+            </div>
+          </div>
+
+          {/* Logout - visible on all devices */}
+          <button
+            onClick={handleLogout}
+            className="inline-flex items-center gap-1 sm:gap-2 bg-rose-500 text-white px-2 sm:px-3 py-1.5 rounded-lg hover:bg-rose-600 transition text-xs sm:text-sm"
+          >
+            <LogOut className="w-4 h-4" />
+            <span className="hidden sm:inline">Logout</span>
+          </button>
+        </div>
+      </div>
+
+
 
         {/* Page content container */}
         <div className="max-w-7xl mx-auto mt-6 space-y-6">
