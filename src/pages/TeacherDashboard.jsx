@@ -5,7 +5,7 @@ import {
   getAttendance,
   getGeneratedOtps,
 } from "../services/api";
-import { useNavigate, Outlet } from "react-router-dom";
+import { NavLink,useNavigate, Outlet } from "react-router-dom";
 import api from "../services/api";
 import {
   LogOut,
@@ -22,6 +22,17 @@ import {
   ChevronsDown,
   ChevronsUp,
 } from "lucide-react";
+import {
+  UserCircle,
+  Info,
+  CalendarCheck,
+  GraduationCap,
+  Menu,
+  ChevronLeft,
+  ChevronRight,
+  Megaphone,
+} from "lucide-react";
+
 import Papa from "papaparse";
 import TeacherSidebar from "../components/TeacherSidebar";
 import { SUBJECTS } from "../constants/subjects";
@@ -304,11 +315,17 @@ export default function TeacherDashboard() {
     </div>
   );
 
+  const navLinks = [
+    { to: "/teacher/profile", icon: <UserCircle className="w-5 h-5" />, label: "Profile" },
+    { to: "/teacher/about", icon: <Info className="w-5 h-5" />, label: "How to Use" },
+    { to: "/teacher/send-notification", icon: <Megaphone className="w-5 h-5" />, label: "Send Notification" },
+    { to: "/teacher", icon: <CalendarCheck className="w-5 h-5" />, label: "Dashboard" },
+  ];
   // --- render ---
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
-      <TeacherSidebar profile={profile} />
+      {/* <TeacherSidebar profile={profile} /> */}
 
       {/* Content */}
       <div className="flex-1 p-4 sm:ml-2">
@@ -337,17 +354,53 @@ export default function TeacherDashboard() {
             </button>
 
             <div className="flex items-center gap-3">
-              <button className="p-2 rounded-md hover:bg-gray-100 transition">
+              {/* <button className="p-2 rounded-md hover:bg-gray-100 transition">
+                <Bell className="w-5 h-5 text-gray-600" />
+              </button> */}
+              <button
+                onClick={() => navigate("/teacher/send-notification")}
+                className="p-2 rounded-md hover:bg-gray-100 transition"
+                title="Notifications"
+                aria-label="Notifications"
+              >
                 <Bell className="w-5 h-5 text-gray-600" />
               </button>
 
-              <div className="flex items-center gap-2 bg-white px-2 py-1 rounded-full shadow-sm">
+              {/* <div className="flex items-center gap-2 bg-white px-2 py-1 rounded-full shadow-sm">
                 <div className="w-8 h-8 rounded-full bg-green-100 text-green-700 flex items-center justify-center font-semibold">
                   {(profile?.full_name?.[0] || "T").toUpperCase()}
                 </div>
                 <div className="text-sm">
                   <div className="font-medium text-gray-800">{profile?.full_name || "Loading..."}</div>
                   <div className="text-xs text-gray-500">{employeeId}</div>
+                </div>
+              </div> */}
+
+              <div
+                onClick={() => navigate("/teacher/profile")}
+                className="flex items-center gap-2 bg-white px-2 py-1 rounded-full shadow-sm cursor-pointer hover:bg-gray-50 transition"
+                title="Go to Profile"
+              >
+                <div className="w-8 h-8 rounded-full bg-green-100 text-green-700 flex items-center justify-center font-semibold">
+                  {(profile?.full_name?.[0] || "T").toUpperCase()}
+                </div>
+                <div className="text-sm">
+                  <div className="font-medium text-gray-800">{profile?.full_name || "Loading..."}</div>
+                  <div className="text-xs text-gray-500">{employeeId}</div>
+                </div>
+              </div>
+
+              <div
+                onClick={() => navigate("/teacher/about")}
+                className="flex items-center gap-2 bg-white px-2 py-1 rounded-full shadow-sm cursor-pointer hover:bg-gray-50 transition"
+                title="Learn How to Use"
+              >
+                <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center">
+                  <Info className="w-5 h-5" />
+                </div>
+                <div className="text-sm">
+                  <div className="font-medium text-gray-800">How to Use</div>
+                  <div className="text-xs text-gray-500">Guide & Tips</div>
                 </div>
               </div>
 
