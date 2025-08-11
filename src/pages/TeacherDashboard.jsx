@@ -315,12 +315,6 @@ export default function TeacherDashboard() {
     </div>
   );
 
-  const navLinks = [
-    { to: "/teacher/profile", icon: <UserCircle className="w-5 h-5" />, label: "Profile" },
-    { to: "/teacher/about", icon: <Info className="w-5 h-5" />, label: "How to Use" },
-    { to: "/teacher/send-notification", icon: <Megaphone className="w-5 h-5" />, label: "Send Notification" },
-    { to: "/teacher", icon: <CalendarCheck className="w-5 h-5" />, label: "Dashboard" },
-  ];
   // --- render ---
   return (
     <div className="flex min-h-screen bg-gray-50">
