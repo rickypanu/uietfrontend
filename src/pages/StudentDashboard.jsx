@@ -211,71 +211,68 @@ export default function StudentDashboard() {
   };
 
   return (
-  <div className="flex min-h-screen bg-gray-50">
-    {/* Sidebar */}
+  <div className="flex min-h-screen flex-col bg-gray-50">
+      {/* Sidebar */}
     {/* <Sidebar onLogout={handleLogout} /> */}
+  {/* Main Content */}
+  <div className="flex-1 w-full bg-gradient-to-b from-green-50 to-green-100 p-3 sm:p-6">
+    <div className="max-w-6xl mx-auto space-y-6 sm:space-y-8">
 
-    {/* Main Content */}
-    <div className="flex-1 min-h-screen w-full bg-gradient-to-b from-green-50 to-green-100 p-4 md:p-8">
-      <div className="max-w-6xl mx-auto space-y-8">
+      {/* Header */}
+      <header className="flex flex-wrap justify-between items-center gap-3 sticky top-0 bg-green-50/80 backdrop-blur-md p-3 sm:p-4 rounded-xl shadow z-10">
+        <h1 className="flex items-center gap-2 text-xl sm:text-2xl md:text-3xl font-bold text-green-800">
+          <GraduationCap className="w-6 h-6 sm:w-8 sm:h-8 text-green-600" />
+          Student Dashboard
+        </h1>
 
-        {/* Header */}
-        <header className="flex justify-between items-center sticky top-0 bg-green-50/80 backdrop-blur-md p-4 rounded-xl shadow z-10">
-  <h1 className="flex items-center gap-2 text-2xl md:text-3xl font-bold text-green-800">
-    <GraduationCap className="w-8 h-8 text-green-600" />
-    Student Dashboard
-  </h1>
+        <div className="flex flex-wrap gap-2">
+          {/* Buttons auto-wrap on mobile */}
+          <button
+            onClick={() => navigate("/student/profile")}
+            className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-white shadow hover:bg-green-100 transition"
+          >
+            <UserRound className="w-4 h-4 sm:w-5 sm:h-5 text-green-700" />
+          </button>
 
-  <div className="flex items-center gap-3">
-    {/* Profile */}
-    <button
-      onClick={() => navigate("/student/profile")}
-      aria-label="Profile"
-      title="View Profile"
-      className="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow hover:bg-green-100 transition"
-    >
-      <UserRound className="w-5 h-5 text-green-700" />
-    </button>
+          {/* Notifications */}
+          
+          <button
+            onClick={() => navigate("/student/notifications")}
+            aria-label="Notifications"
+            title="View Notifications"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow hover:bg-green-100 transition relative"
+          >
+            <Bell className="w-5 h-5 text-yellow-600" />
+            {unreadCount > 0 && (
+              <span className="absolute top-1 right-1 bg-red-500 text-white text-xs font-semibold rounded-full px-1.5 py-0.5 leading-none">
+                {unreadCount}
+              </span>
+            )}
+          </button>
 
-    {/* Notifications */}
-    
-    <button
-      onClick={() => navigate("/student/notifications")}
-      aria-label="Notifications"
-      title="View Notifications"
-      className="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow hover:bg-green-100 transition relative"
-    >
-      <Bell className="w-5 h-5 text-yellow-600" />
-      {unreadCount > 0 && (
-        <span className="absolute top-1 right-1 bg-red-500 text-white text-xs font-semibold rounded-full px-1.5 py-0.5 leading-none">
-          {unreadCount}
-        </span>
-      )}
-    </button>
+          {/* About */}
+          <button
+            onClick={() => navigate("/student/about")}
+            aria-label="How to Use"
+            title="How to Use"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow hover:bg-green-100 transition"
+          >
+            <HelpCircle className="w-5 h-5 text-blue-600" />
+          </button>
 
-    {/* About */}
-    <button
-      onClick={() => navigate("/student/about")}
-      aria-label="How to Use"
-      title="How to Use"
-      className="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow hover:bg-green-100 transition"
-    >
-      <HelpCircle className="w-5 h-5 text-blue-600" />
-    </button>
+          {/* Divider */}
+          <div className="w-px h-6 bg-gray-300 mx-1" />
 
-    {/* Divider */}
-    <div className="w-px h-6 bg-gray-300 mx-1" />
-
-    {/* Logout */}
-    <button
-      onClick={handleLogout}
-      title="Logout"
-      className="flex items-center gap-2 bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 shadow font-medium"
-    >
-      <LogOut className="w-4 h-4" /> Logout
-    </button>
-  </div>
-</header>
+          {/* Logout */}
+          <button
+            onClick={handleLogout}
+            title="Logout"
+            className="flex items-center gap-2 bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 shadow font-medium"
+          >
+            <LogOut className="w-4 h-4" /> Logout
+          </button>
+        </div>
+      </header>
 
 
         {/* Profile Card */}
@@ -412,14 +409,12 @@ export default function StudentDashboard() {
         </section>
 
         {/* Attendance History */}
-        <section className="bg-white rounded-2xl shadow p-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-3 flex items-center gap-2">
-            <CalendarCheck className="text-green-500 w-5 h-5" />
-            Attendance History
-          </h2>
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left border border-gray-200 rounded-lg">
+        <section className="bg-white rounded-2xl shadow p-4 sm:p-6">
+        <h2 className="text-lg sm:text-xl font-semibold mb-3 flex items-center gap-2">
+          <CalendarCheck className="text-green-500 w-5 h-5" /> Attendance History
+        </h2>
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-sm border">
               <thead className="bg-gray-100 text-gray-700 sticky top-0">
                 <tr>
                   <th className="px-4 py-3 border">Subject</th>
