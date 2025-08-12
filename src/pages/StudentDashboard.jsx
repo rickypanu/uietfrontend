@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { markAttendance, getStudentAttendance, exportStudentAttendanceCSV } from "../services/api";
+import { markAttendance, getStudentAttendance } from "../services/api";
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
-import { getFingerprint } from "../services/getFingerprint"
+import { getFingerprint } from "../services/getFingerprint";
 import Sidebar from "../components/Sidebar";
 import { SUBJECTS } from "../constants/subjects";
 import {
@@ -17,7 +17,6 @@ import {
   GraduationCap,
 } from "lucide-react";
 
-
 export default function StudentDashboard() {
   const [otp, setOtp] = useState("");
   const [subject, setSubject] = useState("");
@@ -29,35 +28,41 @@ export default function StudentDashboard() {
   const [filterSubject, setFilterSubject] = useState("");
   const [filterDate, setFilterDate] = useState("");
   const [profile, setProfile] = useState(null);
+  const [otpPasteMessage, setOtpPasteMessage] = useState("");
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const roll_no = localStorage.getItem("userId");
   const navigate = useNavigate();
-  const [otpPasteMessage, setOtpPasteMessage] = useState("");
-
-  const [showMobileSidebar, setShowMobileSidebar] = useState(false);
-
 
   useEffect(() => {
-  const userId = localStorage.getItem("userId");
-  const role = localStorage.getItem("role");
+    const userId = localStorage.getItem("userId");
+    const role = localStorage.getItem("role");
 
-  if (!userId || role !== "student") {
-    navigate("/login");
-  } else {
-    fetchProfile();
-    loadAttendance();
-  }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, []);
-
+    if (!userId || role !== "student") {
+      navigate("/login");
+    } else {
+      fetchProfile();
+      loadAttendance();
+      fetchUnreadNotifications();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const fetchProfile = async () => {
     try {
       const res = await api.get(`/student/profile/${roll_no}`);
-      console.log("PROFILE DATA FROM API:", res.data);
       setProfile(res.data);
     } catch (err) {
       console.error("Failed to fetch profile", err);
+    }
+  };
+
+  const fetchUnreadNotifications = async () => {
+    try {
+      const res = await api.get(`/student/notifications/unread/${roll_no}`);
+      setUnreadCount(res.data.count || 0);
+    } catch (err) {
+      console.error("Failed to fetch unread notifications", err);
     }
   };
 
@@ -71,26 +76,20 @@ export default function StudentDashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [otp]);
 
-    const getAvailableSubjects = () => {
+  const getAvailableSubjects = () => {
     if (!profile || !profile.branch || !profile.semester) return [];
-    console.log("PROFILE INFO ➜", profile);
-
     const course = profile.course.toUpperCase();
-    const branch = profile.branch.toUpperCase(); // e.g., "CSE"
-    const sem = String(profile.semester);         // e.g., "3"
-
-    console.log("Fetching subjects for ➜", branch, sem);
+    const branch = profile.branch.toUpperCase();
+    const sem = String(profile.semester);
     return SUBJECTS?.[course]?.[branch]?.[sem] || [];
   };
 
-
-    const checkOtp = async () => {
+  const checkOtp = async () => {
     try {
       const res = await api.get(`/student/check-otp/${otp}`);
       setOtpInfo(res.data);
       setOtpError("");
     } catch (err) {
-      console.error(err);
       setOtpInfo(null);
       setOtpError("❌ Invalid OTP or expired");
     }
@@ -113,7 +112,9 @@ export default function StudentDashboard() {
       }
       if (dateFilter) {
         data = data.filter(
-          (a) => new Date(a.marked_at).toDateString() === new Date(dateFilter).toDateString()
+          (a) =>
+            new Date(a.marked_at).toDateString() ===
+            new Date(dateFilter).toDateString()
         );
       }
       setAttendanceList(data || []);
@@ -131,22 +132,16 @@ export default function StudentDashboard() {
     }
     setLoading(true);
     try {
-      const visitorId = await getFingerprint(); // get device fingerprint'
+      const visitorId = await getFingerprint();
       const position = await new Promise((resolve, reject) =>
         navigator.geolocation.getCurrentPosition(resolve, reject, {
           enableHighAccuracy: true,
           timeout: 10000,
-          maximumAge: 0
+          maximumAge: 0,
         })
       );
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;
-
-    //   const position = await new Promise((resolve, reject) =>
-    //   navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 })
-    // );
-    // const lat = position.coords.latitude;
-    // const lng = position.coords.longitude;
 
       await markAttendance(roll_no, subject, otp, visitorId, lat, lng);
       setMessage("Attendance marked successfully!");
@@ -154,7 +149,6 @@ export default function StudentDashboard() {
       setSubject("");
       loadAttendance(filterSubject, filterDate);
     } catch (err) {
-      console.error(err);
       let detail = err.response?.data?.detail;
       if (Array.isArray(detail)) {
         detail = detail.map((d) => d.msg).join(", ");
@@ -165,50 +159,49 @@ export default function StudentDashboard() {
   };
 
   const handleExport = () => {
-  if (attendanceList.length === 0) {
-    setMessage("⚠️ No attendance data to export.");
-    return;
-  }
+    if (attendanceList.length === 0) {
+      setMessage("⚠️ No attendance data to export.");
+      return;
+    }
 
-  if (!profile) {
-    setMessage("❌ Profile not loaded yet.");
-    return;
-  }
+    if (!profile) {
+      setMessage("❌ Profile not loaded yet.");
+      return;
+    }
 
-  const metaRows = [
-    [`Name:,${profile.full_name}`],
-    [`Roll No:,${profile.roll_no || ''}`],
-    [`Department:,${profile.department || ''}`],
-    [`Course:,${profile.course || ''}`],
-    [`Branch:,${profile.branch || ''}`],
-    [`Semester:,${profile.semester || ''}`],
-    [`Section:,${profile.section || ''}`],
-    [`DOB:,${profile.dob || ''}`],
-    [], // empty row before table
-  ];
+    const metaRows = [
+      [`Name:,${profile.full_name}`],
+      [`Roll No:,${profile.roll_no || ""}`],
+      [`Department:,${profile.department || ""}`],
+      [`Course:,${profile.course || ""}`],
+      [`Branch:,${profile.branch || ""}`],
+      [`Semester:,${profile.semester || ""}`],
+      [`Section:,${profile.section || ""}`],
+      [`DOB:,${profile.dob || ""}`],
+      [],
+    ];
 
-  const headers = ["Subject", "Marked At", "Time"];
-  const dataRows = attendanceList.map((a) => [
-    a.subject,
-    new Date(a.marked_at).toLocaleString(),
-  ]);
+    const headers = ["Subject", "Marked At", "Time"];
+    const dataRows = attendanceList.map((a) => [
+      a.subject,
+      new Date(a.marked_at).toLocaleString(),
+    ]);
 
-  const csvContent =
-    "data:text/csv;charset=utf-8," +
-    [...metaRows, headers, ...dataRows].map((e) => e.join(",")).join("\n");
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      [...metaRows, headers, ...dataRows].map((e) => e.join(",")).join("\n");
 
-  const encodedUri = encodeURI(csvContent);
-  const link = document.createElement("a");
-  link.setAttribute(
-    "download",
-    `attendance_${profile.roll_no}_${new Date().toISOString()}.csv`
-  );
-  link.href = encodedUri;
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-};
-
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute(
+      "download",
+      `attendance_${profile.roll_no}_${new Date().toISOString()}.csv`
+    );
+    link.href = encodedUri;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  };
 
   const handleLogout = () => {
     localStorage.clear();
@@ -216,175 +209,207 @@ export default function StudentDashboard() {
   };
 
   return (
-   <div className="flex min-h-screen bg-gray-100">
-      {/* Sidebar */}
-      <Sidebar onLogout={handleLogout} />
+  <div className="flex min-h-screen bg-gray-50">
+    {/* Sidebar */}
+    {/* <Sidebar onLogout={handleLogout} /> */}
 
-  <div className="flex-1 min-h-screen w-full bg-gradient-to-b from-green-50 to-green-100 p-4 md:p-8">
-    <div className="max-w-5xl mx-auto space-y-6">
-      {/* Header */}
-       {/* <div className="flex justify-between items-center"> */}
-       <div className="flex justify-between items-center">
-          <h1 className="flex items-center gap-2 text-3xl font-bold text-green-800 mt-12 ml-0 md:ml-[32%]">
+    {/* Main Content */}
+    <div className="flex-1 min-h-screen w-full bg-gradient-to-b from-green-50 to-green-100 p-4 md:p-8">
+      <div className="max-w-6xl mx-auto space-y-8">
+
+        {/* Header */}
+        <header className="flex justify-between items-center sticky top-0 bg-green-50/80 backdrop-blur-md p-4 rounded-xl shadow z-10">
+          <h1 className="flex items-center gap-2 text-2xl md:text-3xl font-bold text-green-800">
             <GraduationCap className="w-8 h-8 text-green-600" />
             Student Dashboard
           </h1>
 
-        {/* <button
-            onClick={handleLogout}
-            className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 flex items-center gap-2"
-          >
-            <LogOut className="w-4 h-4" /> Logout
-        </button> */}
-      </div>
+          <div className="flex items-center gap-3">
+            {/* Profile */}
+            <button
+              onClick={() => navigate("/student/profile")}
+              aria-label="Profile"
+              className="p-2 rounded-full hover:bg-green-100 transition"
+            >
+              <UserRound className="w-6 h-6 text-green-700" />
+            </button>
 
-      {/* Profile Card */}
-      <div className="bg-white rounded-2xl shadow p-6">
-        <h2 className="text-xl font-semibold text-gray-800 mb-2 flex items-center gap-2">
-          <UserRound className="text-green-500 w-6 h-6" />
-          {/* Welcome */}
-          <span className="text-blue-700 font-semibold text-2xl">
-            {profile ? profile.full_name : "Loading..."}
-          </span>
-        </h2>
+            {/* Notifications */}
+            <button
+              onClick={() => navigate("/student/notifications")}
+              aria-label="Notifications"
+              className="relative p-2 rounded-full hover:bg-green-100 transition"
+            >
+              <AlertCircle className="w-6 h-6 text-yellow-600" />
+              {unreadCount > 0 && (
+                <span className="absolute top-1 right-1 bg-red-500 text-white text-xs rounded-full px-1">
+                  {unreadCount}
+                </span>
+              )}
+            </button>
 
-        {/* <div className="text-gray-600 flex flex-wrap gap-4 mt-2 text-sm md:text-base"> */}
-          {/* <span><b>Roll No:</b> {roll_no}</span> */}
-          {/* {profile?.department && <span>🏫 <b>Department:</b> {profile.department}</span>} */}
-          {/* {profile?.course && <span>🎓 <b>Course:</b> {profile.course}</span>} */}
-          {/* {profile?.branch && <span> <b>Branch:</b> {profile.branch}</span>}
-          {profile?.semester && <span> <b>Semester:</b> {profile.semester}</span>} */}
-          {/* {profile?.section && <span>🔖 <b>Section:</b> {profile.section}</span>} */}
-        {/* </div> */}
-      </div>
+            {/* About */}
+            <button
+              onClick={() => navigate("/student/about")}
+              aria-label="How to Use"
+              className="p-2 rounded-full hover:bg-green-100 transition"
+            >
+              <Menu className="w-6 h-6 text-blue-600" />
+            </button>
 
-      {/* Mark Attendance */}
-      <div className="bg-white rounded-2xl shadow p-6 space-y-4">
-        {/* <h2 className="text-xl font-semibold text-gray-800">Enter OTP to Mark Attendance</h2> */}
-        <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
-          <CheckCircle className="text-green-500 w-5 h-5" />
-          Enter OTP to Mark Attendance
-        </h2>
-
-        <form onSubmit={handleMarkAttendance} className="flex flex-col md:flex-row gap-3">
-          <select
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
-            className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-400"
-            required
-          >
-            <option value="" disabled>Select Subject</option>
-            {getAvailableSubjects().map((sub) => (
-              <option key={sub} value={sub}>{sub}</option>
-            ))}
-          </select>
-          
-          <input
-            type="text"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-            onPaste={(e) => {
-              e.preventDefault();
-              setOtpPasteMessage("⚠️ Pasting is disabled. Type the OTP like a real human.");
-              setTimeout(() => setOtpPasteMessage(""), 5000);
-            }}
-            placeholder="Enter OTP"
-            className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-400"
-            required
-          />
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-5 py-2 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 hover:scale-105 transition-all duration-300 text-sm font-semibold"
-        
-          >
-            {loading ? "Marking..." : "Mark Attendance"}
-          </button>
-        </form>
-
-        {otpPasteMessage && <p className="text-yellow-700 text-sm">{otpPasteMessage}</p>}
-
-        {/* {otpInfo && (
-          <div className="bg-green-50 border border-green-200 rounded p-3 text-sm text-gray-700">
-            <p>OTP is for subject: <b>{otpInfo.subject}</b></p>
-            <p>Active from: {new Date(otpInfo.start_time).toLocaleString()}</p>
-            <p>Until: {new Date(otpInfo.end_time).toLocaleString()}</p>
+            {/* Logout */}
+            <button
+              onClick={handleLogout}
+              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 flex items-center gap-2 font-medium shadow"
+            >
+              <LogOut className="w-4 h-4" /> Logout
+            </button>
           </div>
-        )} */}
-        {otpError && <p className="text-red-600">{otpError}</p>}
-        {message && (
-          // <p className={`text-sm ${message.startsWith('✅') ? 'text-green-700' : 'text-red-600'}`}>
-            <p className={`text-sm ${message.startsWith('') ? 'text-green-700' : 'text-red-600'}`}>
-            {message}
-          </p>
-        )}
-      </div>
+        </header>
 
-      {/* Filters */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-center gap-3 bg-white p-4 rounded-xl shadow-md w-full max-w-5xl mx-auto">
-        <div className="flex flex-col gap-2 m-3 ml-1 text-center">
-          <h2 className="text-lg font-semibold text-gray-700 flex items-center justify-center gap-2">
-            <Filter className="w-5 h-5 text-green-500" />
-            Filter Attendance
+        {/* Profile Card */}
+        <section className="bg-white rounded-2xl shadow p-6 flex flex-col sm:flex-row items-center gap-4">
+          <UserRound className="text-green-500 w-12 h-12 flex-shrink-0" />
+          <div>
+            <h2 className="text-2xl font-semibold text-blue-700">
+              {profile ? profile.full_name : "Loading..."}
+            </h2>
+            <p className="text-gray-500">{profile?.roll_no}</p>
+          </div>
+        </section>
+
+        {/* Mark Attendance */}
+        <section className="bg-white rounded-2xl shadow p-6 space-y-4">
+          <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
+            <CheckCircle className="text-green-500 w-5 h-5" />
+            Enter OTP to Mark Attendance
           </h2>
 
-        </div>
+          <form
+            onSubmit={handleMarkAttendance}
+            className="grid grid-cols-1 md:grid-cols-3 gap-3"
+          >
+            <select
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+              className="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400"
+              required
+            >
+              <option value="" disabled>
+                Select Subject
+              </option>
+              {getAvailableSubjects().map((sub) => (
+                <option key={sub} value={sub}>
+                  {sub}
+                </option>
+              ))}
+            </select>
 
-        {/* Subject Dropdown */}
+            <input
+              type="text"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              onPaste={(e) => {
+                e.preventDefault();
+                setOtpPasteMessage(
+                  "⚠️ Pasting is disabled. Type the OTP like a real human."
+                );
+                setTimeout(() => setOtpPasteMessage(""), 5000);
+              }}
+              placeholder="Enter OTP"
+              className={`p-2 border rounded-lg focus:ring-2 ${
+                otpError
+                  ? "border-red-400 focus:ring-red-300"
+                  : otpInfo
+                  ? "border-green-400 focus:ring-green-300"
+                  : "border-gray-300 focus:ring-green-400"
+              }`}
+              required
+            />
 
-        <select
-          value={filterSubject}
-          onChange={(e) => setFilterSubject(e.target.value)}
-          className="w-full md:w-56 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 transition-all"
-        >
-          <option value="">All Subjects</option>
-          {getAvailableSubjects().map((sub) => (
-            <option key={sub} value={sub}>{sub}</option>
-          ))}
-        </select>
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-5 py-2 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 hover:scale-105 transition-all duration-300 font-semibold"
+            >
+              {loading ? "Marking..." : "Mark Attendance"}
+            </button>
+          </form>
 
-        {/* Date Picker */}
-        <input
-          type="date"
-          value={filterDate}
-          onChange={(e) => setFilterDate(e.target.value)}
-          className="w-full md:w-44 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 transition-all"
-        />
+          {otpPasteMessage && (
+            <p className="text-yellow-700 text-sm">{otpPasteMessage}</p>
+          )}
+          {otpError && <p className="text-red-600">{otpError}</p>}
+          {message && (
+            <p
+              className={`text-sm font-medium ${
+                message.includes("success")
+                  ? "text-green-700"
+                  : "text-red-600"
+              }`}
+            >
+              {message}
+            </p>
+          )}
+        </section>
 
-        {/* Apply Filters Button */}
-        <button
-          onClick={() => loadAttendance(filterSubject, filterDate)}
-          className="w-full md:w-40 bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-xl shadow-md hover:shadow-lg transform hover:-translate-y-0.5 hover:scale-105 transition-all duration-300 text-sm font-semibold"
-        >
-           Apply
-        </button>
+        {/* Filters */}
+        <section className="bg-white rounded-2xl shadow p-6 space-y-4">
+          <h2 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
+            <Filter className="w-5 h-5 text-green-500" /> Filter Attendance
+          </h2>
 
-        {/* Reset Button */}
-        <button
-          onClick={() => {
-            setFilterSubject("");
-            setFilterDate("");
-            loadAttendance();
-          }}
-          className="w-full md:w-32 bg-gray-200 hover:bg-gray-300 text-gray-800 px-5 py-2 rounded-xl shadow hover:shadow-md transform hover:scale-105 transition-all duration-300 text-sm font-semibold"
-        >
-           Reset
-        </button>
-      </div>
+          <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+            <select
+              value={filterSubject}
+              onChange={(e) => setFilterSubject(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400"
+            >
+              <option value="">All Subjects</option>
+              {getAvailableSubjects().map((sub) => (
+                <option key={sub} value={sub}>
+                  {sub}
+                </option>
+              ))}
+            </select>
 
-      
+            <input
+              type="date"
+              value={filterDate}
+              onChange={(e) => setFilterDate(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400"
+            />
 
-      {/* Attendance History */}
-      <div className="bg-white rounded-2xl shadow p-6">
-        <h2 className="text-xl font-semibold text-gray-800 mb-3 flex items-center gap-2">
-          <CalendarCheck className="text-green-500 w-5 h-5" />
-          Attendance History
-        </h2>
-        <div className="bg-white shadow rounded-xl p-4">
+            <button
+              onClick={() => loadAttendance(filterSubject, filterDate)}
+              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow-md font-medium"
+            >
+              Apply
+            </button>
+
+            <button
+              onClick={() => {
+                setFilterSubject("");
+                setFilterDate("");
+                loadAttendance();
+              }}
+              className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg shadow-md font-medium"
+            >
+              Reset
+            </button>
+          </div>
+        </section>
+
+        {/* Attendance History */}
+        <section className="bg-white rounded-2xl shadow p-6">
+          <h2 className="text-xl font-semibold text-gray-800 mb-3 flex items-center gap-2">
+            <CalendarCheck className="text-green-500 w-5 h-5" />
+            Attendance History
+          </h2>
+
           <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left border border-gray-200 rounded-lg overflow-hidden">
-              <thead className="bg-gray-100 text-gray-700">
+            <table className="w-full text-sm text-left border border-gray-200 rounded-lg">
+              <thead className="bg-gray-100 text-gray-700 sticky top-0">
                 <tr>
                   <th className="px-4 py-3 border">Subject</th>
                   <th className="px-4 py-3 border">Date</th>
@@ -395,9 +420,6 @@ export default function StudentDashboard() {
                 {attendanceList.length > 0 ? (
                   attendanceList.map((a, idx) => {
                     const markedAt = new Date(a.marked_at);
-                    const date = markedAt.toLocaleDateString();
-                    const time = markedAt.toLocaleTimeString();
-
                     return (
                       <tr
                         key={idx}
@@ -405,15 +427,24 @@ export default function StudentDashboard() {
                           idx % 2 === 0 ? "bg-white" : "bg-gray-50"
                         } hover:bg-green-50 transition-all`}
                       >
-                        <td className="px-4 py-2 border font-medium text-gray-800">{a.subject.toUpperCase()}</td>
-                        <td className="px-4 py-2 border text-gray-700">{date}</td>
-                        <td className="px-4 py-2 border text-gray-700">{time}</td>
+                        <td className="px-4 py-2 border font-medium text-gray-800">
+                          {a.subject.toUpperCase()}
+                        </td>
+                        <td className="px-4 py-2 border text-gray-700">
+                          {markedAt.toLocaleDateString()}
+                        </td>
+                        <td className="px-4 py-2 border text-gray-700">
+                          {markedAt.toLocaleTimeString()}
+                        </td>
                       </tr>
                     );
                   })
                 ) : (
                   <tr>
-                    <td colSpan="3" className="text-center p-4 text-gray-500">
+                    <td
+                      colSpan="3"
+                      className="text-center p-4 text-gray-500"
+                    >
                       No attendance marked yet
                     </td>
                   </tr>
@@ -421,23 +452,20 @@ export default function StudentDashboard() {
               </tbody>
             </table>
           </div>
-        </div>
-      
-      </div>
 
-      {/* Export */}
-      <div className="flex justify-center mt-6">
-        <button
-            onClick={handleExport}
-            className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-5 py-2 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 hover:scale-105 transition-all duration-300 text-sm font-semibold"
-          >
-            <FileDown className="w-4 h-4" />
-            Export Attendance CSV
-          </button>
+          {/* Export Button */}
+          <div className="flex justify-end mt-4">
+            <button
+              onClick={handleExport}
+              className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-5 py-2 rounded-lg shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all font-medium"
+            >
+              <FileDown className="w-4 h-4" /> Export CSV
+            </button>
+          </div>
+        </section>
       </div>
-
     </div>
   </div>
-  </div>
 );
+
 }
