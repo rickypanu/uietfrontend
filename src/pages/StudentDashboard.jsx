@@ -26,12 +26,13 @@ export default function StudentDashboard() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [otpInfo, setOtpInfo] = useState(null);
-  const [otpError, setOtpError] = useState("");
+  // const [otpError, setOtpError] = useState("");
   const [filterSubject, setFilterSubject] = useState("");
   const [filterDate, setFilterDate] = useState("");
   const [profile, setProfile] = useState(null);
   const [otpPasteMessage, setOtpPasteMessage] = useState("");
   const [unreadCount, setUnreadCount] = useState(0);
+  const [otpError, setOtpError] = useState({ message: "", color: "" });
 
   const roll_no = localStorage.getItem("userId");
   const navigate = useNavigate();
@@ -86,16 +87,36 @@ export default function StudentDashboard() {
     return SUBJECTS?.[course]?.[branch]?.[sem] || [];
   };
 
+  // const checkOtp = async () => {
+  //   try {
+  //     const res = await api.get(`/student/check-otp/${otp}`);
+  //     setOtpInfo(res.data);
+  //     setOtpError("");
+  //   } catch (err) {
+  //     setOtpInfo(null);
+  //     setOtpError("OTP is incomplete. Fill all characters to proceed");
+
+  //   }
+  // };
   const checkOtp = async () => {
+    if (!otp || otp.trim().length !== 6) {
+      setOtpInfo(null);
+      setOtpError({ message: "OTP must be exactly 12 characters long", 
+      color: "text-blue-500" });
+      return;
+    }
+
     try {
       const res = await api.get(`/student/check-otp/${otp}`);
       setOtpInfo(res.data);
-      setOtpError("");
+      setOtpError({ message: "", color: "" });
     } catch (err) {
       setOtpInfo(null);
-      setOtpError("❌ Invalid OTP or expired");
+      setOtpError({message: "Invalid OTP. Please check and try again", 
+      color: "text-red-500" });
     }
   };
+
 
   useEffect(() => {
     if (message) {
@@ -347,7 +368,13 @@ export default function StudentDashboard() {
           {otpPasteMessage && (
             <p className="text-yellow-700 text-sm">{otpPasteMessage}</p>
           )}
-          {otpError && <p className="text-red-600">{otpError}</p>}
+          {/* {otpError && <p className="text-red-600">{otpError}</p>} */}
+          {otpError.message && (
+            <p className={`${otpError.color} text-sm mt-2`}>
+              {otpError.message}
+            </p>
+          )}
+
           {message && (
             <p
               className={`text-sm font-medium ${
