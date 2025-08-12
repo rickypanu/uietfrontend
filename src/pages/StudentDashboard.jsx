@@ -15,6 +15,8 @@ import {
   FileDown,
   Filter,
   GraduationCap,
+  Bell,
+  HelpCircle,
 } from "lucide-react";
 
 export default function StudentDashboard() {
@@ -219,53 +221,62 @@ export default function StudentDashboard() {
 
         {/* Header */}
         <header className="flex justify-between items-center sticky top-0 bg-green-50/80 backdrop-blur-md p-4 rounded-xl shadow z-10">
-          <h1 className="flex items-center gap-2 text-2xl md:text-3xl font-bold text-green-800">
-            <GraduationCap className="w-8 h-8 text-green-600" />
-            Student Dashboard
-          </h1>
+  <h1 className="flex items-center gap-2 text-2xl md:text-3xl font-bold text-green-800">
+    <GraduationCap className="w-8 h-8 text-green-600" />
+    Student Dashboard
+  </h1>
 
-          <div className="flex items-center gap-3">
-            {/* Profile */}
-            <button
-              onClick={() => navigate("/student/profile")}
-              aria-label="Profile"
-              className="p-2 rounded-full hover:bg-green-100 transition"
-            >
-              <UserRound className="w-6 h-6 text-green-700" />
-            </button>
+  <div className="flex items-center gap-3">
+    {/* Profile */}
+    <button
+      onClick={() => navigate("/student/profile")}
+      aria-label="Profile"
+      title="View Profile"
+      className="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow hover:bg-green-100 transition"
+    >
+      <UserRound className="w-5 h-5 text-green-700" />
+    </button>
 
-            {/* Notifications */}
-            <button
-              onClick={() => navigate("/student/notifications")}
-              aria-label="Notifications"
-              className="relative p-2 rounded-full hover:bg-green-100 transition"
-            >
-              <AlertCircle className="w-6 h-6 text-yellow-600" />
-              {unreadCount > 0 && (
-                <span className="absolute top-1 right-1 bg-red-500 text-white text-xs rounded-full px-1">
-                  {unreadCount}
-                </span>
-              )}
-            </button>
+    {/* Notifications */}
+    
+    <button
+      onClick={() => navigate("/student/notifications")}
+      aria-label="Notifications"
+      title="View Notifications"
+      className="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow hover:bg-green-100 transition relative"
+    >
+      <Bell className="w-5 h-5 text-yellow-600" />
+      {unreadCount > 0 && (
+        <span className="absolute top-1 right-1 bg-red-500 text-white text-xs font-semibold rounded-full px-1.5 py-0.5 leading-none">
+          {unreadCount}
+        </span>
+      )}
+    </button>
 
-            {/* About */}
-            <button
-              onClick={() => navigate("/student/about")}
-              aria-label="How to Use"
-              className="p-2 rounded-full hover:bg-green-100 transition"
-            >
-              <Menu className="w-6 h-6 text-blue-600" />
-            </button>
+    {/* About */}
+    <button
+      onClick={() => navigate("/student/about")}
+      aria-label="How to Use"
+      title="How to Use"
+      className="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow hover:bg-green-100 transition"
+    >
+      <HelpCircle className="w-5 h-5 text-blue-600" />
+    </button>
 
-            {/* Logout */}
-            <button
-              onClick={handleLogout}
-              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 flex items-center gap-2 font-medium shadow"
-            >
-              <LogOut className="w-4 h-4" /> Logout
-            </button>
-          </div>
-        </header>
+    {/* Divider */}
+    <div className="w-px h-6 bg-gray-300 mx-1" />
+
+    {/* Logout */}
+    <button
+      onClick={handleLogout}
+      title="Logout"
+      className="flex items-center gap-2 bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 shadow font-medium"
+    >
+      <LogOut className="w-4 h-4" /> Logout
+    </button>
+  </div>
+</header>
+
 
         {/* Profile Card */}
         <section className="bg-white rounded-2xl shadow p-6 flex flex-col sm:flex-row items-center gap-4">
