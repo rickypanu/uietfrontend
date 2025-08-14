@@ -179,8 +179,9 @@ export default function StudentDashboard() {
       position = await getLocation();
     } catch (err) {
       if (err.code === 1) { // PERMISSION_DENIED
+        window.location.reload();
         const retry = window.confirm(
-          "📍 Location access is required to mark attendance.\n\nPlease allow location when prompted."
+          "Location access is required to mark attendance.\n\nPlease allow location when prompted."
         );
         if (retry) {
           position = await getLocation(); // retry with high accuracy
