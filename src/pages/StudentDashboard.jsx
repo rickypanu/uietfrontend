@@ -101,7 +101,7 @@ export default function StudentDashboard() {
   const checkOtp = async () => {
     if (!otp || otp.trim().length !== 6) {
       setOtpInfo(null);
-      setOtpError({ message: "OTP must be exactly 12 characters long", 
+      setOtpError({ message: "OTP must be exactly 6 characters long", 
       color: "text-blue-500" });
       return;
     }
