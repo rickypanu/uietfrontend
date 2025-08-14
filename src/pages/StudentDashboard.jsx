@@ -148,58 +148,67 @@ export default function StudentDashboard() {
   };
 
   const handleMarkAttendance = async (e) => {
-    e.preventDefault();
-    if (!roll_no || !otp || !subject) {
-      setMessage("Please fill all fields before marking attendance.");
-      return;
-    }
-    setLoading(true);
+  e.preventDefault();
 
-    try {
-      const visitorId = await getFingerprint();
+  if (!roll_no || !otp || !subject) {
+    setMessage("Please fill all fields before marking attendance.");
+    return;
+  }
+  setLoading(true);
 
-      const getLocation = () => {
-        return new Promise((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(
-            resolve,
-            reject,
-            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-          );
-        });
-      };
+  try {
+    const visitorId = await getFingerprint();
 
-      let position;
-      try {
-        position = await getLocation();
-      } catch (err) {
-        if (err.code === 1) { // PERMISSION_DENIED
-          if (window.confirm("Location access is required to mark attendance. Please allow location access.")) {
-            position = await getLocation();
-          } else {
-            throw new Error("Location permission denied");
+    // Function to request location with high accuracy
+    const getLocation = () => {
+      return new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(
+          resolve,
+          reject,
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
           }
-        } else {
-          throw err;
-        }
-      }
+        );
+      });
+    };
 
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-
-      await markAttendance(roll_no, subject, otp, visitorId, lat, lng);
-      setMessage("Attendance marked successfully!");
-      setOtp("");
-      setSubject("");
-      loadAttendance(filterSubject, filterDate);
+    let position;
+    try {
+      position = await getLocation();
     } catch (err) {
-      let detail = err.response?.data?.detail;
-      if (Array.isArray(detail)) {
-        detail = detail.map((d) => d.msg).join(", ");
+      if (err.code === 1) { // PERMISSION_DENIED
+        const retry = window.confirm(
+          "📍 Location access is required to mark attendance.\n\nPlease allow location when prompted."
+        );
+        if (retry) {
+          position = await getLocation(); // retry with high accuracy
+        } else {
+          throw new Error("Location permission denied");
+        }
+      } else {
+        throw err;
       }
-      setMessage(detail || err.message || "Failed to mark attendance.");
     }
-    setLoading(false);
-  };
+
+    const lat = position.coords.latitude;
+    const lng = position.coords.longitude;
+
+    await markAttendance(roll_no, subject, otp, visitorId, lat, lng);
+    setMessage("Attendance marked successfully!");
+    setOtp("");
+    setSubject("");
+    loadAttendance(filterSubject, filterDate);
+  } catch (err) {
+    let detail = err.response?.data?.detail;
+    if (Array.isArray(detail)) {
+      detail = detail.map((d) => d.msg).join(", ");
+    }
+    setMessage(detail || err.message || "Failed to mark attendance.");
+  }
+  setLoading(false);
+};
 
   // const handleMarkAttendance = async (e) => {
   //   e.preventDefault();
