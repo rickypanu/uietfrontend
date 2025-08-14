@@ -349,7 +349,7 @@ export default function TeacherDashboard() {
             className="hidden sm:inline-flex items-center gap-1 bg-indigo-600 text-white px-2 sm:px-3 py-1.5 rounded-lg hover:bg-indigo-700 transition text-xs sm:text-sm"
           >
             <Plus className="w-4 h-4" />
-            Quick OTP
+            Check-In
           </button>
 
           {/* Notification Icon */}
