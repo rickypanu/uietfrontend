@@ -143,14 +143,14 @@ export default function StudentDashboard() {
       setAttendanceList(data || []);
     } catch (err) {
       console.error("Failed to load attendance", err);
-      setMessage("❌ Failed to load attendance.");
+      setMessage("Failed to load attendance.");
     }
   };
 
   const handleMarkAttendance = async (e) => {
     e.preventDefault();
     if (!roll_no || !otp || !subject) {
-      setMessage("❌ Please fill all fields before marking attendance.");
+      setMessage("Please fill all fields before marking attendance.");
       return;
     }
     setLoading(true);
@@ -176,19 +176,19 @@ export default function StudentDashboard() {
       if (Array.isArray(detail)) {
         detail = detail.map((d) => d.msg).join(", ");
       }
-      setMessage(detail || "❌ Failed to mark attendance.");
+      setMessage(detail || "Failed to mark attendance.");
     }
     setLoading(false);
   };
 
   const handleExport = () => {
     if (attendanceList.length === 0) {
-      setMessage("⚠️ No attendance data to export.");
+      setMessage("No attendance data to export.");
       return;
     }
 
     if (!profile) {
-      setMessage("❌ Profile not loaded yet.");
+      setMessage("Profile not loaded yet.");
       return;
     }
 
