@@ -154,15 +154,35 @@ export default function StudentDashboard() {
       return;
     }
     setLoading(true);
+
     try {
       const visitorId = await getFingerprint();
-      const position = await new Promise((resolve, reject) =>
-        navigator.geolocation.getCurrentPosition(resolve, reject, {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 0,
-        })
-      );
+
+      const getLocation = () => {
+        return new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(
+            resolve,
+            reject,
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+          );
+        });
+      };
+
+      let position;
+      try {
+        position = await getLocation();
+      } catch (err) {
+        if (err.code === 1) { // PERMISSION_DENIED
+          if (window.confirm("Location access is required to mark attendance. Please allow location access.")) {
+            position = await getLocation();
+          } else {
+            throw new Error("Location permission denied");
+          }
+        } else {
+          throw err;
+        }
+      }
+
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;
 
@@ -176,10 +196,44 @@ export default function StudentDashboard() {
       if (Array.isArray(detail)) {
         detail = detail.map((d) => d.msg).join(", ");
       }
-      setMessage(detail || "Failed to mark attendance.");
+      setMessage(detail || err.message || "Failed to mark attendance.");
     }
     setLoading(false);
   };
+
+  // const handleMarkAttendance = async (e) => {
+  //   e.preventDefault();
+  //   if (!roll_no || !otp || !subject) {
+  //     setMessage("Please fill all fields before marking attendance.");
+  //     return;
+  //   }
+  //   setLoading(true);
+  //   try {
+  //     const visitorId = await getFingerprint();
+  //     const position = await new Promise((resolve, reject) =>
+  //       navigator.geolocation.getCurrentPosition(resolve, reject, {
+  //         enableHighAccuracy: true,
+  //         timeout: 10000,
+  //         maximumAge: 0,
+  //       })
+  //     );
+  //     const lat = position.coords.latitude;
+  //     const lng = position.coords.longitude;
+
+  //     await markAttendance(roll_no, subject, otp, visitorId, lat, lng);
+  //     setMessage("Attendance marked successfully!");
+  //     setOtp("");
+  //     setSubject("");
+  //     loadAttendance(filterSubject, filterDate);
+  //   } catch (err) {
+  //     let detail = err.response?.data?.detail;
+  //     if (Array.isArray(detail)) {
+  //       detail = detail.map((d) => d.msg).join(", ");
+  //     }
+  //     setMessage(detail || "Failed to mark attendance.");
+  //   }
+  //   setLoading(false);
+  // };
 
   const handleExport = () => {
     if (attendanceList.length === 0) {
