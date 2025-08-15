@@ -61,10 +61,19 @@ const ProfilePage = () => {
   const handleSaveProfile = async () => {
     try {
       setUpdatingProfile(true);
+      // await api.patch(`/student/profile/update/${roll_no}`, {
+      //   semester: parseInt(editedSemester),
+      //   dob: editedDOB,
+      // });
       await api.patch(`/student/profile/update/${roll_no}`, {
-        semester: parseInt(editedSemester),
-        dob: editedDOB,
-      });
+      full_name: profile.full_name,
+      email: profile.email,
+      branch: profile.branch,
+      section: profile.section,
+      semester: parseInt(editedSemester),
+      dob: editedDOB,
+    });
+
       await fetchProfile();
       setEditMode(false);
     } catch (err) {
@@ -136,21 +145,74 @@ const ProfilePage = () => {
 
           {/* Profile Details */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-4 text-gray-800 text-[17px] w-full">
-            <div>
+            {/* <div>
               <span className="font-semibold">Name:</span> {profile.full_name}
+            </div> */}
+            <div>
+              <span className="font-semibold">Name:</span>{" "}
+              {editMode ? (
+                <input
+                  type="text"
+                  value={profile.full_name}
+                  onChange={(e) =>
+                    setProfile({ ...profile, full_name: e.target.value })
+                  }
+                  className="border border-gray-300 rounded px-2 py-1"
+                />
+              ) : (
+                profile.full_name
+              )}
             </div>
             <div>
               <span className="font-semibold">Roll Number:</span> {profile.roll_no}
             </div>
-            <div>
+            {/* <div>
               <span className="font-semibold">Email:</span> {profile.email}
+            </div> */}
+
+            <div>
+              <span className="font-semibold">Email:</span>{" "}
+              {editMode ? (
+                <input
+                  type="email"
+                  value={profile.email}
+                  onChange={(e) =>
+                    setProfile({ ...profile, email: e.target.value })
+                  }
+                  className="border border-gray-300 rounded px-2 py-1"
+                />
+              ) : (
+                profile.email
+              )}
             </div>
+
             <div>
               <span className="font-semibold">Course:</span> {profile.course}
             </div>
-            <div>
+            {/* <div>
               <span className="font-semibold">Branch:</span> {profile.branch}
+            </div> */}
+            <div>
+              <span className="font-semibold">Branch:</span>{" "}
+              {editMode ? (
+                <select
+                  value={profile.branch}
+                  onChange={(e) =>
+                    setProfile({ ...profile, branch: e.target.value })
+                  }
+                  className="border border-gray-300 rounded px-2 py-1"
+                >
+                  {["CSE", "IT", "ECE", "EEE", "MECH"].map((br) => (
+                    <option key={br} value={br}>
+                      {br}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                profile.branch
+              )}
             </div>
+
             <div>
               <span className="font-semibold">Department:</span> {profile.department}
             </div>
@@ -172,9 +234,30 @@ const ProfilePage = () => {
                 profile.semester
               )}
             </div>
-            <div>
+            {/* <div>
               <span className="font-semibold">Section:</span> {profile.section}
+            </div> */}
+            <div>
+              <span className="font-semibold">Section:</span>{" "}
+              {editMode ? (
+                <select
+                  value={profile.section}
+                  onChange={(e) =>
+                    setProfile({ ...profile, section: e.target.value })
+                  }
+                  className="border border-gray-300 rounded px-2 py-1"
+                >
+                  {["A", "B"].map((sec) => (
+                    <option key={sec} value={sec}>
+                      {sec}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                profile.section
+              )}
             </div>
+
             <div className="sm:col-span-2">
               <span className="font-semibold">Date of Birth:</span>{" "}
               {editMode ? (
