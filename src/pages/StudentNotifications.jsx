@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { XCircle, Download } from "lucide-react";
+import { XCircle, Download, Loader2 } from "lucide-react";
 import api from "../services/api";
 
 export default function StudentNotifications() {
   const [notifications, setNotifications] = useState([]);
   const [studentProfile, setStudentProfile] = useState(null);
+  const [loading, setLoading] = useState(true); // ✅ new state
   const navigate = useNavigate();
 
   const roll_no = localStorage.getItem("userId");
@@ -23,6 +24,8 @@ export default function StudentNotifications() {
         setNotifications(notifRes.data);
       } catch (err) {
         console.error("Error fetching notifications", err);
+      } finally {
+        setLoading(false); // ✅ stop loading after fetch
       }
     };
 
@@ -42,7 +45,13 @@ export default function StudentNotifications() {
         </button>
       </div>
 
-      {notifications.length === 0 ? (
+      {/* ✅ Loading state */}
+      {loading ? (
+        <div className="flex justify-center items-center py-10 text-gray-500">
+          <Loader2 className="animate-spin mr-2" size={20} />
+          Loading notifications...
+        </div>
+      ) : notifications.length === 0 ? (
         <div className="text-gray-500 bg-gray-100 p-4 rounded text-center">
           No active notifications.
         </div>
@@ -54,8 +63,9 @@ export default function StudentNotifications() {
               className="bg-white p-5 rounded-xl shadow hover:shadow-md border-l-4 border-green-500 transition"
             >
               <div className="text-sm text-gray-500 mb-1">
-                {new Date(n.timestamp).toLocaleString()} →{" "}
-                {new Date(n.expiry_time).toLocaleString()}
+                {new Date(n.timestamp).toLocaleString()}
+                {/* {new Date(n.timestamp).toLocaleString()} →{" "} */}
+                {/* {new Date(n.expiry_time).toLocaleString()} */}
               </div>
               <div className="font-semibold text-lg text-green-800 mb-1">
                 {n.teacher_name}
