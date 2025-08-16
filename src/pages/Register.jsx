@@ -29,21 +29,39 @@ export default function Register() {
   const [fieldErrors, setFieldErrors] = useState({});
   const [messageType, setMessageType] = useState(""); // 'success' | 'error'
 
+  // const handleChange = (e) => {
+  //   let { name, value } = e.target;
+
+  //   // Auto-transform fields
+  //   if (["department", "branch", "section", "employee_id"].includes(name)) {
+  //     value = value.toUpperCase();
+  //   }
+  //   if (name === "roll_no") {
+  //     value = value.replace(/\D/, ""); // digits only
+  //   }
+
+  //   setForm((prev) => ({ ...prev, [name]: value }));
+  //   setFieldErrors({});
+  //   setMessage("");
+  // };
   const handleChange = (e) => {
-    let { name, value } = e.target;
+  let { name, value } = e.target;
 
-    // Auto-transform fields
-    if (["department", "branch", "section", "employee_id"].includes(name)) {
-      value = value.toUpperCase();
-    }
-    if (name === "roll_no") {
-      value = value.replace(/\D/, ""); // digits only
-    }
+  // Auto-transform fields
+  if (["department", "branch", "section", "employee_id"].includes(name)) {
+    value = value.toUpperCase();
+  }
+  
+  if (name === "roll_no") {
+    // Remove all non-digits and limit to 6 characters
+    value = value.replace(/\D/g, "").slice(0, 6);
+  }
 
-    setForm((prev) => ({ ...prev, [name]: value }));
-    setFieldErrors({});
-    setMessage("");
-  };
+  setForm((prev) => ({ ...prev, [name]: value }));
+  setFieldErrors({});
+  setMessage("");
+};
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -103,55 +121,6 @@ export default function Register() {
         setMessage(err.response?.data?.detail || "Error during registration.");
       }
     }
-
-    // try {
-    //   if (role === "student") {
-    //     await api.post("/register/student", {
-    //       full_name: form.name,
-    //       email: form.email,
-    //       phone: form.phone,
-    //       dob: form.dob,
-    //       gender: form.gender,
-    //       address: form.address,
-    //       roll_no: form.roll_no,
-    //       department: form.department,
-    //       course: form.course,
-    //       branch: form.branch,
-    //       semester: parseInt(form.semester),
-    //       section: form.section,
-    //     });
-    //   } else {
-    //     await api.post("/register/teacher", {
-    //       full_name: form.name,
-    //       email: form.email,
-    //       phone: form.phone,
-    //       dob: form.dob,
-    //       gender: form.gender,
-    //       address: form.address,
-    //       employee_id: form.employee_id,
-    //       subject: form.subject,
-    //     });
-    //   }
-    //   setMessage("✅ Registration successful! Wait for admin approval.");
-    //   setForm({
-    //     name:"", email:"", phone:"", dob:"", gender:"", address:"",
-    //     roll_no:"", department:"",course: "", branch:"", semester:"", section:"",
-    //     employee_id:"", subject:""
-    //   });
-    // } catch (err) {
-    //   if (Array.isArray(err.response?.data?.detail)) {
-    //     const newErrors = {};
-    //     err.response.data.detail.forEach(error => {
-    //       if (error.loc && error.loc.length >= 2) {
-    //         const fieldName = error.loc[1];
-    //         newErrors[fieldName] = error.msg;
-    //       }
-    //     });
-    //     setFieldErrors(newErrors);
-    //   } else {
-    //     setMessage(err.response?.data?.detail || "❌ Error during registration.");
-    //   }
-    // }
     setLoading(false);
   };
 
@@ -237,9 +206,19 @@ export default function Register() {
         {role === "student" && (
           <>
             <label className="block text-gray-700 text-sm font-medium mb-1">Roll No</label>
-            <input required name="roll_no" value={form.roll_no} onChange={handleChange}
-              placeholder="Roll Number"
-              className="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-500 transition" />
+            <input
+                required
+                name="roll_no"
+                value={form.roll_no}
+                onChange={handleChange}
+                maxLength={6}  // Prevents more than 6 characters
+                placeholder="Roll Number"
+                className="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-500 transition"
+              />
+
+            {/* <input required name="roll_no" value={form.roll_no} onChange={handleChange}  */}
+              {/* // placeholder="Roll Number" */}
+              {/* // className="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-500 transition"  */}
             {fieldErrors.roll_no && <p className="text-red-500 text-xs mt-1">{fieldErrors.roll_no}</p>}
 
             <label className="block text-gray-700 text-sm font-medium mb-1">Department</label>
