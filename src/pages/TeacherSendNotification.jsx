@@ -110,7 +110,7 @@ export default function TeacherSendNotification() {
               required
             >
               <option value="">Select Branch</option>
-              {["CSE", "ECE", "EEE", "MECH", "CIVIL"].map((br) => (
+              {["CSE","IT", "ECE", "EEE", "MECH", "BIOTECH"].map((br) => (
                 <option key={br} value={br}>{br}</option>
               ))}
             </select>
