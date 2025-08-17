@@ -49,6 +49,8 @@ export default function TeacherDashboard() {
   const [message, setMessage] = useState("");
   const [filterDate, setFilterDate] = useState("");
   const [filterMonth, setFilterMonth] = useState("");
+  const [filterBranch, setFilterBranch] = useState("");
+  const [filterSection, setFilterSection] = useState("");
   const [profile, setProfile] = useState(null);
 
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -623,8 +625,38 @@ export default function TeacherDashboard() {
                 <label className="text-xs text-gray-600">Filter by Month</label>
                 <input type="month" value={filterMonth} onChange={(e) => setFilterMonth(e.target.value)} className="p-2 border rounded-md w-full" />
               </div>
+            
+              <div className="flex-1">
+                <label className="text-xs text-gray-600">Filter by Branch</label>
+                <select
+                  value={filterBranch}
+                  onChange={(e) => setFilterBranch(e.target.value)}
+                  className="p-2 border rounded-md w-full"
+                >
+                  <option value="">All</option>
+                  <option value="CSE">CSE</option>
+                  <option value="ECE">ECE</option>
+                  <option value="MECH">MECH</option>
+                  <option value="EEE">EEE</option>
+                </select>
+              </div>
+
+              <div className="flex-1">
+                <label className="text-xs text-gray-600">Filter by Section</label>
+                <select
+                  value={filterSection}
+                  onChange={(e) => setFilterSection(e.target.value)}
+                  className="p-2 border rounded-md w-full"
+                >
+                  <option value="">All</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                </select>
+              </div>
+
               <div className="flex gap-2">
-                <button onClick={() => { setFilterDate(""); setFilterMonth(""); }} className="px-4 py-2 rounded-md bg-gray-100 hover:bg-gray-200 transition">Clear</button>
+                <button onClick={() => { setFilterDate(""); setFilterMonth("");setFilterBranch(""); setFilterSection(""); }} className="px-4 py-2 rounded-md bg-gray-100 hover:bg-gray-200 transition">Clear</button>
                 <button onClick={handleExport} className="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 transition inline-flex items-center gap-2"><FileDown className="w-4 h-4" /> Export CSV</button>
               </div>
             </div>
@@ -655,6 +687,12 @@ export default function TeacherDashboard() {
                         if (filterMonth) {
                           const month = new Date(a.marked_at).toISOString().slice(0, 7);
                           return month === filterMonth;
+                        }
+                        if(filterBranch){
+                          return a.branch === filterBranch;
+                        }
+                        if(filterSection){
+                          return a.section == filterSection;
                         }
                         return true;
                       })
