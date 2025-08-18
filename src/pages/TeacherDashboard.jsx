@@ -253,15 +253,26 @@ export default function TeacherDashboard() {
 
   const handleExport = () => {
     const filtered = attendanceList.filter((a) => {
+      let match = true;
       if (filterDate) {
-        const date = new Date(a.marked_at).toISOString().split("T")[0];
-        return date === filterDate;
+      const date = new Date(a.marked_at).toISOString().split("T")[0];
+      match = match && date === filterDate;
+    }
+
+    if (filterMonth) {
+      const month = new Date(a.marked_at).toISOString().slice(0, 7);
+      match = match && month === filterMonth;
+    }
+      if (filterBranch) {
+        match = match && a.branch === filterBranch;
       }
-      if (filterMonth) {
-        const month = new Date(a.marked_at).toISOString().slice(0, 7);
-        return month === filterMonth;
+
+      if (filterSection) {
+        match = match && a.section === filterSection;
       }
-      return true;
+
+      return match;
+      
     });
 
     if (filtered.length === 0) {
@@ -656,7 +667,7 @@ export default function TeacherDashboard() {
               </div>
 
               <div className="flex gap-2">
-                <button onClick={() => { setFilterDate(""); setFilterMonth("");setFilterBranch(""); setFilterSection(""); }} className="px-4 py-2 rounded-md bg-gray-100 hover:bg-gray-200 transition">Clear</button>
+                <button onClick={() => { setFilterDate(""); setFilterMonth(""); setFilterBranch(""); setFilterSection(""); }} className="px-4 py-2 rounded-md bg-gray-100 hover:bg-gray-200 transition">Clear</button>
                 <button onClick={handleExport} className="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 transition inline-flex items-center gap-2"><FileDown className="w-4 h-4" /> Export CSV</button>
               </div>
             </div>
@@ -680,21 +691,27 @@ export default function TeacherDashboard() {
                   {attendanceList.length > 0 ? (
                     attendanceList
                       .filter((a) => {
+                        let match = true;
+
                         if (filterDate) {
                           const date = new Date(a.marked_at).toISOString().split("T")[0];
-                          return date === filterDate;
+                          match = match && date === filterDate;
                         }
+
                         if (filterMonth) {
                           const month = new Date(a.marked_at).toISOString().slice(0, 7);
-                          return month === filterMonth;
+                          match = match && month === filterMonth;
                         }
-                        if(filterBranch){
-                          return a.branch === filterBranch;
+
+                        if (filterBranch) {
+                          match = match && a.branch === filterBranch;
                         }
-                        if(filterSection){
-                          return a.section == filterSection;
+
+                        if (filterSection) {
+                          match = match && a.section === filterSection;
                         }
-                        return true;
+
+                        return match;
                       })
                       .sort((a, b) => new Date(b.marked_at) - new Date(a.marked_at))
                       .map((a, idx) => {
