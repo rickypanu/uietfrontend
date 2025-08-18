@@ -74,7 +74,7 @@ export default function AdminLogin() {
               <input
                 required
                 value={adminId}
-                onChange={(e) => setAdminId(e.target.value)}
+                onChange={(e) => setAdminId(e.target.valuevalue.replace(/\s+/g, ""))}
                 placeholder="Admin ID"
                 className="w-full outline-none text-gray-700 bg-transparent"
               />
@@ -119,10 +119,11 @@ export default function AdminLogin() {
               <input
                 required
                 value={otp}
-                onChange={(e) => setOtp(e.target.value)}
+                onChange={(e) => setOtp(e.target.value.replace(/\s+/g, ""))}
                 placeholder="Enter OTP"
                 className="w-full outline-none text-gray-700 bg-transparent"
               />
+
             </div>
             <button
               disabled={loading}
