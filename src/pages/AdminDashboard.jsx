@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { FaUserClock, FaUserCheck, FaUserTimes, FaDownload , FaSignOutAlt} from "react-icons/fa";
-import { Shield } from "lucide-react";
+import { Shield, Bell } from "lucide-react";
 
 
 export default function AdminDashboard() {
@@ -168,6 +168,19 @@ export default function AdminDashboard() {
           <Shield className="w-6 h-6 text-green-700" />
           <h1 className="text-3xl font-bold">Admin Dashboard</h1>
         </div>
+        <button
+            onClick={() => navigate("/admin/notifications")}
+            aria-label="Notifications"
+            title="View Notifications"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow hover:bg-green-100 transition relative"
+          >
+            <Bell className="w-5 h-5 text-yellow-600" />
+            {/* {unreadCount > 0 && (
+              <span className="absolute top-1 right-1 bg-red-500 text-white text-xs font-semibold rounded-full px-1.5 py-0.5 leading-none">
+                {unreadCount} */}
+              {/* </span> */}
+            {/* )} */}
+          </button>
         <button
           onClick={handleLogout}
           className="flex items-center bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
