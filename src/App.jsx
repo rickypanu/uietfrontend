@@ -13,6 +13,8 @@ import TeacherAbout from "./pages/TeacherAbout";
 import TeacherProfile from "./pages/TeacherProfile";
 import StudentNotifications from "./pages/StudentNotifications";
 import TeacherSendNotification from "./pages/TeacherSendNotification";
+import TeacherClassRegister from "./pages/TeacherClassRegister";
+import TeacherClasses from "./pages/TeacherClasses";
 
 export default function App() {
   const storedRole = localStorage.getItem("role");
@@ -38,6 +40,10 @@ export default function App() {
           <Route path="/teacher/profile" element={<TeacherProfile />} />
           <Route path="/teacher/about" element={<TeacherAbout />} />
           <Route path="/teacher/send-notification" element={<TeacherSendNotification />} />
+
+          <Route path="/teacher/classes" element={<TeacherClasses />} />
+          <Route path="/teacher/classes/:classId" element={<TeacherClassRegister />} />
+
              
         </Routes>
       </div>
