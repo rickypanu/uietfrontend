@@ -98,6 +98,28 @@ export default function TeacherClassRegister() {
     return { name: s.name, Present: totalPresent, Absent: totalAbsent };
   });
 
+  // Custom X-axis tick component
+const CustomizedAxisTick = ({ x, y, payload }) => {
+  const name = payload.value;
+  const words = name.split(" "); // split by space
+  return (
+    <g transform={`translate(${x},${y + 10})`}>
+      {words.map((word, index) => (
+        <text
+          key={index}
+          x={0}
+          y={index * 12} // line height
+          textAnchor="middle"
+          fill="#666"
+          fontSize={12}
+        >
+          {word}
+        </text>
+      ))}
+    </g>
+  );
+};
+
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
       {/* Header */}
@@ -252,13 +274,20 @@ export default function TeacherClassRegister() {
           <h2 className="text-xl font-bold mb-4">Student Attendance</h2>
           <BarResponsive width="100%" height={300}>
             <BarChart data={barData} margin={{ top: 10, right: 30, left: 0, bottom: 50 }}>
-              <BarXAxis 
+              {/* <BarXAxis 
                 dataKey="name" 
                 angle={-45} 
                 textAnchor="end" 
                 interval={0} 
                 height={60} 
+              /> */}
+              <BarXAxis 
+                dataKey="name" 
+                interval={0} 
+                height={50} 
+                tick={<CustomizedAxisTick />}
               />
+
               <BarYAxis />
               <BarTooltip />
               <BarLegend />
@@ -268,8 +297,6 @@ export default function TeacherClassRegister() {
           </BarResponsive>
         </div>
       </div>
-
-      
     </div>
   );
 }
