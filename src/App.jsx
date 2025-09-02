@@ -15,6 +15,7 @@ import StudentNotifications from "./pages/StudentNotifications";
 import TeacherSendNotification from "./pages/TeacherSendNotification";
 import TeacherClassRegister from "./pages/TeacherClassRegister";
 import TeacherClasses from "./pages/TeacherClasses";
+import AdminSendNotification from "./pages/AdminSendNotification";
 
 export default function App() {
   const storedRole = localStorage.getItem("role");
@@ -28,6 +29,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/notifications" element={<AdminSendNotification />} />
           
           {/* Example for student (uncomment if you add StudentDashboard) */}
           <Route path="/student"element={storedRole === "student" ? <StudentDashboard /> : <Navigate to="/login" replace />}/>
