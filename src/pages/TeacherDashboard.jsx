@@ -7,21 +7,7 @@ import {
 } from "../services/api";
 import { NavLink,useNavigate, Outlet } from "react-router-dom";
 import api from "../services/api";
-import {
-  LogOut,
-  User,
-  KeyRound,
-  ShieldCheck,
-  BookOpenText,
-  CalendarCheck2,
-  FileDown,
-  Filter,
-  Bell,
-  Clock,
-  Plus,
-  ChevronsDown,
-  ChevronsUp,
-} from "lucide-react";
+import {  LogOut,  User,  KeyRound,  ShieldCheck,  BookOpenText,  CalendarCheck2,  FileDown,  Filter,  Bell,  Clock,  Plus,  ChevronsDown,  ChevronsUp,  Layers,} from "lucide-react";
 import {
   UserCircle,
   Info,
@@ -351,6 +337,7 @@ export default function TeacherDashboard() {
         {/* Right Section */}
         <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
           {/* Time (hidden on very small screens) */}
+          
           <div className="hidden sm:flex items-center gap-2 bg-white px-2 py-1 rounded-lg shadow-sm text-xs sm:text-sm">
             <Clock className="w-4 h-4 text-gray-500" />
             {currentTime.toLocaleTimeString()}
@@ -365,6 +352,14 @@ export default function TeacherDashboard() {
             Check-In
           </button>
 
+          <button
+            onClick={() => navigate("/teacher/classes")}
+            className="bg-green-600 text-white px-3 sm:px-4 py-1.5 sm:py-1.5 rounded-lg shadow-md flex items-center gap-1 hover:bg-green-700 transition text-xs sm:text-sm"
+          >
+            <Layers className="w-4 h-4" />
+            Classes
+          </button>
+      
           {/* Notification Icon */}
           <button
             onClick={() => navigate("/teacher/send-notification")}
