@@ -163,31 +163,43 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-100 to-green-200 p-4 sm:p-6 space-y-8">
 
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center space-x-2">
-          <Shield className="w-6 h-6 text-green-700" />
-          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+      <div className="flex justify-between items-center mb-6">
+        {/* Left: Title */}
+        <div className="flex items-center gap-2">
+          <Shield className="w-7 h-7 text-green-700" />
+          <h1 className="text-2xl font-bold text-gray-800">Admin Dashboard</h1>
         </div>
-        <button
+
+        {/* Right: Actions */}
+        <div className="flex items-center gap-4">
+          {/* Notifications */}
+          <button
             onClick={() => navigate("/admin/notifications")}
             aria-label="Notifications"
             title="View Notifications"
-            className="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow hover:bg-green-100 transition relative"
+            className="flex items-center gap-3 px-3 py-2 rounded-lg bg-white shadow hover:bg-green-100 transition"
           >
-            <Bell className="w-5 h-5 text-yellow-600" />
-            {/* {unreadCount > 0 && (
-              <span className="absolute top-1 right-1 bg-red-500 text-white text-xs font-semibold rounded-full px-1.5 py-0.5 leading-none">
-                {unreadCount} */}
-              {/* </span> */}
-            {/* )} */}
+            {/* Bell Icon */}
+            <Bell className="w-6 h-6 text-yellow-600" />
+
+            {/* Text */}
+            <div className="hidden sm:block text-left">
+              <div className="font-medium text-gray-800">Notifications</div>
+            </div>
           </button>
-        <button
-          onClick={handleLogout}
-          className="flex items-center bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-        >
-          <FaSignOutAlt className="mr-2" /> Logout
-        </button>
+
+
+          {/* Logout */}
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 bg-red-500 text-white px-3 py-1.5 rounded-lg shadow hover:bg-red-600 transition"
+          >
+            <FaSignOutAlt className="w-4 h-4" />
+            <span className="text-sm font-medium">Logout</span>
+          </button>
+        </div>
       </div>
+
 
       {/* One block per table */}
       {[{
