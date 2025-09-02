@@ -1,3 +1,4 @@
+// src/pages/StudentNotifications.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { XCircle, Download, Loader2 } from "lucide-react";
@@ -6,7 +7,7 @@ import api from "../services/api";
 export default function StudentNotifications() {
   const [notifications, setNotifications] = useState([]);
   const [studentProfile, setStudentProfile] = useState(null);
-  const [loading, setLoading] = useState(true); // ✅ new state
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   const roll_no = localStorage.getItem("userId");
@@ -14,18 +15,20 @@ export default function StudentNotifications() {
   useEffect(() => {
     const fetchProfileAndNotifications = async () => {
       try {
+        // 1️⃣ Get student profile
         const res = await api.get(`/student/profile/${roll_no}`);
         const profileData = res.data;
         setStudentProfile(profileData);
 
+        // 2️⃣ Fetch merged notifications (teacher + admin)
         const notifRes = await api.get(
-          `/student/notifications/${profileData.branch}/${profileData.section}/${profileData.semester}`
+          `/student/notifications/${profileData.branch}/${profileData.section}/${profileData.semester}/${profileData.roll_no}`
         );
         setNotifications(notifRes.data);
       } catch (err) {
         console.error("Error fetching notifications", err);
       } finally {
-        setLoading(false); // ✅ stop loading after fetch
+        setLoading(false);
       }
     };
 
@@ -34,6 +37,7 @@ export default function StudentNotifications() {
 
   return (
     <div className="max-w-4xl mx-auto p-6">
+      {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-green-700">Notifications</h2>
         <button
@@ -45,7 +49,7 @@ export default function StudentNotifications() {
         </button>
       </div>
 
-      {/* ✅ Loading state */}
+      {/* Loading state */}
       {loading ? (
         <div className="flex justify-center items-center py-10 text-gray-500">
           <Loader2 className="animate-spin mr-2" size={20} />
@@ -62,16 +66,20 @@ export default function StudentNotifications() {
               key={idx}
               className="bg-white p-5 rounded-xl shadow hover:shadow-md border-l-4 border-green-500 transition"
             >
-              <div className="text-sm text-gray-500 mb-1">
+              {/* Timestamp */}
+              {/* <div className="text-sm text-gray-500 mb-1">
                 {new Date(n.timestamp).toLocaleString()}
-                {/* {new Date(n.timestamp).toLocaleString()} →{" "} */}
-                {/* {new Date(n.expiry_time).toLocaleString()} */}
-              </div>
+              </div> */}
+
+              {/* Source: Teacher or Admin */}
               <div className="font-semibold text-lg text-green-800 mb-1">
                 {n.teacher_name}
               </div>
+
+              {/* Message */}
               <p className="text-gray-700 mb-2">{n.message}</p>
 
+              {/* File Attachment */}
               {n.file_url && (
                 <a
                   href={`${api.defaults.baseURL}${n.file_url}`}
