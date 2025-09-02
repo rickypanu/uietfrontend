@@ -86,12 +86,22 @@ export default function Login() {
           <div>
             <label className="block text-gray-700 text-sm mb-1">Login ID</label>
             <input
+  required
+  name="username"
+  autoComplete="username"
+  defaultValue={userId}           // use defaultValue for autofill
+  onChange={(e) => setUserId(e.target.value.replace(/\s+/g, ""))}
+  placeholder={role === "student" ? "Roll Number" : "Employee ID"}
+  className="w-full border border-gray-300 rounded-lg px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+/>
+
+            {/* <input
               required
               value={userId}
               onChange={(e) => setUserId(e.target.value.replace(/\s+/g, ""))}
               placeholder={role === "student" ? "Roll Number" : "Employee ID"}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
+            /> */}
           </div>
 
           <div>
