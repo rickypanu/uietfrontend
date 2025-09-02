@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
-import { XCircle, Trash2, FileText, Clock } from "lucide-react";
+import { XCircle, Trash2, FileText, Clock, SkipBackIcon, ArrowLeft } from "lucide-react";
 
 export default function AdminSendNotification() {
   const [formData, setFormData] = useState({
@@ -91,7 +91,7 @@ export default function AdminSendNotification() {
           onClick={() => navigate("/admin/dashboard")}
           className="flex items-center gap-2 text-sm bg-gray-200 hover:bg-red-100 text-red-600 px-3 py-1 rounded-md transition"
         >
-          <XCircle size={18} />
+          <ArrowLeft size={18} />
           Dashboard
         </button>
       </div>
