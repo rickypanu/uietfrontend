@@ -74,7 +74,7 @@ export default function AdminLogin() {
               <input
                 required
                 value={adminId}
-                onChange={(e) => setAdminId(e.target.valuevalue.replace(/\s+/g, ""))}
+                onChange={(e) => setAdminId(e.target.value.replace(/\s+/g, ""))}
                 placeholder="Admin ID"
                 className="w-full outline-none text-gray-700 bg-transparent"
               />
