@@ -143,15 +143,6 @@ export default function TeacherClasses() {
                 </option>
             ))}
             </select>
-
-          {/* <input
-            type="text"
-            placeholder="Subject"
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
-            required
-            className="border border-gray-300 p-2 rounded-md w-full text-sm"
-          /> */}
         </div>
 
         <div className="pt-2">
@@ -175,19 +166,49 @@ export default function TeacherClasses() {
             {classes.map((c, idx) => (
               <li
                 key={idx}
-                onClick={() => navigate(`/teacher/classes/${c.id}`)}
-                className="p-4 rounded-lg bg-white border border-gray-200 hover:border-indigo-300 hover:shadow-sm transition cursor-pointer flex justify-between items-center"
+                className="p-4 rounded-lg bg-white border border-gray-200 hover:border-indigo-300 hover:shadow-sm transition flex justify-between items-center"
               >
-                <div>
+                <div
+                  className="cursor-pointer"
+                  onClick={() => navigate(`/teacher/classes/${c.id}`)}
+                >
                   <div className="font-semibold text-gray-800">
                     {c.branch} - Sem {c.semester} - Sec {c.section}
                   </div>
                   <div className="text-sm text-gray-500">{c.subject}</div>
                 </div>
-                <Users className="w-5 h-5 text-indigo-500" />
+
+                <div className="flex items-center gap-3">
+                  <Users className="w-5 h-5 text-indigo-500" />
+
+                  {/* Delete Button */}
+                  <button
+                    onClick={async () => {
+                      if (!window.confirm("Are you sure you want to delete this class?")) return;
+
+                      try {
+                        const res = await api.delete(`/classes/${c.id}`);
+                        // Show backend message
+                        setMessage(res.data.message || "✅ Class deleted successfully");
+                        // Remove class from state
+                        setClasses(prev => prev.filter(cls => cls.id !== c.id));
+                      } catch (err) {
+                        console.error("Failed to delete class", err);
+                        setMessage("❌ Failed to delete class");
+                        setTimeout(() => setMessage(""), 3000);
+                      }
+                    }}
+                    className="text-red-600 hover:text-red-800"
+                    title="Delete Class"
+                  >
+                    🗑️
+                  </button>
+
+                </div>
               </li>
             ))}
           </ul>
+
         )}
       </div>
     </div>
