@@ -16,6 +16,7 @@ import TeacherSendNotification from "./pages/TeacherSendNotification";
 import TeacherClassRegister from "./pages/TeacherClassRegister";
 import TeacherClasses from "./pages/TeacherClasses";
 import AdminSendNotification from "./pages/AdminSendNotification";
+import AttendanceAnalysis from "./pages/AttendanceAnalysis";
 
 export default function App() {
   const storedRole = localStorage.getItem("role");
@@ -45,7 +46,7 @@ export default function App() {
 
           <Route path="/teacher/classes" element={<TeacherClasses />} />
           <Route path="/teacher/classes/:classId" element={<TeacherClassRegister />} />
-
+          <Route path="/attendance-analysis" element={<AttendanceAnalysis />} />
              
         </Routes>
       </div>

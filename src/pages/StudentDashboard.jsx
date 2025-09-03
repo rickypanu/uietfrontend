@@ -334,6 +334,17 @@ export default function StudentDashboard() {
             )}
           </button>
 
+         <button
+          onClick={() => navigate("/attendance-analysis")}
+          aria-label="Attendance Analysis"
+          title="Attendance Analysis"
+          className="w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow hover:from-blue-600 hover:to-indigo-700 transition"
+        >
+          <span className="text-lg">📊</span>
+        </button>
+
+
+
           {/* About */}
           <button
             onClick={() => navigate("/student/about")}
