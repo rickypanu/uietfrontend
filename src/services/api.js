@@ -82,6 +82,15 @@ export const getTodayAttendanceCount = async () => {
   return response.data.count;
 };
 
+export const getStudentAttendanceAnalysis = async (rollNo, month, year, subject = "") => {
+  const res = await api.get(
+    `/attendance-analysis/${rollNo}`,
+    { params: { month, year, subject } } // axios handles query params
+  );
+  return res.data;
+};
+
+
 // Add a response interceptor to handle errors globally
 // api.interceptors.response.use(
 //   (response) => response,
