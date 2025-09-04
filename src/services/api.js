@@ -91,6 +91,14 @@ export const getStudentAttendanceAnalysis = async (rollNo, month, year, subject 
 };
 
 
+export const getAttendanceTarget = async (rollNo, subject, targetPercentage, fromDate, toDate) => {
+  const res = await api.get(`/attendance-target/${rollNo}`, {
+    params: { subject, target_percentage: targetPercentage, from_date: fromDate, to_date: toDate }
+  });
+  return res.data;
+};
+
+
 // Add a response interceptor to handle errors globally
 // api.interceptors.response.use(
 //   (response) => response,

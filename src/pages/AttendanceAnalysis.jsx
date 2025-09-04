@@ -1,27 +1,30 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";  // ✅ import navigate
-import { getStudentAttendanceAnalysis } from "../services/api";
+import { useNavigate } from "react-router-dom";
+import { getStudentAttendanceAnalysis, getAttendanceTarget } from "../services/api";
 
 export default function AttendanceAnalysis() {
   const [analysis, setAnalysis] = useState(null);
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [year, setYear] = useState(new Date().getFullYear());
   const [subject, setSubject] = useState("");
-  const navigate = useNavigate(); // ✅ hook
 
+  // 🎯 Target calculator states
+  const [targetSubject, setTargetSubject] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const [targetPercentage, setTargetPercentage] = useState("");
+  const [targetResult, setTargetResult] = useState(null);
+  const [loadingTarget, setLoadingTarget] = useState(false);
+
+  const navigate = useNavigate();
   const rollNo = localStorage.getItem("userId");
 
+  // 📊 Fetch attendance analysis
   useEffect(() => {
-    if (!rollNo) {
-      console.error("No roll number (userId) found in localStorage!");
-      return;
-    }
-
+    if (!rollNo) return;
     getStudentAttendanceAnalysis(rollNo, month, year, subject)
       .then((data) => setAnalysis(data))
-      .catch((err) => {
-        console.error("Failed to fetch attendance analysis:", err);
-      });
+      .catch((err) => console.error("Failed to fetch attendance analysis:", err));
   }, [rollNo, month, year, subject]);
 
   if (!rollNo) {
@@ -33,6 +36,30 @@ export default function AttendanceAnalysis() {
   }
 
   if (!analysis) return <p className="p-6">Loading...</p>;
+
+  // 🎯 Handle Target Calculator
+  const handleTargetCheck = async () => {
+    if (!targetSubject || !fromDate || !targetPercentage) {
+      alert("Please select subject, from date, and target percentage.");
+      return;
+    }
+    setLoadingTarget(true);
+    try {
+      const data = await getAttendanceTarget(
+        rollNo,
+        targetSubject,
+        targetPercentage,
+        fromDate,
+        toDate || undefined
+      );
+      setTargetResult(data);
+    } catch (err) {
+      console.error("Failed to fetch target analysis:", err);
+      alert("Error fetching target data. Try again.");
+    } finally {
+      setLoadingTarget(false);
+    }
+  };
 
   return (
     <div className="p-6">
@@ -106,7 +133,6 @@ export default function AttendanceAnalysis() {
               {stats.attended}/{stats.total} classes →{" "}
               <span className="font-medium">{stats.percentage}%</span>
             </p>
-
             <div className="w-full bg-gray-200 h-2 rounded-full mt-2">
               <div
                 className="bg-blue-500 h-2 rounded-full"
@@ -115,6 +141,67 @@ export default function AttendanceAnalysis() {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* 🎯 Attendance Target Calculator */}
+      <div className="mt-10 p-6 bg-yellow-50 rounded-2xl shadow">
+        <h2 className="text-lg font-bold mb-4">🎯 Attendance Target Calculator</h2>
+
+        <div className="flex flex-wrap gap-4 mb-4">
+          <select
+            value={targetSubject}
+            onChange={(e) => setTargetSubject(e.target.value)}
+            className="border rounded p-2"
+          >
+            <option value="">Select Subject</option>
+            {Object.keys(analysis.subjects).map((sub) => (
+              <option key={sub} value={sub}>
+                {sub}
+              </option>
+            ))}
+          </select>
+
+          <input
+            type="date"
+            value={fromDate}
+            onChange={(e) => setFromDate(e.target.value)}
+            className="border rounded p-2"
+          />
+
+          <input
+            type="date"
+            value={toDate}
+            onChange={(e) => setToDate(e.target.value)}
+            className="border rounded p-2"
+          />
+
+          <input
+            type="number"
+            placeholder="Target %"
+            value={targetPercentage}
+            onChange={(e) => setTargetPercentage(e.target.value)}
+            className="border rounded p-2 w-28"
+          />
+
+          <button
+            onClick={handleTargetCheck}
+            disabled={loadingTarget}
+            className="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition"
+          >
+            {loadingTarget ? "Checking..." : "Check"}
+          </button>
+        </div>
+
+        {targetResult && (
+          <div className="p-4 bg-white border rounded-xl shadow-md">
+            <p className="font-semibold">{targetResult.message}</p>
+            <p className="text-gray-600 text-sm mt-1">
+              Range: {targetResult.date_range} | Current:{" "}
+              {targetResult.current_percentage}% | Needed:{" "}
+              {targetResult.needed_classes} classes
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
