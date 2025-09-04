@@ -85,16 +85,29 @@ export default function AttendanceAnalysis() {
       </div>
 
       {/* Per Subject Stats */}
-      <div className="grid gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {Object.entries(analysis.subjects).map(([sub, stats]) => (
-          <div key={sub} className="p-4 border rounded-lg shadow-sm">
-            <p className="font-semibold">{sub}</p>
-            <p>
-              {stats.attended}/{stats.total} classes → {stats.percentage}%
+            <div
+            key={sub}
+            className="p-4 border rounded-2xl shadow-md bg-white hover:shadow-lg transition"
+            >
+            <p className="font-semibold text-lg mb-2">{sub}</p>
+            <p className="text-gray-700">
+                {stats.attended}/{stats.total} classes →{" "}
+                <span className="font-medium">{stats.percentage}%</span>
             </p>
-          </div>
+
+            {/* Progress bar inside card */}
+            <div className="w-full bg-gray-200 h-2 rounded-full mt-2">
+                <div
+                className="bg-blue-500 h-2 rounded-full"
+                style={{ width: `${stats.percentage}%` }}
+                ></div>
+            </div>
+            </div>
         ))}
-      </div>
+        </div>
+
     </div>
   );
 }
