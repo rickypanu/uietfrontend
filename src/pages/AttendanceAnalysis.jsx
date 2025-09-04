@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getStudentAttendanceAnalysis, getAttendanceTarget } from "../services/api";
-
+import { Calculator, FileBarChart2 } from "lucide-react";
 export default function AttendanceAnalysis() {
   const [analysis, setAnalysis] = useState(null);
   const [month, setMonth] = useState(new Date().getMonth() + 1);
@@ -72,9 +72,10 @@ export default function AttendanceAnalysis() {
   return (
     <div className="p-6 max-w-5xl mx-auto">
       {/* Header Section */}
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">
-          📊 Attendance Analysis
+      <div className="flex items-center justify-between mb-6">        
+        <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+          <FileBarChart2 className="w-6 h-6 text-blue-600" />
+          Attendance Analysis
         </h1>
         <button
           onClick={() => navigate(-1)}
@@ -160,8 +161,9 @@ export default function AttendanceAnalysis() {
 
       {/* 🎯 Attendance Target Calculator */}
       <div className="mt-12 p-8 bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-2xl shadow-md">
-        <h2 className="text-xl font-bold mb-6 text-gray-800">
-          🎯 Attendance Target Calculator
+        <h2 className="text-xl font-bold mb-6 text-gray-800 flex items-center gap-2">
+          <Calculator className="w-6 h-6 text-green-600" />
+          Attendance Target Calculator
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6 items-end">
