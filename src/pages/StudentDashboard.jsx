@@ -313,7 +313,7 @@ export default function StudentDashboard() {
           {/* Buttons auto-wrap on mobile */}
           <button
             onClick={() => navigate("/student/profile")}
-            className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-white shadow hover:bg-green-100 transition"
+            className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-white shadow hover:bg-green-300 transition"
           >
             <UserRound className="w-4 h-4 sm:w-5 sm:h-5 text-green-700" />
           </button>
@@ -324,7 +324,7 @@ export default function StudentDashboard() {
             onClick={() => navigate("/student/notifications")}
             aria-label="Notifications"
             title="View Notifications"
-            className="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow hover:bg-green-100 transition relative"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow hover:bg-yellow-100 transition relative"
           >
             <Bell className="w-5 h-5 text-yellow-600" />
             {unreadCount > 0 && (
@@ -338,7 +338,7 @@ export default function StudentDashboard() {
           onClick={() => navigate("/attendance-analysis")}
           aria-label="Attendance Analysis"
           title="Attendance Analysis"
-          className="w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow hover:from-blue-600 hover:to-indigo-700 transition"
+          className="w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-r from-white-500 to-white-600 text-white shadow hover:from-blue-400 hover:to-indigo-400 transition"
         >
           <span className="text-lg">📊</span>
         </button>
@@ -350,10 +350,11 @@ export default function StudentDashboard() {
             onClick={() => navigate("/student/about")}
             aria-label="How to Use"
             title="How to Use"
-            className="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow hover:bg-green-100 transition"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow hover:bg-blue-100 transition"
           >
             <HelpCircle className="w-5 h-5 text-blue-600" />
           </button>
+
 
           {/* Divider */}
           <div className="w-px h-6 bg-gray-300 mx-1" />
