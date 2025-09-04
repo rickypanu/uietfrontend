@@ -1,6 +1,6 @@
 // src/pages/TeacherClasses.jsx
 import React, { useState, useEffect } from "react";
-import { PlusCircle, BookOpen, Users, ArrowLeft } from "lucide-react";
+import { PlusCircle, BookOpen, Trash2, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { SUBJECTS } from "../constants/subjects";
@@ -201,7 +201,7 @@ export default function TeacherClasses() {
                     className="text-red-600 hover:text-red-800"
                     title="Delete Class"
                   >
-                    🗑️
+                    <Trash2 className="w-5 h-5" />
                   </button>
 
                 </div>
