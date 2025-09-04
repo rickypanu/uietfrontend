@@ -94,14 +94,6 @@ export default function Login() {
               placeholder={role === "student" ? "Roll Number" : "Employee ID"}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
-
-            {/* <input
-              required
-              value={userId}
-              onChange={(e) => setUserId(e.target.value.replace(/\s+/g, ""))}
-              placeholder={role === "student" ? "Roll Number" : "Employee ID"}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-            /> */}
           </div>
 
           <div>
@@ -109,7 +101,8 @@ export default function Login() {
             <input
               required
               type="date"
-              value={dob}
+              autoComplete="date"
+              defaultValue={dob}
               onChange={(e) => setDob(e.target.value)}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
