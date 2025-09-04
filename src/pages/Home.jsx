@@ -24,7 +24,7 @@ export default function Home() {
 
           <Link
             to="/register"
-            className="w-full text-center bg-gradient-to-r from-blue-700 via-blue-800 to-blue-900 
+            className="w-full text-center bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600
               text-white font-semibold px-5 py-3 rounded-full shadow-md hover:shadow-lg 
               hover:scale-105 transition-transform duration-300"
           >
@@ -42,7 +42,9 @@ export default function Home() {
 
           <Link
             to="/admin/login"
-            className="w-full text-center bg-gradient-to-r from-gray-700 via-gray-800 to-gray-900 
+            // className="w-full text-center bg-gradient-to-r from-indigo-600 via-indigo-700 to-indigo-800
+            className="w-full text-center bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700
+
               text-white font-semibold px-5 py-3 rounded-full shadow-md hover:shadow-lg 
               hover:scale-105 transition-transform duration-300"
           >
