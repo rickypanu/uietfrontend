@@ -317,9 +317,6 @@ export default function TeacherDashboard() {
   // --- render ---
   return (
     <div className="flex min-h-screen bg-gray-50">
-      {/* Sidebar */}
-      {/* <TeacherSidebar profile={profile} /> */}
-
       {/* Content */}
       <div className="flex-1 p-4 sm:ml-2">
       <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
@@ -620,7 +617,7 @@ export default function TeacherDashboard() {
           </div>
 
           {/* Filters & Export */}
-          <div className="bg-white rounded-xl shadow-sm p-4">
+          {/* <div className="bg-white rounded-xl shadow-sm p-4">
             <SectionTitle icon={Filter} title="Filter & Export Attendance Records" />
             <div className="mt-3 flex flex-col md:flex-row gap-3 md:items-end">
               <div className="flex-1">
@@ -666,10 +663,10 @@ export default function TeacherDashboard() {
                 <button onClick={handleExport} className="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 transition inline-flex items-center gap-2"><FileDown className="w-4 h-4" /> Export CSV</button>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Attendance table */}
-          <div className="bg-white rounded-xl shadow-sm p-4">
+          {/* <div className="bg-white rounded-xl shadow-sm p-4">
             <SectionTitle icon={CalendarCheck2} title="Attendance Marked by Students" />
             <div className="mt-4 overflow-auto border rounded-md">
               <table className="min-w-full text-sm">
@@ -730,7 +727,7 @@ export default function TeacherDashboard() {
                 </tbody>
               </table>
             </div>
-          </div>
+          </div> */}
 
         </div>
       </div>
