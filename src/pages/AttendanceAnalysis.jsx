@@ -72,17 +72,20 @@ export default function AttendanceAnalysis() {
   return (
     <div className="p-6 max-w-5xl mx-auto">
       {/* Header Section */}
-      <div className="flex items-center justify-between mb-6">        
-        <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-          <FileBarChart2 className="w-6 h-6 text-blue-600" />
-          Attendance Analysis
-        </h1>
+      <div className="relative flex items-center mb-6">
+        {/* Back button on the left */}
         <button
           onClick={() => navigate(-1)}
           className="px-4 py-2 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700 transition"
         >
           ← Back
         </button>
+
+        {/* Centered header */}
+        <h1 className="absolute left-1/2 transform -translate-x-1/2 text-2xl font-bold text-gray-800 flex items-center gap-2">
+          <FileBarChart2 className="w-6 h-6 text-blue-600" />
+          Attendance Analysis
+        </h1>
       </div>
 
       {/* Filters */}
