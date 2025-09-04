@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
-import { getStudentAttendanceAnalysis } from "../services/api"; // adjust path if needed
+import { useNavigate } from "react-router-dom";  // ✅ import navigate
+import { getStudentAttendanceAnalysis } from "../services/api";
 
 export default function AttendanceAnalysis() {
   const [analysis, setAnalysis] = useState(null);
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [year, setYear] = useState(new Date().getFullYear());
   const [subject, setSubject] = useState("");
+  const navigate = useNavigate(); // ✅ hook
 
-  const rollNo = localStorage.getItem("userId"); // ✅ consistent with dashboard
+  const rollNo = localStorage.getItem("userId");
 
   useEffect(() => {
     if (!rollNo) {
@@ -34,6 +36,14 @@ export default function AttendanceAnalysis() {
 
   return (
     <div className="p-6">
+      {/* 🔙 Back Button */}
+      <button
+        onClick={() => navigate(-1)}
+        className="mb-4 px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
+      >
+        ← Back
+      </button>
+
       <h1 className="text-xl font-bold mb-4">📊 Attendance Analysis</h1>
 
       {/* Filters */}
@@ -85,29 +95,27 @@ export default function AttendanceAnalysis() {
       </div>
 
       {/* Per Subject Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {Object.entries(analysis.subjects).map(([sub, stats]) => (
-            <div
+          <div
             key={sub}
             className="p-4 border rounded-2xl shadow-md bg-white hover:shadow-lg transition"
-            >
+          >
             <p className="font-semibold text-lg mb-2">{sub}</p>
             <p className="text-gray-700">
-                {stats.attended}/{stats.total} classes →{" "}
-                <span className="font-medium">{stats.percentage}%</span>
+              {stats.attended}/{stats.total} classes →{" "}
+              <span className="font-medium">{stats.percentage}%</span>
             </p>
 
-            {/* Progress bar inside card */}
             <div className="w-full bg-gray-200 h-2 rounded-full mt-2">
-                <div
+              <div
                 className="bg-blue-500 h-2 rounded-full"
                 style={{ width: `${stats.percentage}%` }}
-                ></div>
+              ></div>
             </div>
-            </div>
+          </div>
         ))}
-        </div>
-
+      </div>
     </div>
   );
 }
