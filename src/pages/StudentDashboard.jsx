@@ -334,14 +334,35 @@ export default function StudentDashboard() {
             )}
           </button>
 
-         <button
+         {/* <button
           onClick={() => navigate("/attendance-analysis")}
           aria-label="Attendance Analysis"
           title="Attendance Analysis"
           className="w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-r from-white-500 to-white-600 text-white shadow hover:from-blue-400 hover:to-indigo-400 transition"
         >
           <span className="text-lg">📊</span>
-        </button>
+        </button> */}
+
+          <div className="relative inline-block">
+            {/* 🔴 New Badge */}
+            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow">
+              NEW
+            </span>
+
+            {/* 📊 Button */}
+            <button
+              onClick={() => navigate("/attendance-analysis")}
+              aria-label="Attendance Analysis"
+              title="Attendance Analysis"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-r from-white-500 to-white-600 text-white shadow hover:from-blue-400 hover:to-indigo-400 transition"
+       
+            //   className="w-10 h-10 flex items-center justify-center rounded-full 
+            //             bg-gradient-to-r from-blue-500 to-indigo-600 text-white 
+            //             shadow hover:from-blue-400 hover:to-indigo-400 transition"
+            >
+              <span className="text-lg">📊</span>
+            </button>
+          </div>
 
 
 
