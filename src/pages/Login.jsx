@@ -61,7 +61,7 @@ export default function Login() {
         {/* Header */}
         <div className="flex flex-col items-center mb-6">
           <GraduationCap size={40} className="text-blue-600 mb-2" />
-          <h2 className="text-3xl font-bold text-gray-800">Login Portal</h2>
+          <h2 className="text-3xl font-bold text-gray-800">Login </h2>
           <p className="text-gray-500 text-sm">Welcome back! Please sign in</p>
         </div>
 
