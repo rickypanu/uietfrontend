@@ -14,7 +14,13 @@ export default function TeacherClassRegister() {
   const [classInfo, setClassInfo] = useState({});
   const [students, setStudents] = useState([]);
   const [dates, setDates] = useState([]);
-  const [filterMonth, setFilterMonth] = useState("");
+  // const [filterMonth, setFilterMonth] = useState("");
+  const [filterMonth, setFilterMonth] = useState(() => {
+  const today = new Date();
+  return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}`;
+});
+
+  const [filterRollNo, setFilterRollNo] = useState("")
   const [percentFilter, setPercentFilter] = useState("");
   const navigate = useNavigate();
 
@@ -66,11 +72,28 @@ export default function TeacherClassRegister() {
     document.body.removeChild(link);
   };
 
+  // const filteredStudents = students.filter((s) => {
+  //   if (!percentFilter) return true;
+  //   const numericPercent = parseFloat(s.percentage.replace("%", ""));
+  //   return numericPercent < parseFloat(percentFilter);
+  // });
   const filteredStudents = students.filter((s) => {
-    if (!percentFilter) return true;
-    const numericPercent = parseFloat(s.percentage.replace("%", ""));
-    return numericPercent < parseFloat(percentFilter);
+    let match = true;
+
+    // Roll number filter
+    if (filterRollNo) {
+      match = match && s.roll_no.toString().includes(filterRollNo.trim());
+    }
+
+    // Percentage filter
+    if (percentFilter) {
+      const numericPercent = parseFloat(s.percentage.replace("%", ""));
+      match = match && numericPercent < parseFloat(percentFilter);
+    }
+
+    return match;
   });
+
 
   /** Pie chart data: above/below threshold */
   const threshold = 75;
@@ -153,9 +176,11 @@ const CustomizedAxisTick = ({ x, y, payload }) => {
       </div>
 
       {/* Filters */}
+      <div className="bg-white shadow rounded-2xl p-6 border border-gray-100 gap-4">
+      <label className="text-xl font-medium text-black-700 mb-1">Filter</label>
       <div className="bg-white shadow rounded-2xl p-6 border border-gray-100 flex flex-wrap gap-4">
         <div className="flex flex-col">
-          <label className="text-sm font-medium text-gray-700 mb-1">Filter by Month</label>
+          <label className="text-sm font-medium text-gray-700 mb-1">Month</label>
           <input
             type="month"
             value={filterMonth}
@@ -163,6 +188,17 @@ const CustomizedAxisTick = ({ x, y, payload }) => {
             className="border border-gray-300 p-2 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
+
+        <div className="flex flex-col">
+          <label className="text-sm font-medium text-gray-700 mb-1">Roll No</label>
+          <input
+            type="number"
+            value={filterRollNo}
+            onChange={(e) => setFilterRollNo(e.target.value)}
+            className="border border-gray-300 p-2 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+
         <div className="flex flex-col">
           <label className="text-sm font-medium text-gray-700 mb-1">Show Below %</label>
           <input
@@ -173,6 +209,7 @@ const CustomizedAxisTick = ({ x, y, payload }) => {
             className="border border-gray-300 p-2 rounded-lg w-32 shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
+      </div>
       </div>
 
       {/* Register Table */}
