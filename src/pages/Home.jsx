@@ -10,7 +10,7 @@ export default function Home() {
       {/* Hero Heading */}
       <header className="text-center px-4 pt-8 sm:pt-12 pb-4 sm:pb-6">
         <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold text-gray-800 drop-shadow-xl leading-tight">
-          <span className="text-green-700">Attendance</span> Management
+          <span className="text-gray-800">Attendance</span> Management
         </h1>
         <p className="mt-2 text-gray-600 text-sm sm:text-base">Simple • Secure • Smart</p>
       </header>
