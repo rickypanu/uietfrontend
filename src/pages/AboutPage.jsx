@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { X, Info, Star, BookOpen, HelpCircle, Filter, Bell, FileDown, UserRound, CalendarCheck } from "lucide-react";
+import { X, Info, Star, BookOpen, HelpCircle, Filter, Bell, FileDown, UserRound, CalendarCheck, Calculator } from "lucide-react";
 
 const AboutPage = () => {
   const navigate = useNavigate();
@@ -19,10 +19,10 @@ const AboutPage = () => {
       {/* Header */}
       <div className="text-center mb-10">
         <h1 className="text-4xl font-extrabold text-green-700 flex justify-center items-center gap-3">
-          <Info className="w-8 h-8 text-green-600" /> About the Student Dashboard
+          <Info className="w-8 h-8 text-green-600" /> Navigating Your Student Dashboard
         </h1>
         <p className="text-lg text-gray-600 mt-2 max-w-2xl mx-auto">
-          Learn how to make the most of your student attendance portal and all its features.
+          A quick guide to help you use your attendance portal and all its features efficiently.
         </p>
       </div>
 
@@ -33,99 +33,89 @@ const AboutPage = () => {
             <Star className="w-6 h-6 text-yellow-500" /> Key Features
           </h2>
           <ul className="space-y-3 text-gray-700 text-[17px] leading-relaxed">
-            <li>🔐 Secure OTP Attendance marking.</li>
-            <li>📚 Subjects auto-loaded based on your profile.</li>
-            <li>✅ Live OTP verification before marking attendance.</li>
-            <li>🌐 Device fingerprint & GPS location capture for security.</li>
-            <li>🔍 Filter attendance by subject or date.</li>
-            <li>📤 Export attendance as a CSV file with profile metadata.</li>
-            <li>👤 View your full student profile anytime.</li>
-            <li>🔔 Get notified of important updates from teachers/admins.</li>
-            <li>📱 Fully responsive design for mobile, tablet, and desktop.</li>
-            <li>🚪 One-click secure logout.</li>
+            <li>Secure OTP Marking: Ensures accurate attendance tracking.</li>
+            <li>Personalized Subjects: Displays subjects based on your profile.</li>
+            <li>Live OTP Validation: Get instant feedback on the OTP status.</li>
+            <li>Enhanced Security: Uses device fingerprinting and GPS for security.</li>
+            <li>Flexible Filtering: Filter history by subject or date.</li>
+            <li>Exportable Records: Download your attendance as a CSV file.</li>
+            <li>Stay Notified: The bell icon shows new updates from faculty.</li>
+            <li>Responsive Design: Works seamlessly on any device.</li>
           </ul>
         </section>
 
         {/* How to Mark Attendance */}
         <section className="bg-white p-6 rounded-2xl shadow-md border border-gray-100 hover:shadow-lg transition">
           <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-            <BookOpen className="w-6 h-6 text-blue-500" /> How to Mark Attendance
+            <BookOpen className="w-6 h-6 text-blue-500" /> How to Mark Your Attendance
           </h2>
           <ol className="list-decimal ml-5 space-y-2 text-[17px] text-gray-700 leading-relaxed">
-            <li>Login with your student credentials.</li>
-            <li>Select the subject from the dropdown menu.</li>
-            <li>Enter the OTP given by your teacher (pasting disabled).</li>
-            <li>Check OTP status — green border = valid, red = invalid.</li>
-            <li>Click <strong>“Mark Attendance”</strong>.</li>
-            <li>Successful entries appear in your Attendance History table.</li>
+            <li>Log in with your student credentials.</li>
+            <li>Select the correct subject from the dropdown menu.</li>
+            <li>Enter the 6-character OTP from your teacher. Pasting is disabled.</li>
+            <li>The OTP field will show a green border for a valid OTP or a red border if it's incorrect.</li>
+            <li>Click the "Mark Attendance" button.</li>
+            <li>Successful entries will appear in your attendance history.</li>
           </ol>
         </section>
 
-        {/* Filtering Attendance */}
-        <section className="bg-white p-6 rounded-2xl shadow-md border border-gray-100 hover:shadow-lg transition">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-            <Filter className="w-6 h-6 text-purple-500" /> Filtering Your Attendance
-          </h2>
-          <ul className="text-[17px] text-gray-700 leading-relaxed space-y-3">
-            <li>🎯 Select a subject and/or date in the Filter Attendance section.</li>
-            <li>🖱 Click <strong>Apply</strong> to filter your records.</li>
-            <li>🔄 Click <strong>Reset</strong> to view all records again.</li>
-          </ul>
-        </section>
-
-        {/* Attendance History */}
-        <section className="bg-white p-6 rounded-2xl shadow-md border border-gray-100 hover:shadow-lg transition">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-            <CalendarCheck className="w-6 h-6 text-green-500" /> Viewing Attendance History
-          </h2>
-          <p className="text-[17px] text-gray-700 leading-relaxed">
-            Your Attendance History table lists:
-          </p>
-          <ul className="list-disc ml-5 text-gray-700 mt-2 space-y-2">
-            <li>📌 Subject (in uppercase)</li>
-            <li>📅 Date of marking</li>
-            <li>⏰ Time of marking</li>
-          </ul>
-          <p className="mt-2 text-gray-600">
-            Rows are striped for better readability and update instantly after marking attendance or applying filters.
-          </p>
-        </section>
-
-        {/* Exporting Attendance */}
-        <section className="bg-white p-6 rounded-2xl shadow-md border border-gray-100 hover:shadow-lg transition">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-            <FileDown className="w-6 h-6 text-green-500" /> Exporting Attendance
-          </h2>
-          <ul className="text-[17px] text-gray-700 leading-relaxed space-y-3">
-            <li>📁 Click <strong>Export CSV</strong> at the bottom of the Attendance History section.</li>
-            <li>📝 Download includes your attendance data + profile details.</li>
-            <li>📂 File name contains your roll number and export date.</li>
-          </ul>
-        </section>
-
-        {/* Notifications & Profile */}
-        <section className="bg-white p-6 rounded-2xl shadow-md border border-gray-100 hover:shadow-lg transition">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-            <Bell className="w-6 h-6 text-yellow-500" /> Notifications & Profile
-          </h2>
-          <ul className="text-[17px] text-gray-700 leading-relaxed space-y-3">
-            <li>🔔 Bell icon shows new updates from teachers/admins.</li>
-            <li>🔴 Red badge = unread notifications count.</li>
-            <li>👤 Click the user icon to view your full profile details (read-only).</li>
-          </ul>
-        </section>
-
-        {/* Logout & Help */}
+        {/* Attendance History & Tools */}
         <section className="bg-white p-6 rounded-2xl shadow-md border border-gray-100 hover:shadow-lg transition md:col-span-2">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-            <HelpCircle className="w-6 h-6 text-red-500" /> Logout & Help
-          </h2>
-          <p className="text-[17px] text-gray-700 leading-relaxed">
-            🚪 Click the red <strong>Logout</strong> button in the top bar to end your session — this clears all local data and redirects to login.
-          </p>
-          <p className="text-[17px] text-gray-700 leading-relaxed mt-3">
-            ❓ For help with OTP issues, location access, or data errors, contact your class teacher or the system administrator.
-          </p>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <CalendarCheck className="w-6 h-6 text-green-500" /> Viewing Your Records
+            </h2>
+            <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                    <h3 className="text-xl font-semibold text-gray-700 mb-2">Attendance History Table</h3>
+                    <p className="text-[17px] text-gray-700 leading-relaxed">
+                        Your history table provides a clear log of every class you've marked:
+                    </p>
+                    <ul className="list-disc ml-5 mt-3 text-[17px] text-gray-700 space-y-2">
+                        <li>The table lists the subject, date, and time for each entry.</li>
+                        <li>Use the subject and date filters to find specific records quickly.</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 className="text-xl font-semibold text-gray-700 mb-2">Exporting Your Data</h3>
+                    <p className="text-[17px] text-gray-700 leading-relaxed">
+                        You can download a copy of your attendance history at any time:
+                    </p>
+                    <ul className="list-disc ml-5 mt-3 text-[17px] text-gray-700 space-y-2">
+                        <li>Click "Export CSV" at the bottom of the table.</li>
+                        <li>The downloaded file includes your attendance data and profile details.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        {/* Analysis & Profile */}
+        <section className="bg-white p-6 rounded-2xl shadow-md border border-gray-100 hover:shadow-lg transition md:col-span-2">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <Calculator className="w-6 h-6 text-indigo-500" /> Analysis & Profile
+            </h2>
+            <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                    <h3 className="text-xl font-semibold text-gray-700 mb-2">Attendance Analysis</h3>
+                    <p className="text-[17px] text-gray-700 leading-relaxed">
+                        The Analysis page helps you understand your attendance with detailed insights:
+                    </p>
+                    <ul className="list-disc ml-5 mt-3 text-[17px] text-gray-700 space-y-2">
+                        <li>View your overall and subject-wise attendance percentage.</li>
+                        <li>Use the Attendance Target Calculator to plan ahead.</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 className="text-xl font-semibold text-gray-700 mb-2">Profile & Help</h3>
+                    <p className="text-[17px] text-gray-700 leading-relaxed">
+                        Manage your account and get support:
+                    </p>
+                    <ul className="list-disc ml-5 mt-3 text-[17px] text-gray-700 space-y-2">
+                        <li>Click the user icon to view and edit your profile details.</li>
+                        <li>The red "Logout" button securely ends your session.</li>
+                        <li>For technical issues, contact your class teacher or the system administrator.</li>
+                    </ul>
+                </div>
+            </div>
         </section>
       </div>
     </div>
