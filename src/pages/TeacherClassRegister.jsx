@@ -167,6 +167,7 @@ const CustomizedAxisTick = ({ x, y, payload }) => {
         <div className="text-gray-600 space-y-1">
           <p><span className="font-semibold text-gray-800">Department:</span> {classInfo.department}</p>
           <p>
+            <span className="font-semibold text-gray-800">Course:</span> {classInfo.course} |{" "}
             <span className="font-semibold text-gray-800">Branch:</span> {classInfo.branch} |{" "}
             <span className="font-semibold text-gray-800">Semester:</span> {classInfo.semester} |{" "}
             <span className="font-semibold text-gray-800">Section:</span> {classInfo.section}

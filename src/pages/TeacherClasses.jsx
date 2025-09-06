@@ -9,6 +9,7 @@ import Select from "react-select";
 export default function TeacherClasses() {
   const [department, setDepartment] = useState("");
   const [classes, setClasses] = useState([]);
+  const [course, setCourse] =useState("")
   const [branch, setBranch] = useState("");
   const [semester, setSemester] = useState("");
   const [section, setSection] = useState("");
@@ -37,6 +38,7 @@ export default function TeacherClasses() {
       const res = await api.post("/classes/create", {
         teacher_id: employeeId,
         department,
+        course,
         branch,
         semester,
         section,
@@ -44,6 +46,7 @@ export default function TeacherClasses() {
       });
       setMessage("✅ Class created successfully");
       setClasses((prev) => [...prev, res.data]);
+      setCourse("");
       setBranch("");
       setSemester("");
       setSection("");
@@ -94,6 +97,17 @@ export default function TeacherClasses() {
             <option value="">Select Department</option>
             <option value="UIET">UIET</option>
           </select>
+          
+          <select
+            value={course}
+            onChange={(e) => setCourse(e.target.value)}
+            required
+            className="border border-gray-300 p-2 rounded-md w-full text-sm bg-white"
+          >
+            <option value="">Select Course</option>
+            <option value="BE">Bachelor of Engineering</option>
+            <option value="ME">Master of Engineering</option>
+          </select>
 
           <select
             value={branch}
@@ -131,18 +145,19 @@ export default function TeacherClasses() {
           </select>
 
             <select
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
-            required
-            className="border border-gray-300 p-2 rounded-md w-full text-sm bg-white"
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+              required
+              className="border border-gray-300 p-2 rounded-md w-full text-sm bg-white"
             >
-            <option value="">Select Subject</option>
-            {branch && semester && SUBJECTS["BE"]?.[branch]?.[semester]?.map((subj, idx) => (
+              <option value="">Select Subject</option>
+              {branch && semester && course && SUBJECTS[course]?.[branch]?.[semester]?.map((subj, idx) => (
                 <option key={idx} value={subj}>
-                {subj}
+                  {subj}
                 </option>
-            ))}
+              ))}
             </select>
+
         </div>
 
         <div className="pt-2">
@@ -173,7 +188,7 @@ export default function TeacherClasses() {
                   onClick={() => navigate(`/teacher/classes/${c.id}`)}
                 >
                   <div className="font-semibold text-gray-800">
-                    {c.branch} - Sem {c.semester} - Sec {c.section}
+                    {c.course} ({c.branch} ) - Sem {c.semester} - Sec {c.section}
                   </div>
                   <div className="text-sm text-gray-500">{c.subject}</div>
                 </div>
