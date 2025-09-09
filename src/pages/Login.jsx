@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
-import { User, GraduationCap, Loader2,  Home } from "lucide-react";
+import { User, GraduationCap, Loader2, Home } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function Login() {
@@ -10,13 +10,15 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-
-  // Reload once to avoid first-load issue
+  // Load saved login info if available
   useEffect(() => {
-    if (!sessionStorage.getItem("loginPageReloadedOnce")) {
-      sessionStorage.setItem("loginPageReloadedOnce", "true");
-      setTimeout(() => window.location.reload(), 500);
-    }
+    const savedRole = localStorage.getItem("role") || "student";
+    const savedUserId = localStorage.getItem("userId") || "";
+    const savedDob = localStorage.getItem("dob") || "";
+
+    setRole(savedRole);
+    setUserId(savedUserId);
+    setDob(savedDob);
   }, []);
 
   const handleSubmit = async (e) => {
@@ -26,26 +28,25 @@ export default function Login() {
 
     try {
       const url = role === "student" ? "/login/student" : "/login/teacher";
-      const payload = role === "student"
-        ? { roll_no: userId.trim().toUpperCase(), dob }
-        : { employee_id: userId.trim().toUpperCase(), dob };
+      const payload =
+        role === "student"
+          ? { roll_no: userId.trim().toUpperCase(), dob }
+          : { employee_id: userId.trim().toUpperCase(), dob };
 
       await api.post(url, payload);
 
-      // 🧹 Clear old data & store fresh
-      localStorage.removeItem("role");
-      localStorage.removeItem("userId");
+      // Save login info for next visit
       localStorage.setItem("role", role);
       localStorage.setItem("userId", userId.trim().toUpperCase());
+      localStorage.setItem("dob", dob);
 
-      // navigate(location.role === "student" ? "/student" : "/teacher");
+      // Navigate to dashboard
       window.location.href = role === "student" ? "/student" : "/teacher";
-
     } catch (err) {
       console.error("Login error:", err);
       let detail = err.response?.data?.detail;
       if (Array.isArray(detail)) {
-        detail = detail.map(d => d.msg).join(", ");
+        detail = detail.map((d) => d.msg).join(", ");
       }
       setMessage(detail || "Login failed.");
     }
@@ -53,21 +54,23 @@ export default function Login() {
   };
 
   return (
-
     <div
       className="flex items-center justify-center bg-gradient-to-b from-blue-200 to-blue-400 px-3 py-6"
-      style={{ minHeight: "100dvh" }}>
+      style={{ minHeight: "100dvh" }}
+    >
       <div className="w-full max-w-sm sm:max-w-md bg-white/90 backdrop-blur p-6 sm:p-8 rounded-2xl shadow-xl">
         {/* Header */}
         <div className="flex flex-col items-center mb-6">
           <GraduationCap size={40} className="text-blue-600 mb-2" />
-          <h2 className="text-3xl font-bold text-gray-800">Login </h2>
-          <p className="text-gray-500 text-sm">Welcome back! Please sign in</p>
+          <h2 className="text-3xl font-bold text-gray-800">Login</h2>
+          <p className="text-gray-500 text-sm">
+            Welcome back! Please sign in
+          </p>
         </div>
 
         {/* Role toggle */}
         <div className="flex justify-center mb-6 gap-2">
-          {["student", "teacher"].map(r => (
+          {["student", "teacher"].map((r) => (
             <button
               key={r}
               type="button"
@@ -89,40 +92,20 @@ export default function Login() {
               required
               name="username"
               autoComplete="username"
-              defaultValue={userId}           // use defaultValue for autofill
+              value={userId}
               onChange={(e) => setUserId(e.target.value.replace(/\s+/g, ""))}
               placeholder={role === "student" ? "Roll Number" : "Employee ID"}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
-
           </div>
 
-          {/* <div>
+          <div>
             <label className="block text-gray-700 text-sm mb-1">Password (DOB)</label>
             <input
               required
               type="date"
               value={dob}
               onChange={(e) => setDob(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div> */}
-
-          <div>
-            <label className="block text-gray-700 text-sm mb-1">DOB (DD-MM-YYYY)</label>
-            <input
-              required
-              type="tel"  // triggers numeric keypad
-              inputMode="numeric"
-              placeholder="DD-MM-YYYY"
-              value={dob}
-              maxLength={10}
-              onChange={(e) => {
-                let val = e.target.value.replace(/\D/g, ""); // remove non-digits
-                if (val.length > 2) val = val.slice(0, 2) + "-" + val.slice(2);
-                if (val.length > 5) val = val.slice(0, 5) + "-" + val.slice(5, 8+2); // max length 10
-                setDob(val);
-              }}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
@@ -138,10 +121,9 @@ export default function Login() {
         </form>
 
         {/* Error message */}
-        {message && (
-          <p className="mt-4 text-center text-sm text-red-500">{message}</p>
-        )}
-       <div className="mt-4 text-center">
+        {message && <p className="mt-4 text-center text-sm text-red-500">{message}</p>}
+
+        <div className="mt-4 text-center">
           <Link
             to="/"
             className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-blue-600 hover:underline transition"
