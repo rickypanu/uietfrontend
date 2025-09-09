@@ -119,14 +119,23 @@ export default function AdminDashboard() {
     }
   };
 
+  // const filterUsers = (users, filter, type) =>
+  //   users.filter(
+  //     u =>
+  //       (type === "all" || u.role === type) &&
+  //       (u.full_name.toLowerCase().includes(filter.toLowerCase()) ||
+  //       u.user_id.toLowerCase().includes(filter.toLowerCase()) ||
+  //       u.email.toLowerCase().includes(filter.toLowerCase()))
+  //   );
   const filterUsers = (users, filter, type) =>
     users.filter(
       u =>
         (type === "all" || u.role === type) &&
-        (u.full_name.toLowerCase().includes(filter.toLowerCase()) ||
-        u.user_id.toLowerCase().includes(filter.toLowerCase()) ||
-        u.email.toLowerCase().includes(filter.toLowerCase()))
+        ((u.full_name || "").toLowerCase().includes(filter.toLowerCase()) ||
+        (u.user_id || "").toLowerCase().includes(filter.toLowerCase()) ||
+        (u.email || "").toLowerCase().includes(filter.toLowerCase()))
     );
+
 
   const paginate = (users, page) =>
     users.slice((page - 1) * itemsPerPage, page * itemsPerPage);
@@ -172,6 +181,22 @@ export default function AdminDashboard() {
 
         {/* Right: Actions */}
         <div className="flex items-center gap-4">
+          {/*Registration */}
+          <button
+            onClick={() => navigate("/admin/register")}
+            aria-label="user Register"
+            title="User Register"
+            className="flex items-center gap-3 px-3 py-2 rounded-lg bg-white shadow hover:bg-green-100 transition"
+          >
+            {/* Upload/Users Icon */}
+            <FaUserCheck className="w-6 h-6 text-green-600" />
+
+            {/* Text */}
+            <div className="hidden sm:block text-left">
+              <div className="font-medium text-gray-800">User Register</div>
+            </div>
+          </button>
+
           {/* Notifications */}
           <button
             onClick={() => navigate("/admin/notifications")}
@@ -298,10 +323,10 @@ export default function AdminDashboard() {
                   <tbody>
                     {paginate(section.users, section.page).map(u => (
                       <tr key={u.user_id} className="text-center">
-                        <td className="px-2 py-1 border">{u.full_name}</td>
-                        <td className="px-2 py-1 border capitalize">{u.role}</td>
+                        <td className="px-2 py-1 border">{u.full_name || "-"}</td>
                         <td className="px-2 py-1 border">{u.user_id}</td>
-                        <td className="px-2 py-1 border">{u.email}</td>
+                        <td className="px-2 py-1 border">{u.user_id || "-"}</td>
+                        <td className="px-2 py-1 border">{u.email || "-"}</td>
                         {section.showActions && (
                           <td className="px-2 py-1 border space-y-1 flex flex-col sm:flex-row sm:space-x-1 sm:space-y-0">
                             <button
