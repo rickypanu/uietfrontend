@@ -97,13 +97,32 @@ export default function Login() {
 
           </div>
 
-          <div>
+          {/* <div>
             <label className="block text-gray-700 text-sm mb-1">Password (DOB)</label>
             <input
               required
               type="date"
               value={dob}
               onChange={(e) => setDob(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+          </div> */}
+
+          <div>
+            <label className="block text-gray-700 text-sm mb-1">DOB (DD-MM-YYYY)</label>
+            <input
+              required
+              type="tel"  // triggers numeric keypad
+              inputMode="numeric"
+              placeholder="DD-MM-YYYY"
+              value={dob}
+              maxLength={10}
+              onChange={(e) => {
+                let val = e.target.value.replace(/\D/g, ""); // remove non-digits
+                if (val.length > 2) val = val.slice(0, 2) + "-" + val.slice(2);
+                if (val.length > 5) val = val.slice(0, 5) + "-" + val.slice(5, 8+2); // max length 10
+                setDob(val);
+              }}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
