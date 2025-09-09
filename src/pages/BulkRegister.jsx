@@ -79,7 +79,7 @@ export default function BulkRegister() {
 
         {/* Title in center */}
         <h2 className="flex-1 text-3xl font-bold text-center text-blue-900">
-            Bulk User Registration
+            User Registration
         </h2>
 
         {/* Right spacer for alignment */}
