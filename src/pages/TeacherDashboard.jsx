@@ -174,103 +174,201 @@ const handleSelectClass = (c) => {
   };
 
   // ------- event handlers -------
-  const handleGenerateOtp = async (e) => {
-    e.preventDefault();
+  // const handleGenerateOtp = async (e) => {
+  //   e.preventDefault();
   
-    if (!branch || !semester || !subject || !course) {
-      setMessage("❌ Please select course, branch, semester, and subject.");
-      return;
-    }
+  //   if (!branch || !semester || !subject || !course) {
+  //     setMessage("❌ Please select course, branch, semester, and subject.");
+  //     return;
+  //   }
 
-    setLoading(true);
-    setMessage("📡 Getting accurate location... Please wait.");
+  //   setLoading(true);
+  //   setMessage("📡 Getting accurate location... Please wait.");
 
-    let watchId = null;
-    let gotAccurateLocation = false;
+  //   let watchId = null;
+  //   let gotAccurateLocation = false;
 
-    try {
-      watchId = navigator.geolocation.watchPosition(
-        async (position) => {
-          const { latitude, longitude, accuracy } = position.coords;
-          setMessage(`📍 Accuracy: ${Math.round(accuracy)} meters`);
+  //   try {
+  //     watchId = navigator.geolocation.watchPosition(
+  //       async (position) => {
+  //         const { latitude, longitude, accuracy } = position.coords;
+  //         setMessage(`📍 Accuracy: ${Math.round(accuracy)} meters`);
 
-          if (accuracy <= 1000 && !gotAccurateLocation) {
-            gotAccurateLocation = true;
-            navigator.geolocation.clearWatch(watchId);
+  //         if (accuracy <= 1000 && !gotAccurateLocation) {
+  //           gotAccurateLocation = true;
+  //           navigator.geolocation.clearWatch(watchId);
 
-            try {
-              const data = await generateOtp(
-                employeeId,
-                course,
-                branch,
-                semester,
-                subject,
-                duration,
-                latitude,
-                longitude
-              );
+  //           try {
+  //             const data = await generateOtp(
+  //               employeeId,
+  //               course,
+  //               branch,
+  //               semester,
+  //               subject,
+  //               duration,
+  //               latitude,
+  //               longitude
+  //             );
 
-              const newOtp = {
-                otp: data.otp,
-                subject: data.subject,
-                end_time: data.valid_till,
-              };
+  //             const newOtp = {
+  //               otp: data.otp,
+  //               subject: data.subject,
+  //               end_time: data.valid_till,
+  //             };
 
-              setOtpList((prev) =>
-                [newOtp, ...prev]
-                  .filter((item) => new Date(item.end_time) > new Date())
-                  .sort((a, b) => new Date(b.end_time) - new Date(a.end_time))
-              );
+  //             setOtpList((prev) =>
+  //               [newOtp, ...prev]
+  //                 .filter((item) => new Date(item.end_time) > new Date())
+  //                 .sort((a, b) => new Date(b.end_time) - new Date(a.end_time))
+  //             );
 
-              setMessage(
-                `✅ OTP Generated: ${data.otp} (valid till: ${new Date(
-                  data.valid_till
-                ).toLocaleString()})`
-              );
+  //             setMessage(
+  //               `✅ OTP Generated: ${data.otp} (valid till: ${new Date(
+  //                 data.valid_till
+  //               ).toLocaleString()})`
+  //             );
 
-              // update today's otps quickly
-              loadTodaysOtps();
-            } catch (error) {
-              console.error("Generate OTP error:", error);
-              setMessage(error?.response?.data?.detail || "❌ Failed to generate OTP");
-            } finally {
-              setLoading(false);
-            }
-          }
-        },
-        (error) => {
-          console.error("Geolocation error:", error);
-          setMessage("❌ Failed to get location. Please allow location access and try again.");
-          setLoading(false);
-          if (watchId) navigator.geolocation.clearWatch(watchId);
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 15000,
-          maximumAge: 0,
-        }
-      );
-    } catch (err) {
-      console.error("Unexpected error:", err);
-      setMessage("❌ Something went wrong.");
-      setLoading(false);
-      if (watchId) navigator.geolocation.clearWatch(watchId);
-    }
-  };
+  //             // update today's otps quickly
+  //             loadTodaysOtps();
+  //           } catch (error) {
+  //             console.error("Generate OTP error:", error);
+  //             setMessage(error?.response?.data?.detail || "❌ Failed to generate OTP");
+  //           } finally {
+  //             setLoading(false);
+  //           }
+  //         }
+  //       },
+  //       (error) => {
+  //         console.error("Geolocation error:", error);
+  //         setMessage("❌ Failed to get location. Please allow location access and try again.");
+  //         setLoading(false);
+  //         if (watchId) navigator.geolocation.clearWatch(watchId);
+  //       },
+  //       {
+  //         enableHighAccuracy: true,
+  //         timeout: 15000,
+  //         maximumAge: 0,
+  //       }
+  //     );
+  //   } catch (err) {
+  //     console.error("Unexpected error:", err);
+  //     setMessage("❌ Something went wrong.");
+  //     setLoading(false);
+  //     if (watchId) navigator.geolocation.clearWatch(watchId);
+  //   }
+  // };
 
-  // Wrapper function
-  const generateOtpForClass = (c) => {
+  // // Wrapper function
+  // const generateOtpForClass = (c) => {
 
-    setLoadingClassId(c.id);
+  //   setLoadingClassId(c.id);
     
-    setCourse(c.course);
-    setBranch(c.branch);
-    setSemester(c.semester);
-    setSubject(c.subject);
+  //   setCourse(c.course);
+  //   setBranch(c.branch);
+  //   setSemester(c.semester);
+  //   setSubject(c.subject);
 
-    // call the same function but without needing a <form> submit
-    handleGenerateOtp(new Event("submit"));
-  };
+  //   // call the same function but without needing a <form> submit
+  //   handleGenerateOtp(new Event("submit"));
+  // };
+
+  // Core OTP generator (independent of form or class)
+const doGenerateOtp = async (c) => {
+  let watchId = null;
+  let gotAccurateLocation = false;
+
+  try {
+    setMessage("📡 Getting accurate location... Please wait.");
+    watchId = navigator.geolocation.watchPosition(
+      async (position) => {
+        const { latitude, longitude, accuracy } = position.coords;
+        setMessage(`📍 Accuracy: ${Math.round(accuracy)} meters`);
+
+        if (accuracy <= 1000 && !gotAccurateLocation) {
+          gotAccurateLocation = true;
+          navigator.geolocation.clearWatch(watchId);
+
+          try {
+            const data = await generateOtp(
+              employeeId,
+              c.course,
+              c.branch,
+              c.semester,
+              c.subject,
+              duration,
+              latitude,
+              longitude
+            );
+
+            const newOtp = {
+              otp: data.otp,
+              subject: data.subject,
+              end_time: data.valid_till,
+            };
+
+            setOtpList((prev) =>
+              [newOtp, ...prev]
+                .filter((item) => new Date(item.end_time) > new Date())
+                .sort((a, b) => new Date(b.end_time) - new Date(a.end_time))
+            );
+
+            setMessage(
+              `✅ OTP Generated: ${data.otp} (valid till: ${new Date(
+                data.valid_till
+              ).toLocaleString()})`
+            );
+
+            loadTodaysOtps(); // refresh today's list
+          } catch (err) {
+            console.error("Generate OTP error:", err);
+            setMessage(err?.response?.data?.detail || "❌ Failed to generate OTP");
+          } finally {
+            setLoadingClassId(null);
+            setLoading(false);
+          }
+        }
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+        setMessage("❌ Failed to get location. Please allow location access and try again.");
+        setLoadingClassId(null);
+        setLoading(false);
+        if (watchId) navigator.geolocation.clearWatch(watchId);
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+    );
+  } catch (err) {
+    console.error("Unexpected error:", err);
+    setMessage("❌ Something went wrong.");
+    setLoadingClassId(null);
+    setLoading(false);
+    if (watchId) navigator.geolocation.clearWatch(watchId);
+  }
+};
+
+// --- Used in two ways ---
+
+// Case 1: Generate from class card button
+const generateOtpForClass = (c) => {
+  setLoading(true);
+  setLoadingClassId(c.id);
+  doGenerateOtp(c);
+};
+
+// Case 2: Generate from form submit
+const handleGenerateOtp = (e) => {
+  e.preventDefault();
+
+  if (!branch || !semester || !subject || !course) {
+    setMessage("❌ Please select course, branch, semester, and subject.");
+    return;
+  }
+
+  setLoading(true);
+  const c = { course, branch, semester, subject }; // form values
+  doGenerateOtp(c);
+};
+
 
 
 
@@ -463,9 +561,8 @@ const handleSelectClass = (c) => {
                           generateOtpForClass(c);
                         }}
                         disabled={loadingClassId === c.id}
-                        className="flex items-center gap-1 px-3 py-1 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition disabled:opacity-60"
+                        className="mt-3 w-full px-3 py-1 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition disabled:opacity-60"
                       >
-                        <KeyRound className="w-4 h-4" />
                         {loadingClassId === c.id ? "Generating..." : "Generate OTP"}
                       </button>
                     </li>
