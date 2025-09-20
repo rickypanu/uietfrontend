@@ -3,7 +3,6 @@ import React, { useEffect, useState, useRef } from "react";
 import {
   generateOtp,
   getAttendance,
-  getGeneratedOtps,
 } from "../services/api";
 import { NavLink,useNavigate, Outlet } from "react-router-dom";
 import api from "../services/api";
