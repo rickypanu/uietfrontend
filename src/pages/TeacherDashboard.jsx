@@ -161,7 +161,7 @@ const [qrMode, setQrMode] = useState("qr"); // mode of the last generated OTP ("
   };
 
   // Core OTP generator
-const doGenerateOtp = async (c, mode = "qr") => {
+const doGenerateOtp = async (c, mode = "qr", durationValue) => {
   let watchId = null;
   let gotAccurateLocation = false;
 
@@ -183,7 +183,7 @@ const doGenerateOtp = async (c, mode = "qr") => {
               c.branch,
               c.semester,
               c.subject,
-              duration,
+              durationValue, 
               latitude,
               longitude,
             );
@@ -207,7 +207,7 @@ const doGenerateOtp = async (c, mode = "qr") => {
             } else {
               setQrOtp(null); // hide QR when only OTP text was requested
               setMessage(
-                `✅ OTP Generated: ${data.otp} (valid till: ${new Date(
+                `OTP Generated: ${data.otp} (valid till: ${new Date(
                   data.valid_till
                 ).toLocaleString()})`
               );
@@ -249,7 +249,7 @@ const generateOtpForClass = (c, durationValue, mode = "qr") => {
   setLoading(true);
   setLoadingClassId(c.id);
   setQrMode(mode);           // remember the mode of this generation
-  doGenerateOtp(c, mode);    // pass mode through
+  doGenerateOtp(c, mode,  durationValue);    // pass mode through
   setCourse(c.course);
   setBranch(c.branch);
   setSemester(c.semester);
