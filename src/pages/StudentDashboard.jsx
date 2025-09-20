@@ -396,18 +396,67 @@ const QRScanner = ({ onScan }) => {
   </div>
 
   {/* QR Scanner Panel */}
-  {scanQrOpen && (
+{scanQrOpen && (
   <div className="border rounded-xl overflow-hidden my-2">
     <QRScanner
-      onScan={(value) => {
-        setOtp(value);
-        setScannedOtp(value);
-        setScanQrOpen(false);
-        setMessage("✅ OTP scanned successfully!");
+      onScan={async (value) => {
+        try {
+          let parsed;
+          try {
+            parsed = JSON.parse(value); // Expect { otp, subject }
+          } catch {
+            parsed = { otp: value, subject: "" }; // fallback if only OTP
+          }
+
+          const scannedOtp = parsed.otp?.trim();
+          const scannedSubject = parsed.subject?.trim();
+
+          if (!scannedOtp) {
+            setMessage("⚠️ Invalid QR code (missing OTP)");
+            return;
+          }
+
+          setScanQrOpen(false);
+          setMessage("⏳ Marking attendance...");
+
+          // Run your existing attendance logic directly
+          const visitorId = await getFingerprint();
+          const position = await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+              enableHighAccuracy: true,
+              timeout: 10000,
+              maximumAge: 0,
+            });
+          });
+
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+
+          await markAttendance(
+            roll_no,
+            scannedSubject || subject, // use subject from QR (preferred), else manual
+            scannedOtp,
+            visitorId,
+            lat,
+            lng
+          );
+
+          setMessage("✅ Attendance marked successfully!");
+          setOtp("");
+          setSubject("");
+          loadAttendance(filterSubject, filterDate);
+        } catch (err) {
+          let detail = err.response?.data?.detail;
+          if (Array.isArray(detail)) {
+            detail = detail.map((d) => d.msg).join(", ");
+          }
+          setMessage(detail || err.message || "❌ Failed to mark attendance.");
+        }
       }}
     />
   </div>
 )}
+
 
 
   <form
