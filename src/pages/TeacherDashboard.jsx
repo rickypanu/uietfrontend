@@ -33,10 +33,6 @@ export default function TeacherDashboard() {
   const [attendanceList, setAttendanceList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const [filterDate, setFilterDate] = useState("");
-  const [filterMonth, setFilterMonth] = useState("");
-  const [filterBranch, setFilterBranch] = useState("");
-  const [filterSection, setFilterSection] = useState("");
   const [profile, setProfile] = useState(null);
 
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -45,9 +41,32 @@ export default function TeacherDashboard() {
   const [course, setCourse] = useState("");
   const [otpCardOpen, setOtpCardOpen] = useState(true);
 
+  const [collapsed, setCollapsed] = useState(false);
+  const [loadingClassId, setLoadingClassId] = useState(null);
+
   const employeeId = localStorage.getItem("userId");
   const navigate = useNavigate();
 
+  // --- state ---
+  const [classes, setClasses] = useState([]);
+
+// --- API calls ---
+const loadClasses = async () => {
+  try {
+    const res = await api.get(`/classes/list/${employeeId}`);
+    setClasses(res.data || []);
+  } catch (err) {
+    console.error("Failed to load classes", err);
+  }
+};
+
+// --- handler to select class ---
+const handleSelectClass = (c) => {
+  setCourse(c.course);
+  setBranch(c.branch);
+  setSemester(c.semester);
+  setSubject(c.subject);
+};
   // SUBJECTS helpers
   const branches = course ? Object.keys(SUBJECTS[course] || {}) : [];
   const semesters = course && branch ? Object.keys(SUBJECTS[course]?.[branch] || {}) : [];
@@ -81,6 +100,7 @@ export default function TeacherDashboard() {
       fetchProfile();
       loadAttendance();
       loadTodaysOtps();
+      loadClasses();  
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -155,7 +175,7 @@ export default function TeacherDashboard() {
   // ------- event handlers -------
   const handleGenerateOtp = async (e) => {
     e.preventDefault();
-
+  
     if (!branch || !semester || !subject || !course) {
       setMessage("❌ Please select course, branch, semester, and subject.");
       return;
@@ -237,52 +257,18 @@ export default function TeacherDashboard() {
     }
   };
 
-  const handleExport = () => {
-    const filtered = attendanceList.filter((a) => {
-      let match = true;
-      if (filterDate) {
-      const date = new Date(a.marked_at).toISOString().split("T")[0];
-      match = match && date === filterDate;
-    }
+  // Wrapper function
+  const generateOtpForClass = (c) => {
+    setCourse(c.course);
+    setBranch(c.branch);
+    setSemester(c.semester);
+    setSubject(c.subject);
 
-    if (filterMonth) {
-      const month = new Date(a.marked_at).toISOString().slice(0, 7);
-      match = match && month === filterMonth;
-    }
-      if (filterBranch) {
-        match = match && a.branch === filterBranch;
-      }
-
-      if (filterSection) {
-        match = match && a.section === filterSection;
-      }
-
-      return match;
-      
-    });
-
-    if (filtered.length === 0) {
-      setMessage("❌ No attendance records to export.");
-      return;
-    }
-
-    const csv = Papa.unparse(
-      filtered.map((a) => ({
-        RollNo: a.roll_no,
-        Subject: a.subject.toUpperCase(),
-        MarkedAt: new Date(a.marked_at).toLocaleString(),
-      }))
-    );
-
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", `attendance_${employeeId}_${new Date().toISOString()}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // call the same function but without needing a <form> submit
+    handleGenerateOtp(new Event("submit"));
   };
+
+
 
   const handleLogout = () => {
     localStorage.clear();
@@ -424,8 +410,68 @@ export default function TeacherDashboard() {
             </div>
           )}
 
-          {/* OTP generator (collapsible) */}
+        {/* classes for select and generate otp */}
           <div className="bg-white rounded-xl shadow-sm p-4">
+      {/* Header with collapse toggle */}
+      <div className="flex justify-between items-center">
+        <SectionTitle
+          icon={Layers}
+          title="Your Classes"
+          subtitle="Click a class to prefill OTP form or generate OTP directly"
+        />
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className="text-sm text-indigo-600 hover:underline"
+        >
+          {collapsed ? "Show" : "Hide"}
+        </button>
+      </div>
+
+      {/* Collapsible Content */}
+      {!collapsed && (
+        <div className="mt-3">
+          {classes.length === 0 ? (
+            <div className="text-sm text-gray-500">No classes created yet.</div>
+          ) : (
+            <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {classes.map((c, idx) => (
+                <li
+                  key={idx}
+                  className="p-3 rounded-lg border border-gray-200 bg-gray-50 hover:border-indigo-300 transition flex flex-col justify-between"
+                >
+                  {/* Class info */}
+                  <div
+                    className="flex-1 cursor-pointer"
+                    onClick={() => handleSelectClass(c)}
+                  >
+                    <div className="font-medium text-gray-800">
+                      {c.course} ({c.branch}) - Sem {c.semester} - Sec {c.section}
+                    </div>
+                    <div className="text-xs text-gray-500">{c.subject}</div>
+                  </div>
+
+                  {/* Generate OTP button */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      generateOtpForClass(c);
+                    }}
+                    disabled={loadingClassId === c.id}
+                    className="mt-3 w-full px-3 py-1 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition disabled:opacity-60"
+                  >
+                    {loadingClassId === c.id ? "Generating..." : "Generate OTP"}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+    </div>
+
+
+          {/* OTP generator (collapsible) */}
+          {/* <div className="bg-white rounded-xl shadow-sm p-4">
             <div className="flex items-center justify-between">
               <SectionTitle icon={KeyRound} title="Generate OTP for Class" subtitle="Create a time-bound OTP for attendance marking" />
               <button
@@ -537,7 +583,7 @@ export default function TeacherDashboard() {
                 </div>
               </form>
             )}
-          </div>
+          </div> */}
 
           {/* Split: Today's OTPs + Students Marked */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -615,121 +661,7 @@ export default function TeacherDashboard() {
               </div>
             </div>
           </div>
-
-          {/* Filters & Export */}
-          {/* <div className="bg-white rounded-xl shadow-sm p-4">
-            <SectionTitle icon={Filter} title="Filter & Export Attendance Records" />
-            <div className="mt-3 flex flex-col md:flex-row gap-3 md:items-end">
-              <div className="flex-1">
-                <label className="text-xs text-gray-600">Filter by Date</label>
-                <input type="date" value={filterDate} onChange={(e) => setFilterDate(e.target.value)} className="p-2 border rounded-md w-full" />
-              </div>
-              <div className="flex-1">
-                <label className="text-xs text-gray-600">Filter by Month</label>
-                <input type="month" value={filterMonth} onChange={(e) => setFilterMonth(e.target.value)} className="p-2 border rounded-md w-full" />
-              </div>
-            
-              <div className="flex-1">
-                <label className="text-xs text-gray-600">Filter by Branch</label>
-                <select
-                  value={filterBranch}
-                  onChange={(e) => setFilterBranch(e.target.value)}
-                  className="p-2 border rounded-md w-full"
-                >
-                  <option value="">All</option>
-                  <option value="CSE">CSE</option>
-                  <option value="ECE">ECE</option>
-                  <option value="MECH">MECH</option>
-                  <option value="EEE">EEE</option>
-                </select>
-              </div>
-
-              <div className="flex-1">
-                <label className="text-xs text-gray-600">Filter by Section</label>
-                <select
-                  value={filterSection}
-                  onChange={(e) => setFilterSection(e.target.value)}
-                  className="p-2 border rounded-md w-full"
-                >
-                  <option value="">All</option>
-                  <option value="A">A</option>
-                  <option value="B">B</option>
-                  <option value="C">C</option>
-                </select>
-              </div>
-
-              <div className="flex gap-2">
-                <button onClick={() => { setFilterDate(""); setFilterMonth(""); setFilterBranch(""); setFilterSection(""); }} className="px-4 py-2 rounded-md bg-gray-100 hover:bg-gray-200 transition">Clear</button>
-                <button onClick={handleExport} className="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 transition inline-flex items-center gap-2"><FileDown className="w-4 h-4" /> Export CSV</button>
-              </div>
-            </div>
-          </div> */}
-
-          {/* Attendance table */}
-          {/* <div className="bg-white rounded-xl shadow-sm p-4">
-            <SectionTitle icon={CalendarCheck2} title="Attendance Marked by Students" />
-            <div className="mt-4 overflow-auto border rounded-md">
-              <table className="min-w-full text-sm">
-                <thead className="bg-gray-100 sticky top-0">
-                  <tr>
-                    <th className="px-4 py-3 text-left">Roll No</th>
-                    <th className="px-4 py-3 text-left">Student Name</th>
-                    <th className="px-4 py-3 text-left">Subject</th>
-                    <th className="px-4 py-3 text-left">Date</th>
-                    <th className="px-4 py-3 text-left">Time</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {attendanceList.length > 0 ? (
-                    attendanceList
-                      .filter((a) => {
-                        let match = true;
-
-                        if (filterDate) {
-                          const date = new Date(a.marked_at).toISOString().split("T")[0];
-                          match = match && date === filterDate;
-                        }
-
-                        if (filterMonth) {
-                          const month = new Date(a.marked_at).toISOString().slice(0, 7);
-                          match = match && month === filterMonth;
-                        }
-
-                        if (filterBranch) {
-                          match = match && a.branch === filterBranch;
-                        }
-
-                        if (filterSection) {
-                          match = match && a.section === filterSection;
-                        }
-
-                        return match;
-                      })
-                      .sort((a, b) => new Date(b.marked_at) - new Date(a.marked_at))
-                      .map((a, idx) => {
-                        const markedDate = new Date(a.marked_at);
-                        const isEven = idx % 2 === 0;
-                        return (
-                          <tr key={idx} className={`${isEven ? "bg-white" : "bg-gray-50"} hover:bg-gray-100 transition`}>
-                            <td className="px-4 py-2 border-t">{a.roll_no}</td>
-                            <td className="px-4 py-2 border-t">{a.student_name || "-"}</td>
-                            <td className="px-4 py-2 border-t">{a.subject?.toUpperCase?.() || "-"}</td>
-                            <td className="px-4 py-2 border-t">{markedDate.toLocaleDateString()}</td>
-                            <td className="px-4 py-2 border-t">{markedDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</td>
-                          </tr>
-                        );
-                      })
-                  ) : (
-                    <tr>
-                      <td colSpan="5" className="text-center py-6 text-gray-500">No attendance records yet</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div> */}
-
-        </div>
+      </div>
       </div>
 
       {/* Outlet for nested routes */}
