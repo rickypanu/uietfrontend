@@ -526,79 +526,77 @@ const handleGenerateOtp = (e) => {
 
         {/* classes for select and generate otp */}
         <div className="bg-white rounded-xl shadow-sm p-4">
-          {/* Header with collapse toggle */}
-          <div className="flex justify-between items-center">
-            <SectionTitle
-              icon={Layers}
-              title="Your Classes"
-              subtitle="Click on button to generate OTP directly"
-            />
-            <button
-              onClick={() => setCollapsed(!collapsed)}
-              className="p-2 rounded-full hover:bg-gray-100 transition"
-            >
-              {collapsed ? (
-                <ChevronDown className="w-5 h-5 text-gray-600" />
-              ) : (
-                <ChevronUp className="w-5 h-5 text-gray-600" />
-              )}
-            </button>
-          </div>
+  {/* Header with collapse toggle */}
+  <div className="flex justify-between items-center">
+    <SectionTitle
+      icon={Layers}
+      title="Your Classes"
+      subtitle="Click the button to generate OTP directly"
+    />
+    <button
+      onClick={() => setCollapsed(!collapsed)}
+      className="p-2 rounded-full hover:bg-gray-100 transition"
+    >
+      {collapsed ? (
+        <ChevronDown className="w-5 h-5 text-gray-600" />
+      ) : (
+        <ChevronUp className="w-5 h-5 text-gray-600" />
+      )}
+    </button>
+  </div>
 
-          {/* Collapsible Content */}
-          {!collapsed && (
-            <div className="mt-4">
-              {classes.length === 0 ? (
-                <div className="text-sm text-gray-500">No classes created yet.</div>
-              ) : (
-                <ul className="divide-y divide-gray-200">
-                  {classes.map((c, idx) => (
-                    <li
-                      key={idx}
-                      className="flex items-center justify-between py-3 px-2 hover:bg-gray-50 rounded-lg transition cursor-pointer"
-                      onClick={() => handleSelectClass(c)}
-                    >
-                      {/* Class Info */}
-                      <div>
-                        <div className="font-medium text-gray-800">
-                          {c.course} ({c.branch}) - Sem {c.semester} - Sec {c.section}
-                        </div>
-                        <div className="text-xs text-gray-500">{c.subject}</div>
-                        <div className="flex items-center gap-3 mb-3">
-                        <div className="flex-1 md:w-1/4">
-                          <label className="block text-xs text-gray-600 mb-1">Validity (mins)</label>
-                          <input
-                            type="number"
-                            min={1}
-                            value={duration}
-                            onChange={(e) => setDuration(e.target.value)}
-                            className="p-2 border rounded-md w-full"
-                            required
-                          />
-                        </div>
-                      </div>
+  {/* Collapsible Content */}
+  {!collapsed && (
+    <div className="mt-4">
+      {classes.length === 0 ? (
+        <div className="text-sm text-gray-500">No classes created yet.</div>
+      ) : (
+        <ul className="divide-y divide-gray-200">
+          {classes.map((c, idx) => {
+            // Local duration state per class
+            const [localDuration, setLocalDuration] = React.useState(duration);
 
-                      </div>
+            return (
+              <li
+                key={idx}
+                className="flex items-center justify-between py-3 px-2 hover:bg-gray-50 rounded-lg transition"
+              >
+                {/* Class Info */}
+                <div>
+                  <div className="font-medium text-gray-800">
+                    {c.course} ({c.branch}) - Sem {c.semester} - Sec {c.section}
+                  </div>
+                  <div className="text-xs text-gray-500">{c.subject}</div>
+                </div>
 
-                      {/* Generate OTP Button */}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          generateOtpForClass(c, duration);
-                        }}
-                        disabled={loadingClassId === c.id}
-                        className="flex items-center gap-1 px-3 py-1 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition disabled:opacity-60"
-                      >
-                        <KeyRound className="w-4 h-4" />
-                        {loadingClassId === c.id ? "Generating..." : "Generate OTP"}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          )}
-        </div>
+                {/* Duration + Generate OTP */}
+                <div className="flex items-center gap-2">
+                  <input
+                    type="number"
+                    min={1}
+                    value={localDuration}
+                    onChange={(e) => setLocalDuration(e.target.value)}
+                    className="w-16 p-1 border rounded-md text-xs text-center"
+                    title="Validity (mins)"
+                  />
+                  <button
+                    onClick={() => generateOtpForClass(c, localDuration)}
+                    disabled={loadingClassId === c.id}
+                    className="flex items-center gap-1 px-3 py-1 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition disabled:opacity-60"
+                  >
+                    <KeyRound className="w-4 h-4" />
+                    {loadingClassId === c.id ? "Generating..." : "Generate OTP"}
+                  </button>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
+  )}
+</div>
+
 
           {/* OTP generator (collapsible) */}
           {/* <div className="bg-white rounded-xl shadow-sm p-4">
