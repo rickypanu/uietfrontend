@@ -20,9 +20,6 @@ import {
   ChevronUp, 
 } from "lucide-react";
 
-import Papa from "papaparse";
-import TeacherSidebar from "../components/TeacherSidebar";
-import { SUBJECTS } from "../constants/subjects";
 
 export default function TeacherDashboard() {
   // --- state ---
@@ -40,7 +37,6 @@ export default function TeacherDashboard() {
   const [todaysOtp, setTodaysOtps] = useState([]);
   const [selectedOtp, setSelectedOtp] = useState(null);
   const [course, setCourse] = useState("");
-  const [otpCardOpen, setOtpCardOpen] = useState(true);
 
   const [collapsed, setCollapsed] = useState(false);
   const [loadingClassId, setLoadingClassId] = useState(null);
@@ -62,17 +58,6 @@ const loadClasses = async () => {
   }
 };
 
-// --- handler to select class ---
-const handleSelectClass = (c) => {
-  setCourse(c.course);
-  setBranch(c.branch);
-  setSemester(c.semester);
-  setSubject(c.subject);
-};
-  // SUBJECTS helpers
-  const branches = course ? Object.keys(SUBJECTS[course] || {}) : [];
-  const semesters = course && branch ? Object.keys(SUBJECTS[course]?.[branch] || {}) : [];
-  const subjects = course && branch && semester ? SUBJECTS[course]?.[branch]?.[semester] || [] : [];
 
   // quick derived values for stats
   const todayISO = new Date().toISOString().split("T")[0];
@@ -174,105 +159,6 @@ const handleSelectClass = (c) => {
     }
   };
 
-  // ------- event handlers -------
-  // const handleGenerateOtp = async (e) => {
-  //   e.preventDefault();
-  
-  //   if (!branch || !semester || !subject || !course) {
-  //     setMessage("❌ Please select course, branch, semester, and subject.");
-  //     return;
-  //   }
-
-  //   setLoading(true);
-  //   setMessage("📡 Getting accurate location... Please wait.");
-
-  //   let watchId = null;
-  //   let gotAccurateLocation = false;
-
-  //   try {
-  //     watchId = navigator.geolocation.watchPosition(
-  //       async (position) => {
-  //         const { latitude, longitude, accuracy } = position.coords;
-  //         setMessage(`📍 Accuracy: ${Math.round(accuracy)} meters`);
-
-  //         if (accuracy <= 1000 && !gotAccurateLocation) {
-  //           gotAccurateLocation = true;
-  //           navigator.geolocation.clearWatch(watchId);
-
-  //           try {
-  //             const data = await generateOtp(
-  //               employeeId,
-  //               course,
-  //               branch,
-  //               semester,
-  //               subject,
-  //               duration,
-  //               latitude,
-  //               longitude
-  //             );
-
-  //             const newOtp = {
-  //               otp: data.otp,
-  //               subject: data.subject,
-  //               end_time: data.valid_till,
-  //             };
-
-  //             setOtpList((prev) =>
-  //               [newOtp, ...prev]
-  //                 .filter((item) => new Date(item.end_time) > new Date())
-  //                 .sort((a, b) => new Date(b.end_time) - new Date(a.end_time))
-  //             );
-
-  //             setMessage(
-  //               `✅ OTP Generated: ${data.otp} (valid till: ${new Date(
-  //                 data.valid_till
-  //               ).toLocaleString()})`
-  //             );
-
-  //             // update today's otps quickly
-  //             loadTodaysOtps();
-  //           } catch (error) {
-  //             console.error("Generate OTP error:", error);
-  //             setMessage(error?.response?.data?.detail || "❌ Failed to generate OTP");
-  //           } finally {
-  //             setLoading(false);
-  //           }
-  //         }
-  //       },
-  //       (error) => {
-  //         console.error("Geolocation error:", error);
-  //         setMessage("❌ Failed to get location. Please allow location access and try again.");
-  //         setLoading(false);
-  //         if (watchId) navigator.geolocation.clearWatch(watchId);
-  //       },
-  //       {
-  //         enableHighAccuracy: true,
-  //         timeout: 15000,
-  //         maximumAge: 0,
-  //       }
-  //     );
-  //   } catch (err) {
-  //     console.error("Unexpected error:", err);
-  //     setMessage("❌ Something went wrong.");
-  //     setLoading(false);
-  //     if (watchId) navigator.geolocation.clearWatch(watchId);
-  //   }
-  // };
-
-  // // Wrapper function
-  // const generateOtpForClass = (c) => {
-
-  //   setLoadingClassId(c.id);
-    
-  //   setCourse(c.course);
-  //   setBranch(c.branch);
-  //   setSemester(c.semester);
-  //   setSubject(c.subject);
-
-  //   // call the same function but without needing a <form> submit
-  //   handleGenerateOtp(new Event("submit"));
-  // };
-
   
   // Core OTP generator (independent of form or class)
 const doGenerateOtp = async (c) => {
@@ -368,23 +254,6 @@ const generateOtpForClass = (c, durationValue) => {
   setDuration(durationValue);
 };
 
-// Case 2: Generate from form submit
-const handleGenerateOtp = (e) => {
-  e.preventDefault();
-
-  if (!branch || !semester || !subject || !course) {
-    setMessage("❌ Please select course, branch, semester, and subject.");
-    return;
-  }
-
-  setLoading(true);
-  const c = { course, branch, semester, subject }; // form values
-  doGenerateOtp(c);
-};
-
-
-
-
   const handleLogout = () => {
     localStorage.clear();
     navigate("/login");
@@ -440,15 +309,6 @@ const handleGenerateOtp = (e) => {
             <Clock className="w-4 h-4 text-gray-500" />
             {currentTime.toLocaleTimeString()}
           </div>
-
-          {/* Quick OTP (hidden on mobile) */}
-          {/* <button
-            onClick={() => setOtpCardOpen((s) => !s)}
-            className="hidden sm:inline-flex items-center gap-1 bg-indigo-600 text-white px-2 sm:px-3 py-1.5 rounded-lg hover:bg-indigo-700 transition text-xs sm:text-sm"
-          >
-            <Plus className="w-4 h-4" />
-            Check-In
-          </button> */}
 
           <button
             onClick={() => navigate("/teacher/classes")}
@@ -603,120 +463,6 @@ const handleGenerateOtp = (e) => {
   )}
 </div>
 
-          {/* OTP generator (collapsible) */}
-          {/* <div className="bg-white rounded-xl shadow-sm p-4">
-            <div className="flex items-center justify-between">
-              <SectionTitle icon={KeyRound} title="Generate OTP for Class" subtitle="Create a time-bound OTP for attendance marking" />
-              <button
-                onClick={() => setOtpCardOpen((s) => !s)}
-                className="p-2 rounded-md hover:bg-gray-100 transition"
-                aria-expanded={otpCardOpen}
-              >
-                {otpCardOpen ? <ChevronsUp className="w-5 h-5 text-gray-600" /> : <ChevronsDown className="w-5 h-5 text-gray-600" />}
-              </button>
-            </div>
-
-            {otpCardOpen && (
-              <form onSubmit={handleGenerateOtp} className="mt-4 grid grid-cols-1 md:grid-cols-6 gap-3 items-end">
-                <div className="md:col-span-2">
-                  <label className="block text-xs text-gray-600 mb-1">Course</label>
-                  <select
-                    value={course}
-                    onChange={(e) => {
-                      setCourse(e.target.value);
-                      setBranch("");
-                      setSemester("");
-                      setSubject("");
-                    }}
-                    className="p-2 border rounded-md w-full"
-                    required
-                  >
-                    <option value="">Select Course</option>
-                    {Object.keys(SUBJECTS).map((c) => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="md:col-span-1">
-                  <label className="block text-xs text-gray-600 mb-1">Branch</label>
-                  <select
-                    value={branch}
-                    onChange={(e) => {
-                      setBranch(e.target.value);
-                      setSemester("");
-                      setSubject("");
-                    }}
-                    className="p-2 border rounded-md w-full"
-                    required
-                  >
-                    <option value="">Select</option>
-                    {branches.map((b) => (
-                      <option key={b} value={b}>{b}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="md:col-span-1">
-                  <label className="block text-xs text-gray-600 mb-1">Semester</label>
-                  <select
-                    value={semester}
-                    onChange={(e) => {
-                      setSemester(e.target.value);
-                      setSubject("");
-                    }}
-                    disabled={!branch}
-                    className="p-2 border rounded-md w-full"
-                    required
-                  >
-                    <option value="">Select</option>
-                    {semesters.map((sem) => (
-                      <option key={sem} value={sem}>{sem}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="md:col-span-1">
-                  <label className="block text-xs text-gray-600 mb-1">Subject</label>
-                  <select
-                    value={subject}
-                    onChange={(e) => setSubject(e.target.value)}
-                    disabled={!semester}
-                    className="p-2 border rounded-md w-full"
-                    required
-                  >
-                    <option value="">Select</option>
-                    {subjects.map((sub) => (
-                      <option key={sub} value={sub}>{sub}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="md:col-span-1">
-                  <label className="block text-xs text-gray-600 mb-1">Validity (mins)</label>
-                  <input
-                    type="number"
-                    min={1}
-                    value={duration}
-                    onChange={(e) => setDuration(e.target.value)}
-                    className="p-2 border rounded-md w-full"
-                    required
-                  />
-                </div>
-
-                <div className="md:col-span-6 flex justify-end">
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition inline-flex items-center gap-2"
-                  >
-                    {loading ? "Generating..." : "Generate OTP"}
-                    <KeyRound className="w-4 h-4" />
-                  </button>
-                </div>
-              </form>
-            )}
-          </div> */}
 
           {/* Split: Today's OTPs + Students Marked */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
