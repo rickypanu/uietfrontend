@@ -185,7 +185,8 @@ const doGenerateOtp = async (c, mode = "qr") => {
               c.subject,
               duration,
               latitude,
-              longitude
+              longitude,
+              mode
             );
 
             const newOtp = {
@@ -622,8 +623,6 @@ const generateOtpForClass = (c, durationValue, mode = "qr") => {
           </button>
         </div>
       )}
-
-
       <Outlet />
     </div>
   );
