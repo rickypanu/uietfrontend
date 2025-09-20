@@ -272,6 +272,7 @@ const handleSelectClass = (c) => {
   //   handleGenerateOtp(new Event("submit"));
   // };
 
+  
   // Core OTP generator (independent of form or class)
 const doGenerateOtp = async (c) => {
   let watchId = null;
@@ -561,8 +562,9 @@ const handleGenerateOtp = (e) => {
                           generateOtpForClass(c);
                         }}
                         disabled={loadingClassId === c.id}
-                        className="mt-3 w-full px-3 py-1 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition disabled:opacity-60"
+                        className="flex items-center gap-1 px-3 py-1 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition disabled:opacity-60"
                       >
+                        <KeyRound className="w-4 h-4" />
                         {loadingClassId === c.id ? "Generating..." : "Generate OTP"}
                       </button>
                     </li>
