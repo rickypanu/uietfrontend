@@ -568,19 +568,22 @@ const handleGenerateOtp = (e) => {
 
               {/* Duration + Generate OTP */}
               <div className="flex items-center gap-2">
-                <input
-                  type="number"
-                  min={1}
-                  value={classDurations[c.id] || duration} // fallback to default
-                  onChange={(e) =>
-                    setClassDurations({
-                      ...classDurations,
-                      [c.id]: e.target.value,
-                    })
-                  }
-                  className="w-16 p-1 border rounded-md text-xs text-center"
-                  title="Validity (mins)"
-                />
+                <div className="flex flex-col items-center">
+                  <label className="text-xs text-gray-600 mb-0.5">Validity</label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={classDurations[c.id] || duration} // fallback to default
+                    onChange={(e) =>
+                      setClassDurations({
+                        ...classDurations,
+                        [c.id]: e.target.value,
+                      })
+                    }
+                    className="w-16 p-1 border rounded-md text-xs text-center"
+                    title="Validity (mins)"
+                  />
+                </div>
                 <button
                   onClick={() =>
                     generateOtpForClass(c, classDurations[c.id] || duration)
