@@ -568,6 +568,7 @@ const handleGenerateOtp = (e) => {
 
               {/* Duration + Generate OTP */}
               <div className="flex items-center gap-2">
+                <label className="block text-xs text-gray-600 mb-1">Validity (mins)</label>
                 <input
                   type="number"
                   min={1}
