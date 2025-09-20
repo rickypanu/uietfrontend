@@ -158,92 +158,93 @@ export default function TeacherDashboard() {
   };
 
   // Core OTP generator
-  const doGenerateOtp = async (c) => {
-    let watchId = null;
-    let gotAccurateLocation = false;
+  const doGenerateOtp = async (c, mode = "qr") => {
+  let watchId = null;
+  let gotAccurateLocation = false;
 
-    try {
-      setMessage("📡 Getting accurate location... Please wait.");
-      watchId = navigator.geolocation.watchPosition(
-        async (position) => {
-          const { latitude, longitude, accuracy } = position.coords;
-          setMessage(`📍 Accuracy: ${Math.round(accuracy)} meters`);
+  try {
+    setMessage("📡 Getting accurate location... Please wait.");
+    watchId = navigator.geolocation.watchPosition(
+      async (position) => {
+        const { latitude, longitude, accuracy } = position.coords;
+        setMessage(`📍 Accuracy: ${Math.round(accuracy)} meters`);
 
-          if (accuracy <= 1000 && !gotAccurateLocation) {
-            gotAccurateLocation = true;
-            navigator.geolocation.clearWatch(watchId);
+        if (accuracy <= 1000 && !gotAccurateLocation) {
+          gotAccurateLocation = true;
+          navigator.geolocation.clearWatch(watchId);
 
-            try {
-              const data = await generateOtp(
-                employeeId,
-                c.course,
-                c.branch,
-                c.semester,
-                c.subject,
-                duration,
-                latitude,
-                longitude
-              );
+          try {
+            const data = await generateOtp(
+              employeeId,
+              c.course,
+              c.branch,
+              c.semester,
+              c.subject,
+              duration,
+              latitude,
+              longitude
+            );
 
-              const newOtp = {
-                otp: data.otp,
-                subject: data.subject,
-                end_time: data.valid_till,
-              };
+            const newOtp = {
+              otp: data.otp,
+              subject: data.subject,
+              end_time: data.valid_till,
+            };
 
-              setOtpList((prev) =>
-                [newOtp, ...prev]
-                  .filter((item) => new Date(item.end_time) > new Date())
-                  .sort((a, b) => new Date(b.end_time) - new Date(a.end_time))
-              );
+            setOtpList((prev) =>
+              [newOtp, ...prev]
+                .filter((item) => new Date(item.end_time) > new Date())
+                .sort((a, b) => new Date(b.end_time) - new Date(a.end_time))
+            );
 
-              setQrOtp(data.otp);
-
-              setMessage(
-                `✅ OTP Generated: ${data.otp} (valid till: ${new Date(
-                  data.valid_till
-                ).toLocaleString()})`
-              );
-
-              loadTodaysOtps(); // refresh today's list
-            } catch (err) {
-              console.error("Generate OTP error:", err);
-              setMessage(err?.response?.data?.detail || "❌ Failed to generate OTP");
-            } finally {
-              setLoadingClassId(null);
-              setLoading(false);
+            if (mode === "qr") {
+              setQrOtp(data.otp); // show QR
+            } else {
+              setQrOtp(null); // hide QR
+              setMessage(`✅ OTP Generated: ${data.otp} (valid till: ${new Date(data.valid_till).toLocaleString()})`);
             }
+
+            loadTodaysOtps();
+          } catch (err) {
+            console.error("Generate OTP error:", err);
+            setMessage(err?.response?.data?.detail || "❌ Failed to generate OTP");
+          } finally {
+            setLoadingClassId(null);
+            setLoading(false);
           }
-        },
-        (error) => {
-          console.error("Geolocation error:", error);
-          setMessage("❌ Failed to get location. Please allow location access and try again.");
-          setLoadingClassId(null);
-          setLoading(false);
-          if (watchId) navigator.geolocation.clearWatch(watchId);
-        },
-        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
-      );
-    } catch (err) {
-      console.error("Unexpected error:", err);
-      setMessage("❌ Something went wrong.");
-      setLoadingClassId(null);
-      setLoading(false);
-      if (watchId) navigator.geolocation.clearWatch(watchId);
-    }
-  };
+        }
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+        setMessage("❌ Failed to get location. Please allow location access and try again.");
+        setLoadingClassId(null);
+        setLoading(false);
+        if (watchId) navigator.geolocation.clearWatch(watchId);
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+    );
+  } catch (err) {
+    console.error("Unexpected error:", err);
+    setMessage("❌ Something went wrong.");
+    setLoadingClassId(null);
+    setLoading(false);
+    if (watchId) navigator.geolocation.clearWatch(watchId);
+  }
+};
 
-  const generateOtpForClass = (c, durationValue) => {
-    setDuration(durationValue);
-    setLoading(true);
-    setLoadingClassId(c.id);
-    doGenerateOtp(c);
+  const generateOtpForClass = (c, durationValue, mode = "qr") => {
+  setDuration(durationValue);
+  setLoading(true);
+  setLoadingClassId(c.id);
 
-    setCourse(c.course);
-    setBranch(c.branch);
-    setSemester(c.semester);
-    setSubject(c.subject);
-  };
+  doGenerateOtp(c, mode);
+
+  setCourse(c.course);
+  setBranch(c.branch);
+  setSemester(c.semester);
+  setSubject(c.subject);
+};
+
 
   // Auto-hide QR after OTP expires
   useEffect(() => {
@@ -391,40 +392,58 @@ export default function TeacherDashboard() {
                   <div className="text-sm text-gray-500">No classes created yet.</div>
                 ) : (
                   <ul className="divide-y divide-gray-200">
-                    {classes.map((c, idx) => (
-                      <li key={idx} className="flex items-center justify-between py-3 px-2 hover:bg-gray-50 rounded-lg transition">
-                        <div>
-                          <div className="font-medium text-gray-800">
-                            {c.course} ({c.branch}) - Sem {c.semester} - Sec {c.section}
-                          </div>
-                          <div className="text-xs text-gray-500">{c.subject}</div>
+                  {classes.map((c, idx) => (
+                    <li
+                      key={idx}
+                      className="flex items-center justify-between py-3 px-2 hover:bg-gray-50 rounded-lg transition"
+                    >
+                      <div>
+                        <div className="font-medium text-gray-800">
+                          {c.course} ({c.branch}) - Sem {c.semester} - Sec {c.section}
                         </div>
-                        <div className="flex items-center gap-2">
-                          <div className="flex flex-col items-center">
-                            <label className="text-xs text-gray-600 mb-0.5">Validity</label>
-                            <input
-                              type="number"
-                              min={1}
-                              value={classDurations[c.id] || duration}
-                              onChange={(e) =>
-                                setClassDurations({ ...classDurations, [c.id]: e.target.value })
-                              }
-                              className="w-16 p-1 border rounded-md text-xs text-center"
-                              title="Validity (mins)"
-                            />
-                          </div>
-                          <button
-                            onClick={() => generateOtpForClass(c, classDurations[c.id] || duration)}
-                            disabled={loadingClassId === c.id}
-                            className="flex items-center gap-1 px-3 py-1 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition disabled:opacity-60"
-                          >
-                            <KeyRound className="w-4 h-4" />
-                            {loadingClassId === c.id ? "Generating..." : "Generate OTP"}
-                          </button>
+                        <div className="text-xs text-gray-500">{c.subject}</div>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        {/* Validity Input */}
+                        <div className="flex flex-col items-center">
+                          <label className="text-xs text-gray-600 mb-0.5">Validity</label>
+                          <input
+                            type="number"
+                            min={1}
+                            value={classDurations[c.id] || duration}
+                            onChange={(e) =>
+                              setClassDurations({ ...classDurations, [c.id]: e.target.value })
+                            }
+                            className="w-16 p-1 border rounded-md text-xs text-center"
+                            title="Validity (mins)"
+                          />
                         </div>
-                      </li>
-                    ))}
-                  </ul>
+
+                        {/* Generate OTP (Text only) */}
+                        <button
+                          onClick={() => generateOtpForClass(c, classDurations[c.id] || duration, "otp")}
+                          disabled={loadingClassId === c.id}
+                          className="flex items-center gap-1 px-3 py-1 bg-green-600 text-white text-sm rounded-md hover:bg-green-700 transition disabled:opacity-60"
+                        >
+                          <KeyRound className="w-4 h-4" />
+                          {loadingClassId === c.id ? "Generating..." : "OTP Only"}
+                        </button>
+
+                        {/* Generate QR */}
+                        <button
+                          onClick={() => generateOtpForClass(c, classDurations[c.id] || duration, "qr")}
+                          disabled={loadingClassId === c.id}
+                          className="flex items-center gap-1 px-3 py-1 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition disabled:opacity-60"
+                        >
+                          <KeyRound className="w-4 h-4" />
+                          {loadingClassId === c.id ? "Generating..." : "With QR"}
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+
                 )}
               </div>
             )}
@@ -477,7 +496,8 @@ export default function TeacherDashboard() {
                 />
                 
                 <div className="mt-2 text-sm text-gray-500">
-                  OTP: {qrOtp} | Subject: {subject}
+                  {/* OTP: {qrOtp} | Subject: {subject} */}
+                  Subject: {subject} 
                 </div>
                 <button
                   onClick={() => setQrOtp(null)}
