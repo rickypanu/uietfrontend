@@ -16,6 +16,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Megaphone,
+  ChevronDown,
+  ChevronUp, 
 } from "lucide-react";
 
 import Papa from "papaparse";
@@ -326,13 +328,13 @@ const handleSelectClass = (c) => {
           </div>
 
           {/* Quick OTP (hidden on mobile) */}
-          <button
+          {/* <button
             onClick={() => setOtpCardOpen((s) => !s)}
             className="hidden sm:inline-flex items-center gap-1 bg-indigo-600 text-white px-2 sm:px-3 py-1.5 rounded-lg hover:bg-indigo-700 transition text-xs sm:text-sm"
           >
             <Plus className="w-4 h-4" />
             Check-In
-          </button>
+          </button> */}
 
           <button
             onClick={() => navigate("/teacher/classes")}
@@ -410,64 +412,66 @@ const handleSelectClass = (c) => {
           )}
 
         {/* classes for select and generate otp */}
-          <div className="bg-white rounded-xl shadow-sm p-4">
-      {/* Header with collapse toggle */}
-      <div className="flex justify-between items-center">
-        <SectionTitle
-          icon={Layers}
-          title="Your Classes"
-          subtitle="Click a class to prefill OTP form or generate OTP directly"
-        />
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="text-sm text-indigo-600 hover:underline"
-        >
-          {collapsed ? "Show" : "Hide"}
-        </button>
-      </div>
+        <div className="bg-white rounded-xl shadow-sm p-4">
+          {/* Header with collapse toggle */}
+          <div className="flex justify-between items-center">
+            <SectionTitle
+              icon={Layers}
+              title="Your Classes"
+              subtitle="Click a class to prefill OTP form or generate OTP directly"
+            />
+            <button
+              onClick={() => setCollapsed(!collapsed)}
+              className="p-2 rounded-full hover:bg-gray-100 transition"
+            >
+              {collapsed ? (
+                <ChevronDown className="w-5 h-5 text-gray-600" />
+              ) : (
+                <ChevronUp className="w-5 h-5 text-gray-600" />
+              )}
+            </button>
+          </div>
 
-      {/* Collapsible Content */}
-      {!collapsed && (
-        <div className="mt-3">
-          {classes.length === 0 ? (
-            <div className="text-sm text-gray-500">No classes created yet.</div>
-          ) : (
-            <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {classes.map((c, idx) => (
-                <li
-                  key={idx}
-                  className="p-3 rounded-lg border border-gray-200 bg-gray-50 hover:border-indigo-300 transition flex flex-col justify-between"
-                >
-                  {/* Class info */}
-                  <div
-                    className="flex-1 cursor-pointer"
-                    onClick={() => handleSelectClass(c)}
-                  >
-                    <div className="font-medium text-gray-800">
-                      {c.course} ({c.branch}) - Sem {c.semester} - Sec {c.section}
-                    </div>
-                    <div className="text-xs text-gray-500">{c.subject}</div>
-                  </div>
+          {/* Collapsible Content */}
+          {!collapsed && (
+            <div className="mt-4">
+              {classes.length === 0 ? (
+                <div className="text-sm text-gray-500">No classes created yet.</div>
+              ) : (
+                <ul className="divide-y divide-gray-200">
+                  {classes.map((c, idx) => (
+                    <li
+                      key={idx}
+                      className="flex items-center justify-between py-3 px-2 hover:bg-gray-50 rounded-lg transition cursor-pointer"
+                      onClick={() => handleSelectClass(c)}
+                    >
+                      {/* Class Info */}
+                      <div>
+                        <div className="font-medium text-gray-800">
+                          {c.course} ({c.branch}) - Sem {c.semester} - Sec {c.section}
+                        </div>
+                        <div className="text-xs text-gray-500">{c.subject}</div>
+                      </div>
 
-                  {/* Generate OTP button */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      generateOtpForClass(c);
-                    }}
-                    disabled={loadingClassId === c.id}
-                    className="mt-3 w-full px-3 py-1 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition disabled:opacity-60"
-                  >
-                    {loadingClassId === c.id ? "Generating..." : "Generate OTP"}
-                  </button>
-                </li>
-              ))}
-            </ul>
+                      {/* Generate OTP Button */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          generateOtpForClass(c);
+                        }}
+                        disabled={loadingClassId === c.id}
+                        className="flex items-center gap-1 px-3 py-1 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition disabled:opacity-60"
+                      >
+                        <KeyRound className="w-4 h-4" />
+                        {loadingClassId === c.id ? "Generating..." : "Generate OTP"}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           )}
         </div>
-      )}
-    </div>
-
 
           {/* OTP generator (collapsible) */}
           {/* <div className="bg-white rounded-xl shadow-sm p-4">
