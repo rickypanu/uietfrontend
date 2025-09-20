@@ -260,6 +260,9 @@ const handleSelectClass = (c) => {
 
   // Wrapper function
   const generateOtpForClass = (c) => {
+
+    setLoadingClassId(c.id);
+    
     setCourse(c.course);
     setBranch(c.branch);
     setSemester(c.semester);
