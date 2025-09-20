@@ -267,9 +267,85 @@ export default function TeacherDashboard() {
             </div>
           )}
         </div>
+        
+           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            {/* Today's OTPs */}
+            <div className="lg:col-span-1 bg-white rounded-xl shadow-sm p-4">
+              <SectionTitle icon={BookOpenText} title="Today's OTPs" />
+              <div className="mt-3">
+                {todaysOtp.length === 0 ? (
+                  <div className="text-sm text-gray-500">No OTPs generated yet</div>
+                ) : (
+                  <ul className="space-y-2 max-h-52 overflow-y-auto pr-2">
+                    {todaysOtp
+                      .sort((a, b) => new Date(b.start_time) - new Date(a.start_time))
+                      .map((otpItem, index) => {
+                        const formattedTime = otpItem.start_time
+                          ? new Date(otpItem.start_time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })
+                          : "No Time";
+                        return (
+                          <li
+                            key={index}
+                            onClick={() => setSelectedOtp(otpItem.otp)}
+                            className={`cursor-pointer p-2 rounded-md border ${selectedOtp === otpItem.otp ? "border-indigo-300 bg-indigo-50" : "border-gray-100 bg-gray-50"} hover:shadow-sm transition flex justify-between items-center`}
+                          >
+                            <div>
+                              <div className="text-sm font-semibold text-gray-800">{otpItem.otp} <span className="text-xs text-gray-500">— {otpItem.subject}</span></div>
+                              <div className="text-xs text-gray-500">{formattedTime}</div>
+                            </div>
+                            <div className="text-xs text-gray-400">{(new Date(otpItem.start_time)).toLocaleTimeString?.() || ""}</div>
+                          </li>
+                        );
+                      })}
+                  </ul>
+                )}
+              </div>
+            </div>
 
+            {/* Students Marked (center) */}
+            <div className="lg:col-span-2 bg-white rounded-xl shadow-sm p-4">
+              <div className="flex items-center justify-between">
+                <SectionTitle icon={CalendarCheck2} title="Students Marked" subtitle={selectedOtp ? `Showing students for OTP: ${selectedOtp}` : "Select an OTP to view students"} />
+                <div className="flex items-center gap-2">
+                  <div className="text-sm text-gray-600">Selected OTP count</div>
+                  <div className="text-xl font-bold text-indigo-600">{selectedOtp ? attendanceList.filter((r) => r.otp === selectedOtp).length : "-"}</div>
+                </div>
+              </div>
+
+              <div className="mt-4">
+                {selectedOtp ? (
+                  <ul className="space-y-3 max-h-44 overflow-y-auto pr-2">
+                    {attendanceList.filter((r) => r.otp === selectedOtp).length > 0 ? (
+                      attendanceList
+                        .filter((r) => r.otp === selectedOtp)
+                        .sort((a, b) => a.roll_no.localeCompare(b.roll_no, undefined, { numeric: true }))
+                        .map((record, idx) => (
+                          <li key={idx} className="flex items-center gap-3 bg-gray-50 px-3 py-2 rounded-md hover:bg-gray-100 transition">
+                            <div className="w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center font-semibold">
+                              {record.student_name
+                                ? record.student_name.split(" ").map((n) => n[0]).join("").toUpperCase()
+                                : (record.roll_no || "R")[0]}
+                            </div>
+                            <div className="flex-1">
+                              <div className="text-sm font-medium text-gray-800">{record.student_name || "Unknown"}</div>
+                              <div className="text-xs text-gray-500">{record.roll_no}</div>
+                            </div>
+                            <div className="text-xs text-gray-500">{new Date(record.marked_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</div>
+                          </li>
+                        ))
+                    ) : (
+                      <div className="text-sm text-gray-500">No students marked yet for this OTP</div>
+                    )}
+                  </ul>
+                ) : (
+                  <div className="text-sm text-gray-500">Click an OTP on the left to see students who marked attendance.</div>
+                )}
+              </div>
+            </div>
+          </div>
         {/* Today's OTPs + Attendance list */}
         {/* ...keep your existing layout unchanged, only optionally show mode icon*/}
+        
       </div>
       <Outlet />
     </div>
