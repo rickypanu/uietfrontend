@@ -350,10 +350,21 @@ const doGenerateOtp = async (c) => {
 // --- Used in two ways ---
 
 // Case 1: Generate from class card button
-const generateOtpForClass = (c) => {
+const generateOtpForClass = (c, durationValue) => {
+
+  setDuration(durationValue);
+
   setLoading(true);
   setLoadingClassId(c.id);
   doGenerateOtp(c);
+
+  setCourse(c.course);
+  setBranch(c.branch);
+  setSemester(c.semester);
+  setSubject(c.subject);
+
+  // update the duration state before generating
+  setDuration(durationValue);
 };
 
 // Case 2: Generate from form submit
@@ -520,7 +531,7 @@ const handleGenerateOtp = (e) => {
             <SectionTitle
               icon={Layers}
               title="Your Classes"
-              subtitle="Click a class to prefill OTP form or generate OTP directly"
+              subtitle="Click on button to generate OTP directly"
             />
             <button
               onClick={() => setCollapsed(!collapsed)}
@@ -553,13 +564,27 @@ const handleGenerateOtp = (e) => {
                           {c.course} ({c.branch}) - Sem {c.semester} - Sec {c.section}
                         </div>
                         <div className="text-xs text-gray-500">{c.subject}</div>
+                        <div className="flex items-center gap-3 mb-3">
+                        <div className="flex-1 md:w-1/4">
+                          <label className="block text-xs text-gray-600 mb-1">Validity (mins)</label>
+                          <input
+                            type="number"
+                            min={1}
+                            value={duration}
+                            onChange={(e) => setDuration(e.target.value)}
+                            className="p-2 border rounded-md w-full"
+                            required
+                          />
+                        </div>
+                      </div>
+
                       </div>
 
                       {/* Generate OTP Button */}
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          generateOtpForClass(c);
+                          generateOtpForClass(c, duration);
                         }}
                         disabled={loadingClassId === c.id}
                         className="flex items-center gap-1 px-3 py-1 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition disabled:opacity-60"
