@@ -475,6 +475,7 @@ export default function TeacherDashboard() {
                   bgColor="#ffffff"
                   fgColor="#000000"
                 />
+                
                 <div className="mt-2 text-sm text-gray-500">
                   OTP: {qrOtp} | Subject: {subject}
                 </div>

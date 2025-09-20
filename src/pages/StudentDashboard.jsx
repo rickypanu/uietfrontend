@@ -388,7 +388,7 @@ const QRScanner = ({ onScan }) => {
       onClick={() => setScanQrOpen(!scanQrOpen)}
       className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
     >
-      {scanQrOpen ? "Close QR Scanner" : "📷 Scan QR to Fill OTP"}
+      {scanQrOpen ? "Close QR Scanner" : "📷 Scan QR to Mark attendance"}
     </button>
     {scannedOtp && (
       <span className="text-green-700 font-medium">Scanned OTP: {scannedOtp}</span>
@@ -434,7 +434,7 @@ const QRScanner = ({ onScan }) => {
 
           await markAttendance(
             roll_no,
-            scannedSubject || subject, // use subject from QR (preferred), else manual
+            scannedSubject,
             scannedOtp,
             visitorId,
             lat,
