@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-// Add at the top with other imports
-// import { QrReader } from "react-qr-reader";
 import { useZxing } from "react-zxing";
 import { markAttendance, getStudentAttendance } from "../services/api";
 import api from "../services/api";
@@ -374,162 +372,159 @@ const QRScanner = ({ onScan }) => {
           </div>
         </section>
 
-{/* Mark Attendance */}
-<section className="bg-white rounded-2xl shadow p-6 space-y-4">
-  <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
-    <CheckCircle className="text-green-500 w-5 h-5" />
-    Enter OTP to Mark Attendance
-  </h2>
+                 {/* QR Scanner Toggle */}
+          <div className="flex items-center gap-2 mb-2">
+            <button
+              type="button"
+              onClick={() => setScanQrOpen(!scanQrOpen)}
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
+            >
+              {scanQrOpen ? "Close QR Scanner" : "📷 Scan QR to Mark attendance"}
+            </button>
+            {scannedOtp && (
+              <span className="text-green-700 font-medium">Scanned OTP: {scannedOtp}</span>
+            )}
+          </div>
 
-  {/* QR Scanner Toggle */}
-  <div className="flex items-center gap-2 mb-2">
-    <button
-      type="button"
-      onClick={() => setScanQrOpen(!scanQrOpen)}
-      className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
-    >
-      {scanQrOpen ? "Close QR Scanner" : "📷 Scan QR to Mark attendance"}
-    </button>
-    {scannedOtp && (
-      <span className="text-green-700 font-medium">Scanned OTP: {scannedOtp}</span>
-    )}
-  </div>
+          {/* QR Scanner Panel */}
+          {scanQrOpen && (
+            <div className="border rounded-xl overflow-hidden my-2">
+              <QRScanner
+                onScan={async (value) => {
+                  try {
+                    let parsed;
+                    try {
+                      parsed = JSON.parse(value); // Expect { otp, subject }
+                    } catch {
+                      parsed = { otp: value, subject: "" }; // fallback if only OTP
+                    }
 
-  {/* QR Scanner Panel */}
-{scanQrOpen && (
-  <div className="border rounded-xl overflow-hidden my-2">
-    <QRScanner
-      onScan={async (value) => {
-        try {
-          let parsed;
-          try {
-            parsed = JSON.parse(value); // Expect { otp, subject }
-          } catch {
-            parsed = { otp: value, subject: "" }; // fallback if only OTP
-          }
+                    const scannedOtp = parsed.otp?.trim();
+                    const scannedSubject = parsed.subject?.trim();
 
-          const scannedOtp = parsed.otp?.trim();
-          const scannedSubject = parsed.subject?.trim();
+                    if (!scannedOtp) {
+                      setMessage("⚠️ Invalid QR code (missing OTP)");
+                      return;
+                    }
 
-          if (!scannedOtp) {
-            setMessage("⚠️ Invalid QR code (missing OTP)");
-            return;
-          }
+                    setScanQrOpen(false);
+                    setMessage("⏳ Marking attendance...");
 
-          setScanQrOpen(false);
-          setMessage("⏳ Marking attendance...");
+                    // Run your existing attendance logic directly
+                    const visitorId = await getFingerprint();
+                    const position = await new Promise((resolve, reject) => {
+                      navigator.geolocation.getCurrentPosition(resolve, reject, {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0,
+                      });
+                    });
 
-          // Run your existing attendance logic directly
-          const visitorId = await getFingerprint();
-          const position = await new Promise((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(resolve, reject, {
-              enableHighAccuracy: true,
-              timeout: 10000,
-              maximumAge: 0,
-            });
-          });
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
 
-          const lat = position.coords.latitude;
-          const lng = position.coords.longitude;
+                    await markAttendance(
+                      roll_no,
+                      scannedSubject,
+                      scannedOtp,
+                      visitorId,
+                      lat,
+                      lng
+                    );
 
-          await markAttendance(
-            roll_no,
-            scannedSubject,
-            scannedOtp,
-            visitorId,
-            lat,
-            lng
-          );
-
-          setMessage("✅ Attendance marked successfully!");
-          setOtp("");
-          setSubject("");
-          loadAttendance(filterSubject, filterDate);
-        } catch (err) {
-          let detail = err.response?.data?.detail;
-          if (Array.isArray(detail)) {
-            detail = detail.map((d) => d.msg).join(", ");
-          }
-          setMessage(detail || err.message || "❌ Failed to mark attendance.");
-        }
-      }}
-    />
-  </div>
-)}
+                    setMessage("✅ Attendance marked successfully!");
+                    setOtp("");
+                    setSubject("");
+                    loadAttendance(filterSubject, filterDate);
+                  } catch (err) {
+                    let detail = err.response?.data?.detail;
+                    if (Array.isArray(detail)) {
+                      detail = detail.map((d) => d.msg).join(", ");
+                    }
+                    setMessage(detail || err.message || "❌ Failed to mark attendance.");
+                  }
+                }}
+              />
+            </div>
+          )}
 
 
+        {/* Mark Attendance */}
+        <section className="bg-white rounded-2xl shadow p-6 space-y-4">
+          <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
+            <CheckCircle className="text-green-500 w-5 h-5" />
+            Enter OTP to Mark Attendance
+          </h2>
+            <form
+              onSubmit={handleMarkAttendance}
+              className="grid grid-cols-1 md:grid-cols-3 gap-3"
+            >
+              <select
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+                className="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400"
+                required
+              >
+                <option value="" disabled>
+                  Select Subject
+                </option>
+                {getAvailableSubjects().map((sub) => (
+                  <option key={sub} value={sub}>
+                    {sub}
+                  </option>
+                ))}
+              </select>
 
-  <form
-    onSubmit={handleMarkAttendance}
-    className="grid grid-cols-1 md:grid-cols-3 gap-3"
-  >
-    <select
-      value={subject}
-      onChange={(e) => setSubject(e.target.value)}
-      className="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400"
-      required
-    >
-      <option value="" disabled>
-        Select Subject
-      </option>
-      {getAvailableSubjects().map((sub) => (
-        <option key={sub} value={sub}>
-          {sub}
-        </option>
-      ))}
-    </select>
+              <input
+                type="text"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                onPaste={(e) => {
+                  e.preventDefault();
+                  setOtpPasteMessage(
+                    "⚠️ Pasting is disabled. Type the OTP like a real human."
+                  );
+                  setTimeout(() => setOtpPasteMessage(""), 5000);
+                }}
+                placeholder="Enter OTP"
+                className={`p-2 border rounded-lg focus:ring-2 ${
+                  otpError
+                    ? "border-red-400 focus:ring-red-300"
+                    : otpInfo
+                    ? "border-green-400 focus:ring-green-300"
+                    : "border-gray-300 focus:ring-green-400"
+                }`}
+                required
+              />   
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-5 py-2 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 hover:scale-105 transition-all duration-300 font-semibold"
+              >
+                {loading ? "Marking..." : "Mark Attendance"}
+              </button>
+            </form>
 
-    <input
-      type="text"
-      value={otp}
-      onChange={(e) => setOtp(e.target.value)}
-      onPaste={(e) => {
-        e.preventDefault();
-        setOtpPasteMessage(
-          "⚠️ Pasting is disabled. Type the OTP like a real human."
-        );
-        setTimeout(() => setOtpPasteMessage(""), 5000);
-      }}
-      placeholder="Enter OTP"
-      className={`p-2 border rounded-lg focus:ring-2 ${
-        otpError
-          ? "border-red-400 focus:ring-red-300"
-          : otpInfo
-          ? "border-green-400 focus:ring-green-300"
-          : "border-gray-300 focus:ring-green-400"
-      }`}
-      required
-    />
+            {otpPasteMessage && (
+              <p className="text-yellow-700 text-sm">{otpPasteMessage}</p>
+            )}
 
-    <button
-      type="submit"
-      disabled={loading}
-      className="flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-5 py-2 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 hover:scale-105 transition-all duration-300 font-semibold"
-    >
-      {loading ? "Marking..." : "Mark Attendance"}
-    </button>
-  </form>
+            {otpError.message && (
+              <p className={`${otpError.color} text-sm mt-2`}>{otpError.message}</p>
+            )}
 
-  {otpPasteMessage && (
-    <p className="text-yellow-700 text-sm">{otpPasteMessage}</p>
-  )}
-
-  {otpError.message && (
-    <p className={`${otpError.color} text-sm mt-2`}>{otpError.message}</p>
-  )}
-
-  {message && (
-    <p
-      className={`text-sm font-medium ${
-        message.includes("success")
-          ? "text-green-700"
-          : "text-red-600"
-      }`}
-    >
-      {message}
-    </p>
-  )}
-</section>
+            {message && (
+              <p
+                className={`text-sm font-medium ${
+                  message.includes("success")
+                    ? "text-green-700"
+                    : "text-red-600"
+                }`}
+              >
+                {message}
+              </p>
+            )}
+          </section>
 
         {/* Mark Attendance */}
         {/* <section className="bg-white rounded-2xl shadow p-6 space-y-4">
