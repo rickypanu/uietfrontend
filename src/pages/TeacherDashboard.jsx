@@ -48,6 +48,7 @@ export default function TeacherDashboard() {
   const employeeId = localStorage.getItem("userId");
   const navigate = useNavigate();
 
+  const [classDurations, setClassDurations] = React.useState({});
   // --- state ---
   const [classes, setClasses] = useState([]);
 
@@ -552,51 +553,52 @@ const handleGenerateOtp = (e) => {
         <div className="text-sm text-gray-500">No classes created yet.</div>
       ) : (
         <ul className="divide-y divide-gray-200">
-          {classes.map((c, idx) => {
-            // Local duration state per class
-            const [localDuration, setLocalDuration] = React.useState(duration);
-
-            return (
-              <li
-                key={idx}
-                className="flex items-center justify-between py-3 px-2 hover:bg-gray-50 rounded-lg transition"
-              >
-                {/* Class Info */}
-                <div>
-                  <div className="font-medium text-gray-800">
-                    {c.course} ({c.branch}) - Sem {c.semester} - Sec {c.section}
-                  </div>
-                  <div className="text-xs text-gray-500">{c.subject}</div>
+          {classes.map((c, idx) => (
+            <li
+              key={idx}
+              className="flex items-center justify-between py-3 px-2 hover:bg-gray-50 rounded-lg transition"
+            >
+              {/* Class Info */}
+              <div>
+                <div className="font-medium text-gray-800">
+                  {c.course} ({c.branch}) - Sem {c.semester} - Sec {c.section}
                 </div>
+                <div className="text-xs text-gray-500">{c.subject}</div>
+              </div>
 
-                {/* Duration + Generate OTP */}
-                <div className="flex items-center gap-2">
-                  <input
-                    type="number"
-                    min={1}
-                    value={localDuration}
-                    onChange={(e) => setLocalDuration(e.target.value)}
-                    className="w-16 p-1 border rounded-md text-xs text-center"
-                    title="Validity (mins)"
-                  />
-                  <button
-                    onClick={() => generateOtpForClass(c, localDuration)}
-                    disabled={loadingClassId === c.id}
-                    className="flex items-center gap-1 px-3 py-1 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition disabled:opacity-60"
-                  >
-                    <KeyRound className="w-4 h-4" />
-                    {loadingClassId === c.id ? "Generating..." : "Generate OTP"}
-                  </button>
-                </div>
-              </li>
-            );
-          })}
+              {/* Duration + Generate OTP */}
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  min={1}
+                  value={classDurations[c.id] || duration} // fallback to default
+                  onChange={(e) =>
+                    setClassDurations({
+                      ...classDurations,
+                      [c.id]: e.target.value,
+                    })
+                  }
+                  className="w-16 p-1 border rounded-md text-xs text-center"
+                  title="Validity (mins)"
+                />
+                <button
+                  onClick={() =>
+                    generateOtpForClass(c, classDurations[c.id] || duration)
+                  }
+                  disabled={loadingClassId === c.id}
+                  className="flex items-center gap-1 px-3 py-1 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition disabled:opacity-60"
+                >
+                  <KeyRound className="w-4 h-4" />
+                  {loadingClassId === c.id ? "Generating..." : "Generate OTP"}
+                </button>
+              </div>
+            </li>
+          ))}
         </ul>
       )}
     </div>
   )}
 </div>
-
 
           {/* OTP generator (collapsible) */}
           {/* <div className="bg-white rounded-xl shadow-sm p-4">
