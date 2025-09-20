@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from "react";
+// Add at the top with other imports
+// import { QrReader } from "react-qr-reader";
+import { useZxing } from "react-zxing";
 import { markAttendance, getStudentAttendance } from "../services/api";
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
@@ -20,6 +23,11 @@ import {
 } from "lucide-react";
 
 export default function StudentDashboard() {
+  // Inside your StudentDashboard function, add state for QR scanning
+const [scanQrOpen, setScanQrOpen] = useState(false);
+const [scannedOtp, setScannedOtp] = useState("");
+
+
   const [otp, setOtp] = useState("");
   const [subject, setSubject] = useState("");
   const [attendanceList, setAttendanceList] = useState([]);
@@ -87,17 +95,7 @@ export default function StudentDashboard() {
     return SUBJECTS?.[course]?.[branch]?.[sem] || [];
   };
 
-  // const checkOtp = async () => {
-  //   try {
-  //     const res = await api.get(`/student/check-otp/${otp}`);
-  //     setOtpInfo(res.data);
-  //     setOtpError("");
-  //   } catch (err) {
-  //     setOtpInfo(null);
-  //     setOtpError("OTP is incomplete. Fill all characters to proceed");
 
-  //   }
-  // };
   const checkOtp = async () => {
     if (!otp || otp.trim().length !== 6) {
       setOtpInfo(null);
@@ -210,40 +208,32 @@ export default function StudentDashboard() {
   setLoading(false);
 };
 
-  // const handleMarkAttendance = async (e) => {
-  //   e.preventDefault();
-  //   if (!roll_no || !otp || !subject) {
-  //     setMessage("Please fill all fields before marking attendance.");
-  //     return;
-  //   }
-  //   setLoading(true);
-  //   try {
-  //     const visitorId = await getFingerprint();
-  //     const position = await new Promise((resolve, reject) =>
-  //       navigator.geolocation.getCurrentPosition(resolve, reject, {
-  //         enableHighAccuracy: true,
-  //         timeout: 10000,
-  //         maximumAge: 0,
-  //       })
-  //     );
-  //     const lat = position.coords.latitude;
-  //     const lng = position.coords.longitude;
 
-  //     await markAttendance(roll_no, subject, otp, visitorId, lat, lng);
-  //     setMessage("Attendance marked successfully!");
-  //     setOtp("");
-  //     setSubject("");
-  //     loadAttendance(filterSubject, filterDate);
-  //   } catch (err) {
-  //     let detail = err.response?.data?.detail;
-  //     if (Array.isArray(detail)) {
-  //       detail = detail.map((d) => d.msg).join(", ");
-  //     }
-  //     setMessage(detail || "Failed to mark attendance.");
-  //   }
-  //   setLoading(false);
-  // };
+// Function to handle QR scan
+const handleScanResult = (result, error) => {
+  if (!!result) {
+    const scannedValue = result?.text?.trim();
+    if (scannedValue && scannedValue.length === 6) {
+      setOtp(scannedValue);
+      setScannedOtp(scannedValue);
+      setScanQrOpen(false); // close scanner after successful scan
+      setMessage("✅ OTP scanned successfully!");
+    }
+  }
+  if (!!error) {
+    // console.log(error);
+  }
+};
 
+const QRScanner = ({ onScan }) => {
+  const { ref } = useZxing({
+    onDecodeResult(result) {
+      onScan(result.getText());
+    },
+  });
+
+  return <video ref={ref} className="w-full h-64 rounded-lg" />;
+};
   const handleExport = () => {
     if (attendanceList.length === 0) {
       setMessage("No attendance data to export.");
@@ -296,8 +286,7 @@ export default function StudentDashboard() {
 
   return (
   <div className="flex min-h-screen flex-col bg-gray-50">
-      {/* Sidebar */}
-    {/* <Sidebar onLogout={handleLogout} /> */}
+    
   {/* Main Content */}
   <div className="flex-1 w-full bg-gradient-to-b from-green-50 to-green-100 p-3 sm:p-6">
     <div className="max-w-6xl mx-auto space-y-6 sm:space-y-8">
@@ -336,35 +325,15 @@ export default function StudentDashboard() {
             )}
           </button>
 
-         {/* <button
+         <button
           onClick={() => navigate("/attendance-analysis")}
           aria-label="Attendance Analysis"
           title="Attendance Analysis"
           className="w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-r from-white-500 to-white-600 text-white shadow hover:from-blue-400 hover:to-indigo-400 transition"
         >
           <span className="text-lg">📊</span>
-        </button> */}
+        </button>
 
-          <div className="relative inline-block">
-            {/* 🔴 New Badge */}
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow">
-              NEW
-            </span>
-
-            {/* 📊 Button */}
-            <button
-              onClick={() => navigate("/attendance-analysis")}
-              aria-label="Attendance Analysis"
-              title="Attendance Analysis"
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-r from-white-500 to-white-600 text-white shadow hover:from-blue-400 hover:to-indigo-400 transition"
-       
-            //   className="w-10 h-10 flex items-center justify-center rounded-full 
-            //             bg-gradient-to-r from-blue-500 to-indigo-600 text-white 
-            //             shadow hover:from-blue-400 hover:to-indigo-400 transition"
-            >
-              <span className="text-lg">📊</span>
-            </button>
-          </div>
 
 
 
@@ -405,8 +374,116 @@ export default function StudentDashboard() {
           </div>
         </section>
 
+{/* Mark Attendance */}
+<section className="bg-white rounded-2xl shadow p-6 space-y-4">
+  <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
+    <CheckCircle className="text-green-500 w-5 h-5" />
+    Enter OTP to Mark Attendance
+  </h2>
+
+  {/* QR Scanner Toggle */}
+  <div className="flex items-center gap-2 mb-2">
+    <button
+      type="button"
+      onClick={() => setScanQrOpen(!scanQrOpen)}
+      className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
+    >
+      {scanQrOpen ? "Close QR Scanner" : "📷 Scan QR to Fill OTP"}
+    </button>
+    {scannedOtp && (
+      <span className="text-green-700 font-medium">Scanned OTP: {scannedOtp}</span>
+    )}
+  </div>
+
+  {/* QR Scanner Panel */}
+  {scanQrOpen && (
+  <div className="border rounded-xl overflow-hidden my-2">
+    <QRScanner
+      onScan={(value) => {
+        setOtp(value);
+        setScannedOtp(value);
+        setScanQrOpen(false);
+        setMessage("✅ OTP scanned successfully!");
+      }}
+    />
+  </div>
+)}
+
+
+  <form
+    onSubmit={handleMarkAttendance}
+    className="grid grid-cols-1 md:grid-cols-3 gap-3"
+  >
+    <select
+      value={subject}
+      onChange={(e) => setSubject(e.target.value)}
+      className="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400"
+      required
+    >
+      <option value="" disabled>
+        Select Subject
+      </option>
+      {getAvailableSubjects().map((sub) => (
+        <option key={sub} value={sub}>
+          {sub}
+        </option>
+      ))}
+    </select>
+
+    <input
+      type="text"
+      value={otp}
+      onChange={(e) => setOtp(e.target.value)}
+      onPaste={(e) => {
+        e.preventDefault();
+        setOtpPasteMessage(
+          "⚠️ Pasting is disabled. Type the OTP like a real human."
+        );
+        setTimeout(() => setOtpPasteMessage(""), 5000);
+      }}
+      placeholder="Enter OTP"
+      className={`p-2 border rounded-lg focus:ring-2 ${
+        otpError
+          ? "border-red-400 focus:ring-red-300"
+          : otpInfo
+          ? "border-green-400 focus:ring-green-300"
+          : "border-gray-300 focus:ring-green-400"
+      }`}
+      required
+    />
+
+    <button
+      type="submit"
+      disabled={loading}
+      className="flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-5 py-2 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 hover:scale-105 transition-all duration-300 font-semibold"
+    >
+      {loading ? "Marking..." : "Mark Attendance"}
+    </button>
+  </form>
+
+  {otpPasteMessage && (
+    <p className="text-yellow-700 text-sm">{otpPasteMessage}</p>
+  )}
+
+  {otpError.message && (
+    <p className={`${otpError.color} text-sm mt-2`}>{otpError.message}</p>
+  )}
+
+  {message && (
+    <p
+      className={`text-sm font-medium ${
+        message.includes("success")
+          ? "text-green-700"
+          : "text-red-600"
+      }`}
+    >
+      {message}
+    </p>
+  )}
+</section>
+
         {/* Mark Attendance */}
-        <section className="bg-white rounded-2xl shadow p-6 space-y-4">
+        {/* <section className="bg-white rounded-2xl shadow p-6 space-y-4">
           <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
             <CheckCircle className="text-green-500 w-5 h-5" />
             Enter OTP to Mark Attendance
@@ -465,9 +542,9 @@ export default function StudentDashboard() {
 
           {otpPasteMessage && (
             <p className="text-yellow-700 text-sm">{otpPasteMessage}</p>
-          )}
-          {/* {otpError && <p className="text-red-600">{otpError}</p>} */}
-          {otpError.message && (
+          )} */}
+
+          {/* {otpError.message && (
             <p className={`${otpError.color} text-sm mt-2`}>
               {otpError.message}
             </p>
@@ -484,7 +561,7 @@ export default function StudentDashboard() {
               {message}
             </p>
           )}
-        </section>
+        </section> */}
 
         {/* Filters */}
         <section className="bg-white rounded-2xl shadow p-6 space-y-4">
