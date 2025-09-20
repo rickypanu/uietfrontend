@@ -452,10 +452,10 @@ export default function TeacherDashboard() {
           {/* Today's OTPs + Students */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div className="lg:col-span-1 bg-white rounded-xl shadow-sm p-4">
-              <SectionTitle icon={BookOpenText} title="Today's OTPs" />
+              <SectionTitle icon={BookOpenText} title="Today's Class" />
               <div className="mt-3">
                 {todaysOtp.length === 0 ? (
-                  <div className="text-sm text-gray-500">No OTPs generated yet</div>
+                  <div className="text-sm text-gray-500">No OTPs/ QR code generated yet</div>
                 ) : (
                   <ul className="space-y-2 max-h-52 overflow-y-auto pr-2">
                     {todaysOtp
@@ -471,7 +471,8 @@ export default function TeacherDashboard() {
                             className={`cursor-pointer p-2 rounded-md border ${selectedOtp === otpItem.otp ? "border-indigo-300 bg-indigo-50" : "border-gray-100 bg-gray-50"} hover:shadow-sm transition flex justify-between items-center`}
                           >
                             <div>
-                              <div className="text-sm font-semibold text-gray-800">{otpItem.otp} <span className="text-xs text-gray-500">— {otpItem.subject}</span></div>
+                              {/* <div className="text-sm font-semibold text-gray-800">{otpItem.otp} <span className="text-xs text-gray-500">— {otpItem.subject}</span></div> */}
+                              <div className="text-sm font-semibold text-gray-800"> {otpItem.subject}</div>
                               <div className="text-xs text-gray-500">{formattedTime}</div>
                             </div>
                             <div className="text-xs text-gray-400">{(new Date(otpItem.start_time)).toLocaleTimeString?.() || ""}</div>
