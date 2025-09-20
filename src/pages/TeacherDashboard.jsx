@@ -40,6 +40,9 @@ export default function TeacherDashboard() {
   const [classDurations, setClassDurations] = useState({});
   const [classes, setClasses] = useState([]);
 
+  // add near other states
+const [qrMode, setQrMode] = useState("qr"); // mode of the last generated OTP ("qr" or "otp")
+
   const employeeId = localStorage.getItem("userId");
   const navigate = useNavigate();
 
@@ -158,7 +161,7 @@ export default function TeacherDashboard() {
   };
 
   // Core OTP generator
-  const doGenerateOtp = async (c, mode = "qr") => {
+const doGenerateOtp = async (c, mode = "qr") => {
   let watchId = null;
   let gotAccurateLocation = false;
 
@@ -189,6 +192,7 @@ export default function TeacherDashboard() {
               otp: data.otp,
               subject: data.subject,
               end_time: data.valid_till,
+              mode, // store how this OTP was generated ("qr" or "otp")
             };
 
             setOtpList((prev) =>
@@ -197,12 +201,20 @@ export default function TeacherDashboard() {
                 .sort((a, b) => new Date(b.end_time) - new Date(a.end_time))
             );
 
+            // show or hide main QR box depending on chosen mode
             if (mode === "qr") {
-              setQrOtp(data.otp); // show QR
+              setQrOtp(data.otp); // show big QR
             } else {
-              setQrOtp(null); // hide QR
-              setMessage(`✅ OTP Generated: ${data.otp} (valid till: ${new Date(data.valid_till).toLocaleString()})`);
+              setQrOtp(null); // hide QR when only OTP text was requested
+              setMessage(
+                `✅ OTP Generated: ${data.otp} (valid till: ${new Date(
+                  data.valid_till
+                ).toLocaleString()})`
+              );
             }
+
+            // keep track of last generated mode (useful for the main QR card)
+            setQrMode(mode);
 
             loadTodaysOtps();
           } catch (err) {
@@ -232,18 +244,18 @@ export default function TeacherDashboard() {
   }
 };
 
-  const generateOtpForClass = (c, durationValue, mode = "qr") => {
+const generateOtpForClass = (c, durationValue, mode = "qr") => {
   setDuration(durationValue);
   setLoading(true);
   setLoadingClassId(c.id);
-
-  doGenerateOtp(c, mode);
-
+  setQrMode(mode);           // remember the mode of this generation
+  doGenerateOtp(c, mode);    // pass mode through
   setCourse(c.course);
   setBranch(c.branch);
   setSemester(c.semester);
   setSubject(c.subject);
 };
+
 
 
   // Auto-hide QR after OTP expires
@@ -370,6 +382,43 @@ export default function TeacherDashboard() {
               {message}
             </div>
           )}
+
+          {otpList.length > 0 && (
+          <div className="mt-6">
+            <h4 className="text-sm font-semibold text-gray-700 mb-2">Active OTPs</h4>
+            <ul className="space-y-2">
+              {otpList.map((otpItem, index) => (
+                <li
+                  key={otpItem.otp + index}
+                  className="p-3 bg-gray-50 rounded-lg border border-gray-200 flex justify-between items-center"
+                >
+                  <div>
+                    <div className="text-sm font-medium text-gray-800">{otpItem.subject}</div>
+                    <div className="text-xs text-gray-500">
+                      Expires: {new Date(otpItem.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </div>
+                  </div>
+
+                  {/* Show small QR only if this OTP was created with QR mode */}
+                  {otpItem.mode === "qr" ? (
+                    <QRCodeSVG
+                      value={JSON.stringify({ otp: otpItem.otp, subject: otpItem.subject })}
+                      size={70}
+                      bgColor="#ffffff"
+                      fgColor="#000000"
+                    />
+                  ) : (
+                    <span className="text-sm font-mono bg-white px-2 py-1 rounded border">
+                      {otpItem.otp}
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+
 
           {/* Classes + Generate OTP */}
           <div className="bg-white rounded-xl shadow-sm p-4">
@@ -558,7 +607,10 @@ export default function TeacherDashboard() {
         <div className="fixed bottom-4 right-4 bg-white p-4 rounded-xl shadow-lg flex flex-col items-center z-50 border border-gray-200">
           <h4 className="text-sm font-medium text-gray-700 mb-2">Live Attendance QR</h4>
           <QRCodeSVG value={latestValidOtp.otp} size={140} bgColor="#ffffff" fgColor="#000000" />
-          <div className="mt-1 text-xs text-gray-500">OTP: {latestValidOtp.otp}</div>
+          {/* show plain OTP only if this OTP was generated in otp-mode */}
+          {latestValidOtp.mode === "otp" && (
+            <div className="mt-1 text-xs text-gray-500">OTP: {latestValidOtp.otp}</div>
+          )}
           <div className="text-xs text-gray-400">
             Expires at: {new Date(latestValidOtp.end_time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
           </div>
@@ -570,6 +622,7 @@ export default function TeacherDashboard() {
           </button>
         </div>
       )}
+
 
       <Outlet />
     </div>
