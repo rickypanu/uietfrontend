@@ -60,10 +60,6 @@ export default function TeacherDashboard() {
     setSubject(c.subject);
   };
 
-  // SUBJECTS helpers
-  const branches = course ? Object.keys(SUBJECTS[course] || {}) : [];
-  const semesters = course && branch ? Object.keys(SUBJECTS[course]?.[branch] || {}) : [];
-  const subjects = course && branch && semester ? SUBJECTS[course]?.[branch]?.[semester] || [] : [];
 
   // Quick derived values for stats
   const todayISO = new Date().toISOString().split("T")[0];
@@ -468,19 +464,28 @@ export default function TeacherDashboard() {
               </div>
 
               {/* QR for generated OTP */}
-              {qrOtp && (
-                <div className="mt-4 p-4 bg-white rounded-xl shadow-sm flex flex-col items-center">
-                  <h4 className="text-sm font-medium text-gray-700 mb-2">Scan to mark attendance</h4>
-                  <QRCodeSVG value={qrOtp} size={180} bgColor="#ffffff" fgColor="#000000" />
-                  <div className="mt-2 text-sm text-gray-500">OTP: {qrOtp}</div>
-                  <button
-                    onClick={() => setQrOtp(null)}
-                    className="mt-2 px-3 py-1 text-xs text-white bg-red-500 rounded hover:bg-red-600 transition"
-                  >
-                    Close QR
-                  </button>
+              {qrOtp && subject && (
+              <div className="mt-4 p-4 bg-white rounded-xl shadow-sm flex flex-col items-center">
+                <h4 className="text-sm font-medium text-gray-700 mb-2">
+                  Scan to mark attendance
+                </h4>
+                <QRCodeSVG
+                  value={JSON.stringify({ otp: qrOtp, subject })}
+                  size={180}
+                  bgColor="#ffffff"
+                  fgColor="#000000"
+                />
+                <div className="mt-2 text-sm text-gray-500">
+                  OTP: {qrOtp} | Subject: {subject}
                 </div>
-              )}
+                <button
+                  onClick={() => setQrOtp(null)}
+                  className="mt-2 px-3 py-1 text-xs text-white bg-red-500 rounded hover:bg-red-600 transition"
+                >
+                  Close QR
+                </button>
+              </div>
+            )}
             </div>
 
             <div className="lg:col-span-2 bg-white rounded-xl shadow-sm p-4">
