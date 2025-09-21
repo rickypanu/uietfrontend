@@ -186,6 +186,7 @@ const doGenerateOtp = async (c, mode = "qr", durationValue) => {
               durationValue, 
               latitude,
               longitude,
+              mode,
             );
 
             const newOtp = {

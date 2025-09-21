@@ -45,7 +45,7 @@ export const exportStudentAttendanceCSV = async (rollNo) => {
 };
 
 
-export const generateOtp = async (employeeId,course, branch, semester, subject, durationMinutes, lat, lng) => {
+export const generateOtp = async (employeeId,course, branch, semester, subject, durationMinutes, lat, lng, mode) => {
   const res = await api.post("/teacher/generate-otp", {
     employee_id: employeeId,
     course: course,
@@ -55,7 +55,8 @@ export const generateOtp = async (employeeId,course, branch, semester, subject, 
     subject,
     duration_minutes: durationMinutes,
     lat,
-    lng
+    lng,
+    mode  
   });
   return res.data;
 };
