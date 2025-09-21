@@ -398,7 +398,84 @@ const QRScanner = ({ onScan }) => {
           </div> */}
 
           {/* QR Scanner Panel */}
-          {scanQrOpen && (
+
+          {/* QR Scanner Modal */}
+{scanQrOpen && (
+  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-4 relative">
+      {/* Close Button */}
+      <button
+        onClick={() => setScanQrOpen(false)}
+        className="absolute top-3 right-3 text-gray-600 hover:text-red-500"
+      >
+        ✖
+      </button>
+
+      <h2 className="text-lg font-semibold text-center text-green-700 mb-4">
+        Scan QR Code
+      </h2>
+
+      {/* Scanner */}
+      <QRScanner
+        onScan={async (value) => {
+          try {
+            let parsed;
+            try {
+              parsed = JSON.parse(value); // Expect { otp, subject }
+            } catch {
+              parsed = { otp: value, subject: "" }; // fallback if only OTP
+            }
+
+            const scannedOtp = parsed.otp?.trim();
+            const scannedSubject = parsed.subject?.trim();
+
+            if (!scannedOtp) {
+              setMessage("⚠️ Invalid QR code (missing OTP)");
+              return;
+            }
+
+            setScanQrOpen(false);
+            setMessage("⏳ Marking attendance...");
+
+            const visitorId = await getFingerprint();
+            const position = await new Promise((resolve, reject) => {
+              navigator.geolocation.getCurrentPosition(resolve, reject, {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0,
+              });
+            });
+
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+
+            await markAttendance(
+              roll_no,
+              scannedSubject,
+              scannedOtp,
+              visitorId,
+              lat,
+              lng
+            );
+
+            setMessage("✅ Attendance marked successfully!");
+            setOtp("");
+            setSubject("");
+            loadAttendance(filterSubject, filterDate);
+          } catch (err) {
+            let detail = err.response?.data?.detail;
+            if (Array.isArray(detail)) {
+              detail = detail.map((d) => d.msg).join(", ");
+            }
+            setMessage(detail || err.message || "❌ Failed to mark attendance.");
+          }
+        }}
+      />
+    </div>
+  </div>
+)}
+
+          {/* {scanQrOpen && (
             <div className="border rounded-xl overflow-hidden my-2">
               <QRScanner
                 onScan={async (value) => {
@@ -457,7 +534,7 @@ const QRScanner = ({ onScan }) => {
                 }}
               />
             </div>
-          )}
+          )} */}
 
 
         {/* Mark Attendance */}
