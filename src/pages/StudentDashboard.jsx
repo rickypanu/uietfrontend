@@ -18,6 +18,7 @@ import {
   GraduationCap,
   Bell,
   HelpCircle,
+  QrCode,
 } from "lucide-react";
 
 export default function StudentDashboard() {
@@ -305,6 +306,16 @@ const QRScanner = ({ onScan }) => {
             className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-white shadow hover:bg-green-300 transition"
           >
             <UserRound className="w-4 h-4 sm:w-5 sm:h-5 text-green-700" />
+          </button>
+
+          {/* qrcode for attendace */}
+          <button
+            onClick={() => setScanQrOpen(!scanQrOpen)}
+            aria-label="Scan QR"
+            title="Scan QR"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow hover:bg-purple-100 transition"
+          >
+            <QrCode className="w-5 h-5 text-purple-600" />
           </button>
 
           {/* Notifications */}
