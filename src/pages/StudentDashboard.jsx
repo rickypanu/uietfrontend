@@ -397,9 +397,8 @@ const QRScanner = ({ onScan }) => {
             )}
           </div> */}
 
-          {/* QR Scanner Panel */}
 
-          {/* QR Scanner Modal */}
+{/* QR Scanner Modal */}
 {scanQrOpen && (
   <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
     <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-4 relative">
@@ -434,7 +433,7 @@ const QRScanner = ({ onScan }) => {
               return;
             }
 
-            setScanQrOpen(false);
+            // Show marking message inside modal
             setMessage("⏳ Marking attendance...");
 
             const visitorId = await getFingerprint();
@@ -458,10 +457,14 @@ const QRScanner = ({ onScan }) => {
               lng
             );
 
+            // ✅ Success message in modal
             setMessage("✅ Attendance marked successfully!");
             setOtp("");
             setSubject("");
             loadAttendance(filterSubject, filterDate);
+
+            // Auto-close modal after 2s
+            setTimeout(() => setScanQrOpen(false), 2000);
           } catch (err) {
             let detail = err.response?.data?.detail;
             if (Array.isArray(detail)) {
@@ -471,9 +474,25 @@ const QRScanner = ({ onScan }) => {
           }
         }}
       />
+
+      {/* Message inside modal */}
+      {message && (
+        <p
+          className={`text-center mt-4 font-medium ${
+            message.includes("success")
+              ? "text-green-600"
+              : message.includes("Marking")
+              ? "text-blue-600"
+              : "text-red-600"
+          }`}
+        >
+          {message}
+        </p>
+      )}
     </div>
   </div>
 )}
+
 
           {/* {scanQrOpen && (
             <div className="border rounded-xl overflow-hidden my-2">
