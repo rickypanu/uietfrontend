@@ -384,7 +384,7 @@ const QRScanner = ({ onScan }) => {
         </section>
 
                  {/* QR Scanner Toggle */}
-          <div className="flex items-center gap-2 mb-2">
+          {/* <div className="flex items-center gap-2 mb-2">
             <button
               type="button"
               onClick={() => setScanQrOpen(!scanQrOpen)}
@@ -395,7 +395,7 @@ const QRScanner = ({ onScan }) => {
             {scannedOtp && (
               <span className="text-green-700 font-medium">Scanned OTP: {scannedOtp}</span>
             )}
-          </div>
+          </div> */}
 
           {/* QR Scanner Panel */}
           {scanQrOpen && (
