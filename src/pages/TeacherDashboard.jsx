@@ -1,6 +1,7 @@
 // src/pages/TeacherDashboard.jsx
 import React, { useEffect, useState, useRef } from "react";
 import { QRCodeSVG } from 'qrcode.react';
+import { motion } from "framer-motion";
 import {
   generateOtp,
   getAttendance,
@@ -136,7 +137,7 @@ const [qrMode, setQrMode] = useState("qr"); // mode of the last generated OTP ("
     try {
       const res = await api.get(`/teacher/active-otps/${employeeId}`);
       const sorted = res.data.sort((a, b) => new Date(b.end_time) - new Date(a.end_time));
-      setOtpList(sorted);
+   setOtpList(sorted);
     } catch (err) {
       console.error("Failed to load active OTPs", err);
     }
@@ -172,7 +173,7 @@ const doGenerateOtp = async (c, mode = "qr", durationValue) => {
         const { latitude, longitude, accuracy } = position.coords;
         setMessage(`📍 Accuracy: ${Math.round(accuracy)} meters`);
 
-        if (accuracy <= 1000 && !gotAccurateLocation) {
+        if (accuracy <= 100000 && !gotAccurateLocation) {
           gotAccurateLocation = true;
           navigator.geolocation.clearWatch(watchId);
 
@@ -604,25 +605,54 @@ const generateOtpForClass = (c, durationValue, mode = "qr") => {
       </div>
 
       {/* Floating QR panel */}
+
       {latestValidOtp && latestQrVisible && (
-        <div className="fixed bottom-4 right-4 bg-white p-4 rounded-xl shadow-lg flex flex-col items-center z-50 border border-gray-200">
-          <h4 className="text-sm font-medium text-gray-700 mb-2">Live Attendance QR</h4>
-          <QRCodeSVG value={latestValidOtp.otp} size={140} bgColor="#ffffff" fgColor="#000000" />
-          {/* show plain OTP only if this OTP was generated in otp-mode */}
-          {latestValidOtp.mode === "otp" && (
-            <div className="mt-1 text-xs text-gray-500">OTP: {latestValidOtp.otp}</div>
-          )}
-          <div className="text-xs text-gray-400">
-            Expires at: {new Date(latestValidOtp.end_time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+            <motion.div
+        drag
+        dragMomentum={false}
+        className="fixed bottom-4 right-4 bg-white p-4 rounded-xl shadow-lg flex flex-col items-center z-50 border border-gray-200 w-64 cursor-move"
+      >
+          <div className="fixed bottom-4 right-4 bg-white p-4 rounded-xl shadow-lg flex flex-col items-center z-50 border border-gray-200 w-64 cursor-move">
+            {/* drag handle */}
+            <div className="drag-handle w-full text-center font-medium text-gray-600 cursor-move border-b pb-1 mb-2">
+              Live Attendance {latestValidOtp.mode === "qr" ? "QR" : "OTP"}
+            </div>
+
+            {/* QR or OTP */}
+            {latestValidOtp.mode === "qr" ? (
+              <QRCodeSVG
+                value={JSON.stringify({ otp: latestValidOtp.otp, subject: latestValidOtp.subject })}
+                size={140}
+                bgColor="#ffffff"
+                fgColor="#000000"
+              />
+            ) : (
+              <div className="text-lg font-mono bg-gray-100 px-3 py-2 rounded border text-gray-800">
+                {latestValidOtp.otp}
+              </div>
+            )}
+
+            {/* expiry */}
+            <div className="mt-1 text-xs text-gray-500">
+              Expires at:{" "}
+              {new Date(latestValidOtp.end_time).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </div>
+
+            {/* close button */}
+            <button
+              onClick={() => setLatestQrVisible(false)}
+              className="mt-2 px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition"
+            >
+              Close
+            </button>
           </div>
-          <button
-            onClick={() => setLatestQrVisible(false)}
-            className="mt-2 px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition"
-          >
-            Close
-          </button>
-        </div>
+      </motion.div>
       )}
+
+
       <Outlet />
     </div>
   );
