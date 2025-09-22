@@ -42,7 +42,7 @@ export default function TeacherDashboard() {
   const [classes, setClasses] = useState([]);
 
   // add near other states
-const [qrMode, setQrMode] = useState("qr"); // mode of the last generated OTP ("qr" or "otp")
+  const [qrMode, setQrMode] = useState("qr"); // mode of the last generated OTP ("qr" or "otp")
 
   const employeeId = localStorage.getItem("userId");
   const navigate = useNavigate();
@@ -173,7 +173,7 @@ const doGenerateOtp = async (c, mode = "qr", durationValue) => {
         const { latitude, longitude, accuracy } = position.coords;
         setMessage(`📍 Accuracy: ${Math.round(accuracy)} meters`);
 
-        if (accuracy <= 100000 && !gotAccurateLocation) {
+        if (accuracy <= 100 && !gotAccurateLocation) {
           gotAccurateLocation = true;
           navigator.geolocation.clearWatch(watchId);
 
