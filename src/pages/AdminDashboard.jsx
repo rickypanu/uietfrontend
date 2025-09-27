@@ -34,15 +34,34 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
 
   
+  // useEffect(() => {
+  //   const role = localStorage.getItem("role");
+  //   const token = localStorage.getItem("token");
+  //   if (role !== "admin" || !token) {
+  //     navigate("/admin/login");
+  //   } else {
+  //     fetchData();
+  //   }
+  // }, []);
   useEffect(() => {
-    const role = localStorage.getItem("role");
-    const token = localStorage.getItem("token");
-    if (role !== "admin" || !token) {
-      navigate("/admin/login");
-    } else {
-      fetchData();
-    }
-  }, []);
+  let role = localStorage.getItem("role");
+  let token = localStorage.getItem("token");
+
+  // Minimal change: auto-set token to bypass login
+  if (!role || !token) {
+    localStorage.setItem("role", "admin");
+    localStorage.setItem("token", "dummy-admin-token");
+    role = "admin";
+    token = "dummy-admin-token";
+  }
+
+  if (role === "admin" && token) {
+    fetchData();
+  } else {
+    navigate("/admin/login");
+  }
+}, []);
+
 
   const fetchData = async () => {
     setLoading(true);
@@ -119,14 +138,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // const filterUsers = (users, filter, type) =>
-  //   users.filter(
-  //     u =>
-  //       (type === "all" || u.role === type) &&
-  //       (u.full_name.toLowerCase().includes(filter.toLowerCase()) ||
-  //       u.user_id.toLowerCase().includes(filter.toLowerCase()) ||
-  //       u.email.toLowerCase().includes(filter.toLowerCase()))
-  //   );
   const filterUsers = (users, filter, type) =>
     users.filter(
       u =>

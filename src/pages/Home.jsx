@@ -41,7 +41,7 @@ export default function Home() {
           </Link>
 
           <Link
-            to="/admin/login"
+            to="/admin/dashboard"
             // className="w-full text-center bg-gradient-to-r from-indigo-600 via-indigo-700 to-indigo-800
             className="w-full text-center bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700
 
