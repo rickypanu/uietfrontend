@@ -5,16 +5,16 @@ import { Link } from "react-router-dom";
 
 export default function Login() {
   const [role, setRole] = useState("student");
-  const [userId, setUserId] = useState("");
-  const [dob, setDob] = useState("");
+  const [userId, setUserId] = useState("235087");
+  const [dob, setDob] = useState("2025-09-01");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
   // Load saved login info if available
   useEffect(() => {
     const savedRole = localStorage.getItem("role") || "student";
-    const savedUserId = localStorage.getItem("userId") || "";
-    const savedDob = localStorage.getItem("dob") || "";
+    const savedUserId = localStorage.getItem("userId") || "235087";
+    const savedDob = localStorage.getItem("dob") || "2025-09-01";
 
     setRole(savedRole);
     setUserId(savedUserId);
