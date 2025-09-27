@@ -280,7 +280,8 @@ const QRScanner = ({ onScan }) => {
 
   const handleLogout = () => {
     localStorage.clear();
-    navigate("/login");
+    // navigate("/login");
+    navigate("/");
   };
 
   return (

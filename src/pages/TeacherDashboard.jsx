@@ -272,7 +272,8 @@ const generateOtpForClass = (c, durationValue, mode = "qr") => {
 
   const handleLogout = () => {
     localStorage.clear();
-    navigate("/login");
+    // navigate("/login");
+    navigate("/");
   };
 
   // UI helpers

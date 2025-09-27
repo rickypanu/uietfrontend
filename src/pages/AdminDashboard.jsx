@@ -171,7 +171,8 @@ export default function AdminDashboard() {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
     localStorage.removeItem("admin_id");  // ✅ remove saved admin_id if you have stored it
-    navigate("/admin/login");
+    // navigate("/admin/login");
+    navigate("/");
   };
   if (loading) return <div className="p-4 text-center">Loading...</div>;
 
