@@ -384,19 +384,7 @@ const QRScanner = ({ onScan }) => {
           </div>
         </section>
 
-                 {/* QR Scanner Toggle */}
-          {/* <div className="flex items-center gap-2 mb-2">
-            <button
-              type="button"
-              onClick={() => setScanQrOpen(!scanQrOpen)}
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
-            >
-              {scanQrOpen ? "Close QR Scanner" : "📷 Scan QR to Mark attendance"}
-            </button>
-            {scannedOtp && (
-              <span className="text-green-700 font-medium">Scanned OTP: {scannedOtp}</span>
-            )}
-          </div> */}
+
 
 
 {/* QR Scanner Modal */}
@@ -495,66 +483,6 @@ const QRScanner = ({ onScan }) => {
 )}
 
 
-          {/* {scanQrOpen && (
-            <div className="border rounded-xl overflow-hidden my-2">
-              <QRScanner
-                onScan={async (value) => {
-                  try {
-                    let parsed;
-                    try {
-                      parsed = JSON.parse(value); // Expect { otp, subject }
-                    } catch {
-                      parsed = { otp: value, subject: "" }; // fallback if only OTP
-                    }
-
-                    const scannedOtp = parsed.otp?.trim();
-                    const scannedSubject = parsed.subject?.trim();
-
-                    if (!scannedOtp) {
-                      setMessage("⚠️ Invalid QR code (missing OTP)");
-                      return;
-                    }
-
-                    setScanQrOpen(false);
-                    setMessage("⏳ Marking attendance...");
-
-                    // Run your existing attendance logic directly
-                    const visitorId = await getFingerprint();
-                    const position = await new Promise((resolve, reject) => {
-                      navigator.geolocation.getCurrentPosition(resolve, reject, {
-                        enableHighAccuracy: true,
-                        timeout: 10000,
-                        maximumAge: 0,
-                      });
-                    });
-
-                    const lat = position.coords.latitude;
-                    const lng = position.coords.longitude;
-
-                    await markAttendance(
-                      roll_no,
-                      scannedSubject,
-                      scannedOtp,
-                      visitorId,
-                      lat,
-                      lng
-                    );
-
-                    setMessage("✅ Attendance marked successfully!");
-                    setOtp("");
-                    setSubject("");
-                    loadAttendance(filterSubject, filterDate);
-                  } catch (err) {
-                    let detail = err.response?.data?.detail;
-                    if (Array.isArray(detail)) {
-                      detail = detail.map((d) => d.msg).join(", ");
-                    }
-                    setMessage(detail || err.message || "❌ Failed to mark attendance.");
-                  }
-                }}
-              />
-            </div>
-          )} */}
 
 
         {/* Mark Attendance */}
