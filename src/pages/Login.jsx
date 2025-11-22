@@ -5,8 +5,8 @@ import { Link } from "react-router-dom";
 
 export default function Login() {
   const [role, setRole] = useState("student");
-  const [userId, setUserId] = useState("235087");
-  const [dob, setDob] = useState("2025-09-01");
+  const [userId, setUserId] = useState("");
+  const [dob, setDob] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
