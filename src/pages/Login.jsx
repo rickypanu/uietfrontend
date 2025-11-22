@@ -12,9 +12,9 @@ export default function Login() {
 
   // Load saved login info if available
   useEffect(() => {
-    const savedRole = localStorage.getItem("role") || "student";
-    const savedUserId = localStorage.getItem("userId") || "235087";
-    const savedDob = localStorage.getItem("dob") || "2025-09-01";
+    const savedRole = localStorage.getItem("role");
+    const savedUserId = localStorage.getItem("userId");
+    const savedDob = localStorage.getItem("dob");
 
     setRole(savedRole);
     setUserId(savedUserId);

@@ -31,16 +31,16 @@ export default function Home() {
             Register
           </Link>
 
-          {/* <Link
+          <Link
             to="/login"
             className="w-full text-center bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-600 
               text-white font-semibold px-5 py-3 rounded-full shadow-md hover:shadow-lg 
               hover:scale-105 transition-transform duration-300"
           >
             Student / Teacher Login
-          </Link> */}
+          </Link>
 
-          <Link
+          {/* <Link
             to="/teacher"
             className="w-full text-center bg-gradient-to-r from-cyan-300 via-blue-300 to-cyan-600 
               text-white font-semibold px-5 py-3 rounded-full shadow-md hover:shadow-lg 
@@ -55,7 +55,7 @@ export default function Home() {
               hover:scale-105 transition-transform duration-300"
           >
             Student Login
-          </Link>
+          </Link> */}
 
           <Link
             to="/admin/dashboard"
